@@ -2,28 +2,79 @@
 name = Jacquin Moon
 email = jacquindev@outlook.com
 
+[alias]
+a = add
+bl = blame -w -C -C -C --color-lines --color-by-age
+c = commit -m
+co = checkout
+d = diff --word-diff -M -C
+l = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+m = merge
+p = push
+pl = pull
+st = status
+sw = switch
+sa = stash -all
+unstash = stash pop
+contributors = shortlog --summary --numbered
+# Find commits by source code
+fc = "!f() { git log --pretty=format:'%C(yellow)%h  %Cblue%ad  %Creset%s%Cgreen  [%cn] %Cred%d' --decorate --date=short -S$1; }; f"
+# Find commits by commit message
+fm = "!f() { git log --pretty=format:'%C(yellow)%h  %Cblue%ad  %Creset%s%Cgreen  [%cn] %Cred%d' --decorate --date=short --grep=$1; }; f"
+# Remove branches that have already been merged with current branch
+bye = "!git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d"
+
+[color]
+ui = true
+
+[column]
+ui = auto
+
+[core]
+editor = nvim
+ignorecase = false
+pager = delta
+
 [credential]
 helper = /mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager.exe
+
+[delta]
+navigate = true
+features = mantis-shrimp
+
+[diff]
+colorMoved = default
+
+[fetch]
+prune = true
+output = compact
+
+[help]
+autocorrect = 1
 
 [include]
 path = ~/.config/git/delta/themes.gitconfig
 
-[core]
-pager = delta
+[init]
+defaultBranch = main
 
 [interactive]
 diffFilter = delta --color-only
 
-[delta]
-navigate = true # use n and N to move between diff sections
-features = mantis-shrimp
-
-# delta detects terminal colors automatically; set one of these to disable auto-detection
-# dark = true
-# light = true
+[log]
+decorate = short
 
 [merge]
 conflictstyle = diff3
+log = true
 
-[diff]
-colorMoved = default
+[pull]
+rebase = true
+
+[push]
+autoSetupRemote = true
+autoSetupRemove = true
+
+[rebase]
+autoStash = true
+updateRefs = true
