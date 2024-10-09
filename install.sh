@@ -77,6 +77,8 @@ setup_nvm() {
             nvm install node
         fi
         nvm install-latest-npm
+        npm i -g git-open git-recent
+        
     elif command_exists nvm; then
         echo
         _nvm_installed_version=$(builtin cd "$NVM_DIR" && git describe --tags)
@@ -90,6 +92,11 @@ setup_nvm() {
             builtin cd "$NVM_DIR" && git fetch quiet && git checkout "$_nvm_latest_release_tag"
             \. "$NVM_DIR/nvm.sh"
         fi
+    fi
+
+    if [ -d "$NVM_DIR" ] && [ ! -f "$NVM_DIR/default_packages" ]; then
+        echo "git-open" >> "$NVM_DIR/default_packages"
+        echo "git-recent" >> "$NVM_DIR/default_packages"
     fi
 }
 
