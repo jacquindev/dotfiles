@@ -3,6 +3,8 @@ alias c='clear'
 
 alias reload='exec $SHELL -l'
 
+mkcd() { mkdir "$@" && cd "$@" }
+
 # Custom paths
 alias bdot="cd $XDG_CONFIG_HOME/bash"
 alias zdot="cd $ZDOTDIR"

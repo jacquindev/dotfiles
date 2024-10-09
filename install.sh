@@ -19,6 +19,7 @@ system_update() {
     if [[ $(uname -r) =~ WSL ]]; then check_apt_packages wslu; fi
 
     [ ! -d "$XDG_DATA_HOME/gnupg" ] && (mkdir -p "$XDG_DATA_HOME/gnupg" && chmod 600 "$XDG_DATA_HOME/gnupg")
+    [ ! -d "$XDG_CACHE_HOME/wget" ] && mkdir -p "$XDG_CACHE_HOME/wget"
 }
 
 # Apply dotfiles

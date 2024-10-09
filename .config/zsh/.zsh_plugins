@@ -5,6 +5,7 @@ mroth/evalcache
 marlonrichert/zsh-autocomplete
 zsh-users/zsh-completions path:src kind:fpath
 lukechilds/zsh-better-npm-completion kind:defer
+ahmetb/kubectx path:completion kind:fpath
 
 # Oh-my-zsh
 getantidote/use-omz

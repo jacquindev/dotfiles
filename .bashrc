@@ -141,3 +141,9 @@ fi
 
 [ -s "${HOME}/.g/env" ] && \. "${HOME}/.g/env"  # g shell setup
 
+
+# Added by `rbenv init` on Thu Oct 10 03:46:19 +07 2024
+eval "$(rbenv init - --no-rehash bash)"
+
+[ -s "${HOME}/.g/env" ] && \. "${HOME}/.g/env"  # g shell setup
+
