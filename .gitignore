@@ -1,0 +1,7 @@
+.config/atuin
+.config/go
+.config/wslu
+.config/pypoetry/poetry.lock
+
+.zcompdump*
+.zsh_plugins.zsh
