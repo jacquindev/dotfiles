@@ -42,7 +42,7 @@ setup_homebrew() {
         brew update && brew upgrade && brew cleanup prune=all
     fi
     check_brew_packages atuin bat eza fd fzf ripgrep luajit luarocks neovim oh-my-posh \
-        jq fx yh
+        jq fx yh lazygit 
 }
 
 # Zsh
