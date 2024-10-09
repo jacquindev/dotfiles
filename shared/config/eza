@@ -1,0 +1,10 @@
+if ! command -v eza &>/dev/null; then return; fi
+
+alias ls='eza --git --icons --group --group-directories-first --time-style=long-iso --color-scale=all'
+alias l='ls --git-ignore'
+alias ll='ls --all --header --long'
+alias llm='ls --all --header --long --sort=modified'
+alias la='ls -lbhHigUmuSa'
+alias lx='ls -lbhHigUmuSa@'
+alias lt='ls --tree'
+alias tree='ls --tree'

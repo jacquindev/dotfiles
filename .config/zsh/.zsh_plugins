@@ -1,0 +1,22 @@
+# Evalcache
+mroth/evalcache
+
+# Completions
+marlonrichert/zsh-autocomplete
+zsh-users/zsh-completions path:src kind:fpath
+lukechilds/zsh-better-npm-completion kind:defer
+
+# Oh-my-zsh
+getantidote/use-omz
+ohmyzsh/ohmyzsh path:lib/grep.zsh
+ohmyzsh/ohmyzsh path:plugins/aliases
+ohmyzsh/ohmyzsh path:plugins/extract
+ohmyzsh/ohmyzsh path:plugins/gitfast
+ohmyzsh/ohmyzsh path:plugins/urltools
+
+# Nvm support
+lukechilds/zsh-nvm
+
+# End
+zdharma-continuum/fast-syntax-highlighting kind:defer
+zsh-users/zsh-autosuggestions
