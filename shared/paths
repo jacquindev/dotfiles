@@ -24,7 +24,7 @@ pathprepend() {
 if [[ $(uname -r) =~ WSL ]]; then
     userprofile=$(wslpath "$(wslvar USERPROFILE)")
     # VSCode
-    pathappend "$userprofile/AppData/Local/Programs/Microsoft VS Code/bin"
+    pathprepend "$userprofile/AppData/Local/Programs/Microsoft VS Code/bin"
 fi
 
 #DEV TOOLS #############################################################################

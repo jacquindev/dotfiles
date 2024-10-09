@@ -1,0 +1,26 @@
+alias _='sudo '
+alias c='clear'
+
+alias reload='exec $SHELL -l'
+
+# Custom paths
+alias bdot="cd $XDG_CONFIG_HOME/bash"
+alias zdot="cd $ZDOTDIR"
+alias dotf="cd $DOTFILES"
+alias proj="cd $XDG_PROJECTS_DIR"
+
+alias fpaths='echo $FPATH | tr ":" "\n"'
+alias paths='echo $PATH | tr ":" "\n"'
+
+# shell profile
+alias bashrc='nvim ~/.bashrc'
+alias zshrc='nvim $ZDOTDIR/.zshrc'
+
+# rsync
+alias rcopy="rsync -avz --progress -h"
+alias rmove="rsync -avz --progress -h --remove-source-files"
+alias rupdate="rsync -avzu --progress -h"
+alias rsynch="rsync -avzu --delete --progress -h"
+
+# oh-my-posh
+if command -v oh-my-posh >/dev/null 2>&1; then alias omp='oh-my-posh'; fi

@@ -1,0 +1,10 @@
+if ! command -v kubectl >/dev/null; then return; fi
+
+if command -v jq >/dev/null; then kj() { kubectl "$@" -o json | jq }; fi
+if command -v fx >/dev/null; then kjx() { kubectl "$@" -o json | fx }; fi
+if command -v yh >/dev/null; then ky() { kubectl "$@" -o yaml | yh }; fi
+
+if [ ! -f "$XDG_DATA_HOME/kubectl-aliases/.kubectl_aliases" ]; then
+    git clone https://github.com/ahmetb/kubectl-aliases.git "$XDG_DATA_HOME/kubectl-aliases"
+fi
+source "$XDG_DATA_HOME/kubectl-aliases/.kubectl_aliases"

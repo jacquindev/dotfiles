@@ -1,0 +1,97 @@
+# Reference: - https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/ubuntu/ubuntu.plugin.zsh
+
+if command -v apt >/dev/null 2>&1; then APT=apt; else APT=apt-get; fi
+
+# cache
+alias acs="apt-cache search"
+alias acp="apt-cache policy"
+alias acsp="apt-cache showpkg"
+
+# list
+alias ali='apt list --installed'
+alias alu='apt list --upgradable'
+
+# sudo
+alias aga="sudo $APT autoclean"
+alias agar="sudo $APT autoremove"
+alias agb="sudo $APT build-dep"
+alias agc="sudo $APT clean"
+alias agd="sudo $APT dselect-upgrade"
+alias agi="sudo $APT install"
+alias agp="sudo $APT purge"
+alias agr="sudo $APT remove"
+alias agu="sudo $APT update"
+alias agud="sudo $APT update && sudo $APT dist-upgrade -y"
+alias agug="sudo $APT upgrade -y"
+alias aguu="sudo $APT update && sudo $APT upgrade -y"
+
+alias ppap="sudo ppa-purge"
+
+# print all installed packages
+alias allpkgs='dpkg --get-selections | rg -v deinstall'
+
+# apt-add-repository with automatic install/upgrade of the desired package
+# Usage: aar ppa:xxxxxx/xxxxxx [packagename]
+# If packagename is not given as 2nd argument the function will ask for it and guess the default by taking
+# the part after the / from the ppa name which is sometimes the right name for the package you want to install
+aar() {
+    if [ -n "$2" ]; then
+        PACKAGE=$2
+    else
+        printf "Type in the package name to install/upgrade with this ppa [%s]: " "${1##*/}"
+        read -r PACKAGE
+    fi
+
+    if [ -z "$PACKAGE" ]; then
+        PACKAGE=${1##*/}
+    fi
+
+    sudo apt-add-repository "$1" && sudo ${APT} update
+    sudo ${APT} install "$PACKAGE"
+}
+
+# Prints apt history
+# Usage:
+#   apt-history install
+#   apt-history upgrade
+#   apt-history remove
+#   apt-history rollback
+#   apt-history list
+# Based On: https://linuxcommando.blogspot.com/2008/08/how-to-show-apt-log-history.html
+apt_history() {
+    case "$1" in
+    install)
+        bat /var/log/dpkg.log | rg --no-filename 'install '
+        ;;
+    upgrade | remove)
+        bat /var/log/dpkg.log | rg --no-filename "$1"
+        ;;
+    rollback)
+        bat /var/log/dpkg.log | rg upgrade |
+            rg "$2" -A10000000 |
+            rg "$3" -B10000000 |
+            awk '{print $4"="$5}'
+        ;;
+    list)
+        bat /var/log/dpkg.log | rg --no-filename ''
+        ;;
+    *)
+        echo
+        echo "$(tput setaf 2)==> $(tput setaf 220)Parameters:"
+        echo " $(tput setaf 6)install$(tput sgr0)  - Lists all packages that have been installed."
+        echo " $(tput setaf 6)upgrade$(tput sgr0)  - Lists all packages that have been upgraded."
+        echo " $(tput setaf 6)remove$(tput sgr0)   - Lists all packages that have been removed."
+        echo " $(tput setaf 6)rollback$(tput sgr0) - Lists rollback information."
+        echo " $(tput setaf 6)list$(tput sgr0)     - Lists all contents of dpkg logs."
+        echo
+        ;;
+    esac
+}
+
+# List packages by size
+apt_list_packages() {
+    dpkg-query -W --showformat='${Installed-Size} ${Package} ${Status}\n' |
+        rg -v deinstall |
+        sort -n |
+        awk '{print $1" "$2}'
+}

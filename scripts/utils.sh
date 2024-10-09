@@ -1,13 +1,13 @@
 #!/bin/sh
 
-FMT_RED=$(printf '\033[38;5;196m')
-FMT_GREEN=$(printf '\033[38;5;082m')
-FMT_YELLOW=$(printf '\033[38;5;226m')
-FMT_BLUE=$(printf '\033[38;5;021m')
-FMT_ORANGE=$(printf '\033[38;5;202m')
-FMT_PINK=$(printf '\033[38;5;163m')
-FMT_BOLD=$(printf '\033[1m')
-FMT_RESET=$(printf '\033[0m')
+FMT_RED="$(tput setaf 1)"
+FMT_GREEN="$(tput setaf 2)"
+FMT_YELLOW="$(tput setaf 220)"
+FMT_BLUE="$(tput setaf 4)"
+FMT_ORANGE="$(tput setaf 208)"
+FMT_PINK="$(tput setaf 5)"
+FMT_BOLD="$(tput bold)"
+FMT_RESET="$(tput sgr0)"
 
 underline() {
     printf '\033[4m%s\033[24m\n' "$*" || printf '%s\n' "$*"

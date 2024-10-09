@@ -13,8 +13,8 @@ GITHUB="https://github.com"
 # Update system and install prerequisites
 system_update() {
     sudo apt update && sudo apt upgrade -y
-    check_apt_packages atool build-essential ccache cmake curl direnv file \
-        g++ gcc git make moreutils stow unzip zip wamerican wget
+    check_apt_packages atool build-essential bash-completion ccache cmake curl direnv \
+        file g++ gcc git make moreutils stow unzip zip wamerican wget
     
     if [[ $(uname -r) =~ WSL ]]; then check_apt_packages wslu; fi
 
@@ -41,7 +41,8 @@ setup_homebrew() {
         warning "You're already installed Homebrew. Trying to update..."
         brew update && brew upgrade && brew cleanup prune=all
     fi
-    check_brew_packages atuin bat eza fd fzf ripgrep luajit luarocks neovim oh-my-posh
+    check_brew_packages atuin bat eza fd fzf ripgrep luajit luarocks neovim oh-my-posh \
+        jq fx yh
 }
 
 # Zsh

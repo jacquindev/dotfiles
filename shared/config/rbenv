@@ -1,0 +1,41 @@
+# References: - https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/rbenv/rbenv.plugin.zsh
+if ! command -v rbenv >/dev/null 2>&1; then return; fi
+
+alias rubies="rbenv versions"
+alias gemsets="rbenv gemset list"
+
+current_ruby="$(rbenv version-name)"
+current_gemset="$(rbenv gemset active 2>/dev/null) | tr ' ' '+'"
+
+gems() {
+    rbenv_path=$(rbenv prefix)
+    gem list "$@" | sed -E \
+        -e "s/\([0-9a-z, \.]+( .+)?\)/$(tput setaf 4)&$(tput sgr0)/g" \
+        -e "s|$rbenv_path|$(tput setaf 5)\$rbenv_path$(tput sgr0)|g" \
+        -e "s/$current_ruby@global/$(tput setaf 3)&$(tput sgr0)/g" \
+        -e "s/$current_ruby$current_gemset$/$(tput setaf 2)&$(tput sgr0)/g"
+}
+
+# gem
+alias gemb="gem build *.gemspec"
+alias gemp="gem push *.gem"
+
+alias gemca="gem cert --add"
+alias gemcb="gem cert --build"
+alias gemcl="gem cleanup -n"
+alias gemcr="gem cert --remove"
+alias gemgi="gem generate_index"
+alias gemh="gem help"
+alias gemi="gem info"
+alias gemia="gem info --all"
+alias gemin="gem install"
+alias gemlo="gem lock"
+alias gemli="gem list"
+alias gemo="gem open"
+alias gemoe="gem open -e"
+alias gemun="gem uninstall"
+
+# ruby
+alias rb='ruby'
+alias rfind='find . -name "*.rb" | xargs grep -n'
+alias rrun="ruby -e"
