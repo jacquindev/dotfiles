@@ -3,7 +3,9 @@ alias c='clear'
 
 alias reload='exec $SHELL -l'
 
-mkcd() { mkdir "$@" && cd "$@" }
+mkcd() { 
+    mkdir "$@" && cd "$@" 
+}
 
 # Custom paths
 alias bdot="cd $XDG_CONFIG_HOME/bash"
@@ -24,5 +26,11 @@ alias rmove="rsync -avz --progress -h --remove-source-files"
 alias rupdate="rsync -avzu --progress -h"
 alias rsynch="rsync -avzu --delete --progress -h"
 
+# disk usage
+alias dud='du -d 1 -h'
+alias duf='du -sh *'
+
 # oh-my-posh
-if command -v oh-my-posh >/dev/null 2>&1; then alias omp='oh-my-posh'; fi
+if command -v 'oh-my-posh' >/dev/null 2>&1; then
+    alias omp='oh-my-posh'
+fi

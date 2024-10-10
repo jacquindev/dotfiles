@@ -55,4 +55,4 @@ export BUNDLE_USER_PLUGIN="$XDG_DATA_HOME/bundle"
 export GOPATH="$XDG_DATA_HOME/go"
 
 # krew
-export KREW_ROOT="$XDG_DATA_HOME/krew"
+export KREW_ROOT="$XDG_DATA_HOME/kubernetes/krew"

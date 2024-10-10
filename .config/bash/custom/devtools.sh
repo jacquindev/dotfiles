@@ -27,3 +27,7 @@ if command -v kubectl >/dev/null 2>&1; then source <(kubectl completion bash); f
 
 # Minikube
 if command -v minikube >/dev/null 2>&1; then source <(minikube completion bash); fi
+
+# Helm
+if command -v helm >/dev/null 2>&1; then source <(helm completion bash); fi
+if command -v helmfile >/dev/null 2>&1; then source <(helmfile completion bash); fi

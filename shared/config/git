@@ -1,0 +1,20 @@
+# gitignore
+gi() { 
+    curl -fLw '\n' "https://www.toptal.com/developers/gitignore/api/$(IFS=','; echo "$*")" 
+}
+gilist() { 
+    curl -sfL https://www.toptal.com/developers/gitignore/api/list | tr "," "\n" 
+}
+gimake() { 
+    gi "$@" > .gitignore 
+}
+
+# git-lfs
+if command -v "git-lfs" >/dev/null 2>&1; then
+    alias glfsi='git lfs install'
+    alias glfst='git lfs track'
+    alias glfsls='git lfs ls-files'
+    alias glfsmi='git lfs migrate import --include='
+    
+    alias gplfs="git lfs push origin $(git branch | cut -f2 -d ' ')"
+fi

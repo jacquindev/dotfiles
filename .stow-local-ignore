@@ -25,8 +25,7 @@ _darcs
 \.shellcheckrc
 
 install.sh
-setup_docker.sh
-setup_kube.sh
 
 scripts
 shared
+k8s

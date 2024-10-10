@@ -29,3 +29,7 @@ if [[ ${commands[kubectl]} ]]; then source <(kubectl completion zsh); fi
 
 # Minikube
 if [[ ${commands[minikube]} ]]; then source <(minikube completion zsh); fi
+
+# Helm
+if [[ ${+commands[helm]} ]]; then source <(helm completion zsh); fi
+if [[ ${+commands[helmfile]} ]]; then source <(helmfile completion zsh); fi
