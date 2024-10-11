@@ -24,9 +24,7 @@ system_update() {
 
 # Apply dotfiles
 stow_dotfiles() {
-    [ -d "$HOME/.cache/backup" ] || mkdir -p "$HOME/.cache/backup"
-    if [ -f "$HOME/.bashrc" ]; then mv -i "$HOME/.bashrc" "$HOME/.cache/backup/.bashrc-$(date +%Y-%m-%d_%H-%M-%S)"; fi
-    if [ -f "$HOME/.profile" ]; then mv -i "$HOME/.profile" "$HOME/.cache/backup/.profile-$(date +%Y-%m-%d_%H-%M-%S)"; fi
+    backup
     builtin cd "$DOTFILES" && stow .
 }
 
@@ -37,13 +35,12 @@ setup_homebrew() {
         info "Installing Homebrew and Homebrew's packages..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+        brew bundle
     else
         echo
         warning "You're already installed Homebrew. Trying to update..."
         brew update && brew upgrade && brew cleanup prune=all
     fi
-    check_brew_packages atuin bat eza fd fzf ripgrep luajit luarocks neovim oh-my-posh \
-        jq fx yh lazygit git-delta
 }
 
 # Zsh
@@ -256,6 +253,7 @@ cleanup_home() {
 
 main() {
     system_update
+    setup_git
     stow_dotfiles
     setup_homebrew
     setup_zsh

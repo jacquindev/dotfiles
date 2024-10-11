@@ -22,9 +22,14 @@ _darcs
 ^/LICENSE.*
 ^/COPYING
 
-\.shellcheckrc
+.shellcheckrc
 
 install.sh
+
+Brewfile
+Brewfile.lock.json
+
+Dockerfile
 
 scripts
 shared
