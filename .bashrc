@@ -119,6 +119,7 @@ fi
 if [ -d "$HOME/.dotfiles/shared" ]; then
     [ -f "$HOME/.dotfiles/shared/envs" ] && source "$HOME/.dotfiles/shared/envs"
     [ -f "$HOME/.dotfiles/shared/paths" ] && source "$HOME/.dotfiles/shared/paths"
+    [ -f "$HOME/.dotfiles/shared/brew" ] && source "$HOME/.dotfiles/shared/brew"
 
     for file in "$HOME/.dotfiles/shared/config/"*; do
         source "$file"

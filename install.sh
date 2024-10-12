@@ -1,30 +1,61 @@
 #!/bin/sh
 
 # shellcheck source-path=SCRIPTDIR
-here="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null 2>&1 && pwd )"
-. "$here/scripts/utils.sh"
-. "$here/scripts/helpers.sh"
-
-export DOTFILES="$HOME/.dotfiles"
+DOTFILES="$(pwd)"
+. "$DOTFILES/scripts/utils.sh"
+. "$DOTFILES/scripts/helpers.sh"
 . "$DOTFILES/shared/envs"
 
 GITHUB="https://github.com"
 
+[ ! -d "$XDG_DATA_HOME/gnupg" ] && (mkdir -p "$XDG_DATA_HOME/gnupg" && chmod 600 "$XDG_DATA_HOME/gnupg")
+[ ! -d "$XDG_CACHE_HOME/wget" ] && mkdir -p "$XDG_CACHE_HOME/wget"
+
 # Update system and install prerequisites
 system_update() {
-    sudo apt update && sudo apt upgrade -y
-    check_apt_packages atool build-essential bash-completion ccache cmake curl direnv \
-        file g++ gcc git make moreutils stow unzip zip wamerican wget
-    
-    if [[ $(uname -r) =~ WSL ]]; then check_apt_packages wslu; fi
+    if [[ "$(uname)" == "Darwin" ]]; then
+        xcode-select --install
+    fi
 
-    [ ! -d "$XDG_DATA_HOME/gnupg" ] && (mkdir -p "$XDG_DATA_HOME/gnupg" && chmod 600 "$XDG_DATA_HOME/gnupg")
-    [ ! -d "$XDG_CACHE_HOME/wget" ] && mkdir -p "$XDG_CACHE_HOME/wget"
+    if command_exists apt || command_exists apt-get; then
+        if command_exists apt; then APT=apt; else APT=apt-get; fi
+        sudo "$APT" update && sudo "$APT" upgrade -y
+        check_apt_packages atool build-essential bash-completion ccache cmake curl direnv \
+            file g++ gcc git make moreutils stow unzip usbutils zip wamerican wget
+
+        if [[ "$(uname -r)" =~ "WSL" ]]; then
+            check_apt_packages wslu
+            echo
+            if checkyes "Build newest Microsoft Linux Kernel?"; then
+                git clone --depth 1 "${GITHUB}/microsoft/WSL2-Linux-Kernel.git" WSL2-Linux-Kernel
+                check_apt_packages bc bison build-essential dwarves flex libssl-dev libelf-dev python3 pahole
+                builtin cd WSL2-Linux-Kernel
+                make -j$(nproc) KCONFIG_CONFIG=Microsoft/config-wsl
+                sudo make modules_install headers_install
+                printf "Where would you like to put your kernel image on your windows machine? (eg: /mnt/c/)"
+                read -r location
+                cp arch/x86/boot/bzImage $location
+                success "Finished building WSL2 Kernel! After running this script, please exit WSL terminal window."
+                echo "${FMT_BLUE}Please follow the instruction in Step 2 & 3 of this link:"
+                echo "https://learn.microsoft.com/en-us/community/content/wsl-user-msft-kernel-v6"
+                echo "${FMT_RESET}"
+            fi
+        fi
+    fi
 }
 
 # Apply dotfiles
 stow_dotfiles() {
-    backup
+    echo
+    BACKUP_DIR="$HOME/.cache/backup"
+    [ -d "$BACKUP_DIR" ] || mkdir -p "$BACKUP_DIR"
+    for file in "$HOME/.config/nvim" "$HOME/.vim" "$HOME/.vimrc" "$HOME/.bashrc" "$HOME/.profile"; do 
+        if [ ! -L "$file" ] || [ -d "$file" ] || [ -f "$file" ]; then
+            filename=$(basename $file)
+            mv -i "$file" "$BACKUP_DIR/$filename-$(date +%Y-%m-%d_%H-%M-%S)"
+            echo "${FMT_PINK}Backing up $file to ${FMT_GREEN}${BACKUP_DIR}/$filename-$(date +%Y-%m-%d_%H-%M-%S)${FMT_RESET}..."
+        fi
+    done
     builtin cd "$DOTFILES" && stow .
 }
 
@@ -34,12 +65,16 @@ setup_homebrew() {
         echo
         info "Installing Homebrew and Homebrew's packages..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+        \. "$DOTFILES/shared/brew"
         brew bundle
+
+        if [[ "$(uname)" == "Darwin" ]]; then
+            check_brew_packages cmake make moreutils ninja wget
+        fi
     else
         echo
         warning "You're already installed Homebrew. Trying to update..."
-        brew update && brew upgrade && brew cleanup prune=all
+        brew update && brew upgrade && brew cleanup --prune=all
     fi
 }
 
@@ -47,12 +82,19 @@ setup_homebrew() {
 setup_zsh() {
     if ! command_exists zsh && checkyes "Could not find ZSH. Install ZSH now?"; then
         echo
-        check_apt_packages zsh
+        if command_exists apt || command_exists apt-get; then
+            check_apt_packages zsh
+        else
+            check_brew_packages zsh
+        fi
         if checkyes "Make ZSH your default shell?"; then
             chsh -s "$(which zsh)" "$USER"
             success "ZSH was set as your default shell."
             info "After running this script, please close and reopen your terminal to take effect"
         fi
+    else
+        echo
+        warning "You're already installed ZSH!"
     fi
 }
 
@@ -93,6 +135,7 @@ setup_nvm() {
     fi
 
     if [ -d "$NVM_DIR" ] && [ ! -f "$NVM_DIR/default_packages" ]; then
+        echo; echo "${FMT_ORANGE}Adding 'git-open' & 'git-recent' as two default packages...${FMT_RESET}" 
         echo "git-open" >> "$NVM_DIR/default_packages"
         echo "git-recent" >> "$NVM_DIR/default_packages"
     fi
@@ -102,8 +145,12 @@ setup_pyenv() {
     if ! command_exists pyenv && checkyes "Could not find Pyenv. Install now?"; then
         echo
         info "Installing Pyenv..."
-        check_apt_packages libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev \
-            libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+        if command_exists apt || command_exists apt-get; then
+            check_apt_packages libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev \
+                libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+        else
+            check_brew_packages openssl readline sqlite3 xz zlib tcl-tk
+        fi
 
         export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions/global/bin:$POETRY_HOME/bin:$PATH"
 
@@ -171,8 +218,13 @@ setup_rbenv() {
         echo
         if checkyes "Could not find rbenv. Install?"; then
             info "Installing Rbenv..."
-            check_apt_packages autoconf patch build-essential libssl-dev libyaml-dev libreadline6-dev \
-                zlib1g-dev libgmp-dev libncurses5-dev libffi-dev libgdbm6 libgdbm-dev libdb-dev uuid-dev
+            if command_exists apt || command_exists apt-get; then
+                check_apt_packages autoconf patch build-essential libssl-dev libyaml-dev libreadline6-dev \
+                    zlib1g-dev libgmp-dev libncurses5-dev libffi-dev libgdbm6 libgdbm-dev libdb-dev uuid-dev
+            else
+                check_brew_packages openssl@3 readline libyaml gmp
+                if ! command_exists rustc; then check_brew_packages rust; fi
+            fi
 
             export PATH="$RBENV_ROOT/bin:$RBENV_ROOT/shims:$RBENV_ROOT/versions/global/bin:$PATH"
 
@@ -202,7 +254,7 @@ setup_rbenv() {
         fi
     else
         echo
-        warning "You're already installed Rbenv! Trying to update..."
+        warning "You're already installed Rbenv! Trying to update 'rbenv' and its plugins..."
         echo
         rbenv update
     fi
@@ -232,7 +284,15 @@ setup_go() {
 cleanup_home() {
     echo
     info "Cleaning up home..."
+    if command_exists apt || command_exists apt-get; then
+        if command_exists apt; then APT=apt; else APT=apt-get; fi
+        sudo "$APT" autoremove && sudo "$APT" autoclean
+    fi
+    if [ -d /etc/update-motd.d ]; then
+        sudo chmod -x /etc/update-motd.d/*
+    fi
     sleep 5
+    echo
     echo "${FMT_ORANGE}To disable dynamic motd and news:"
     echo "Edit the file ${FMT_YELLOW}/etc/default/motd-news${FMT_ORANGE}"
     echo "FROM: ${FMT_YELLOW}ENABLED=1${FMT_ORANGE} TO: ${FMT_YELLOW}ENABLED=0${FMT_ORANGE}"
@@ -243,17 +303,16 @@ cleanup_home() {
     echo "${FMT_ORANGE}Then add the following line:"
     echo "${FMT_YELLOW}Defaults !admin_flag${FMT_RESET}"
     sleep 3
-    if [ ! -f "$HOME/.hushlogin" ]; then touch "$HOME/.hushlogin"; fi
+    if [ ! -f "$HOME/.hushlogin" ] || [ ! -L "$HOME/.hushlogin" ]; then touch "$HOME/.hushlogin"; fi
     if [ -f "$HOME/.sudo_as_admin_successful" ]; then rm -f "$HOME/.sudo_as_admin_successful"; fi
     if [ -f "$HOME/.motd_shown" ]; then rm -f "$HOME/.motd_shown"; fi
-    sudo apt autoremove && sudo apt clean
-    sudo chmod -x /etc/update-motd.d/*
+    echo
+    sleep 3
     success "All done!"
 }
 
 main() {
     system_update
-    setup_git
     stow_dotfiles
     setup_homebrew
     setup_zsh

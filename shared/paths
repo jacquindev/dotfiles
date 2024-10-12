@@ -4,15 +4,15 @@
 # References: - https://superuser.com/questions/39751/add-directory-to-path-if-its-not-already-there
 
 pathappend() {
-    if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
-        PATH="${PATH:+"$PATH:"}$1"
-    fi
+  if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
+    PATH="${PATH:+"$PATH:"}$1"
+  fi
 }
 
 pathprepend() {
-    if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
-        PATH="$1${PATH:+":$PATH"}"
-    fi
+  if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
+    PATH="$1${PATH:+":$PATH"}"
+  fi
 }
 
 # Main bin
@@ -20,12 +20,15 @@ pathprepend() {
 [ -d "$HOME/.local/bin" ] && pathprepend "$HOME/.local/bin"
 [ -d /usr/local/sbin ] && pathprepend /usr/local/sbin
 
+# Uncomment this if you set /etc/wsl.conf [interop] appendWindowsPath=false
 # WSL
-if [[ $(uname -r) =~ WSL ]]; then
-    userprofile=$(wslpath "$(wslvar USERPROFILE)")
-    # VSCode
-    pathprepend "$userprofile/AppData/Local/Programs/Microsoft VS Code/bin"
-fi
+# if [[ $(uname -r) =~ WSL ]]; then
+#   userprofile=$(wslpath "$(wslvar USERPROFILE)")
+#   # VSCode
+#   pathprepend "$userprofile/AppData/Local/Programs/Microsoft VS Code/bin"g up
+#   pathprepend "mnt/c/Windows/System32/notepad.exe"
+#   pathprepend "mnt/c/Program Files/usbipd-win/"
+# fi
 
 #DEV TOOLS #############################################################################
 # npm
