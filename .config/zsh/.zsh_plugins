@@ -7,10 +7,8 @@ zsh-users/zsh-completions path:src kind:fpath
 lukechilds/zsh-better-npm-completion kind:defer
 ahmetb/kubectx path:completion kind:fpath
 
-# custom
-$ZSH_CUSTOM/plugins/devtools
-$ZSH_CUSTOM/plugins/completion
-$ZSH_CUSTOM/plugins/nvm
+# Util
+romkatv/zsh-bench kind:path
 
 # Oh-my-zsh
 getantidote/use-omz
@@ -24,7 +22,8 @@ ohmyzsh/ohmyzsh path:plugins/poetry-env
 
 # Nvm support
 # lukechilds/zsh-nvm
+#$ZSH_CUSTOM/plugins/completion kind:defer
 
 # End
 zdharma-continuum/fast-syntax-highlighting kind:defer
-zsh-users/zsh-autosuggestions
+zsh-users/zsh-autosuggestions kind:defer

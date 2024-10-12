@@ -50,20 +50,41 @@ _nvm_load() {
     }
 }
 
+_nvm_global_binaries() {
+    # Look for global binaries
+    local global_binary_paths=$(find "$NVM_DIR"/versions/*/*/bin/* >/dev/null 2>&1)
+    # If we have some, format them
+    if [ -n "$global_binary_paths" ]; then
+        echo "$global_binary_paths" | xargs -n 1 basename | sort | uniq
+    fi
+}
+
 _nvm_lazy_load() {
     # All global node binaries including node
     local global_binaries
     if [[ "$NVM_NO_USE" == true ]]; then
         global_binaries=()
     else
-        global_binaries=(nvm node npm npx pnpm pnpx yarn corepack bun bunx)
+        global_binaries=($(_nvm_global_binaries))
     fi
 
+    if type yarn >/dev/null 2>&1; then global_binaries+=('yarn'); fi
+    global_binaries+=('nvm')
     global_binaries+=($NVM_LAZY_LOAD_EXTRA_COMMANDS)
 
-    for cmd in $global_binaries; do
+    local cmds
+    cmds=()
+    local bin
+    for bin in $global_binaries; do
+        [[ "$(which $bin 2>/dev/null)" = "$bin: aliased to "* ]] || cmds+=($bin)
+    done
+
+    # Create function for each command
+    local cmd
+    for cmd in $cmds; do
+        # When called, unset all lazy loaders, load nvm then run current command
         eval "$cmd(){
-            unset -f "$global_binaries" > /dev/null 2>&1
+            unset -f $cmds > /dev/null 2>&1
             _nvm_load
             $cmd \"\$@\"
         }"
@@ -141,7 +162,7 @@ _nvm_install_wrapper() {
 }
 
 _nvm_completion() {
-    [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
+    [[ -r "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
 }
 
 if [[ "$NVM_NO_LOAD" != true ]]; then

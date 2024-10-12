@@ -9,7 +9,7 @@ LOCAL_COMMANDS=(
     minikube 
 )
 for command in ${LOCAL_COMMANDS[@]}; do
-    if [[ ${+commands[$command]} ]] && ! brew ls --versions "$command" >/dev/null 2>&1; then
+    if [[ ${+commands[$command]} ]]; then
         if [[ ! -f "${ZSH_CACHE_DIR}/completions/_${command}" ]]; then
             typeset -g -A _comps
             autoload -Uz _${command}
@@ -30,11 +30,11 @@ for file in ${KUBECTX_FILES[@]}; do
     if [[ ! -L "${ZSH_CACHE_DIR}/completions/${filename}" ]]; then
         ln -s "$file" "${ZSH_CACHE_DIR}/completions/${filename}"
     fi
-    unset file
+    unset file filename
 done
 
 # poetry
-if [[ ${+commands[poetry]} ]] && ! brew ls --versions poetry &>/dev/null; then
+if [[ ${+commands[poetry]} ]]; then
     if [[ ! -f "${ZSH_CACHE_DIR}/completions/_poetry" ]]; then
         typeset -g -A _comps
         autoload -Uz _poetry
@@ -44,24 +44,22 @@ if [[ ${+commands[poetry]} ]] && ! brew ls --versions poetry &>/dev/null; then
 fi
 
 # pyenv
-if [[ ${+commands[pyenv]} ]] && ! brew ls --versions pyenv &>/dev/null; then
-    if [[ -f "$PYENV_ROOT/completions/pyenv.zsh" ]]; then
-        source "$PYENV_ROOT/completions/pyenv.zsh"
-    fi
+if [[ ${+commands[pyenv]} ]]; then
+    [[ -f "$PYENV_ROOT/completions/pyenv.zsh" ]] && source "$PYENV_ROOT/completions/pyenv.zsh"
 fi 
 
 # rbenv
-if [[ ${+commands[rbenv]} ]] && ! brew ls --versions rbenv &>/dev/null; then
+if [[ ${+commands[rbenv]} ]]; then
     FPATH="$RBENV_ROOT/completions:$FPATH"
 fi
 
 # pipx
-if [[ ${+commands[pipx]} ]] && ! brew ls --versions rbenv &>/dev/null; then
-    eval "$(register-python-argcomplete pipx)"
+if [[ ${+commands[pipx]} ]]; then
+    _evalcache register-python-argcomplete pipx
 fi
 
 # poethepoet
-if [[ ${+commands[poe]} ]] && ! brew ls --versions poethepoet &>/dev/null; then
+if [[ ${+commands[poe]} ]]; then
     if [[ ! -f "${ZSH_CACHE_DIR}/completions/_poe" ]]; then
         typeset -g -A _comps
         autoload -Uz _poe

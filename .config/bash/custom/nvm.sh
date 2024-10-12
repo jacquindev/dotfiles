@@ -1,18 +1,18 @@
 #!/bin/bash
+_bash_print() {
+    local IFS=$' \t\n'
+    printf '%s\n' "$*"
+}
+
+_nvm_find_up() {
+    local path=$PWD
+    while [[ $path && ! -e $path/$1 ]]; do
+        path=${path%/*}
+    done
+    _bash_print "$path"
+}
+
 cdnvm() {
-    _bash_print() {
-        local IFS=$' \t\n'
-        printf '%s\n' "$*"
-    }
-
-    _nvm_find_up() {
-        local path=$PWD
-        while [[ $path && ! -e $path/$1 ]]; do
-            path=${path%/*}
-        done
-        _bash_print "$path"
-    }
-
     command cd "$@" || return "$?"
     local nvmrc_path=$(_nvm_find_up .nvmrc)
 
@@ -54,7 +54,7 @@ cdnvm() {
 }
 
 if [[ "$NVM_NO_LOAD" != true ]]; then
-    if [[ "$NVM_NO_USE" == true ]]; then
+    if [[ "$NVM_AUTO_USE" == true ]]; then
         alias cd='cdnvm'
         cdnvm "$PWD" || exit
     fi

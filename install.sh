@@ -38,8 +38,8 @@ system_update() {
                 cp arch/x86/boot/bzImage $location
                 success "Finished building WSL2 Kernel! After running this script, please exit WSL terminal window."
                 echo "${FMT_BLUE}Please follow the instruction in Step 2 & 3 of this link:"
-                echo "https://learn.microsoft.com/en-us/community/content/wsl-user-msft-kernel-v6"
-                echo "${FMT_RESET}"
+                echo "https://learn.microsoft.com/en-us/community/content/wsl-user-msft-kernel-v6${FMT_RESET}"
+                echo
             fi
         fi
     fi
@@ -50,7 +50,7 @@ stow_dotfiles() {
     echo
     BACKUP_DIR="$HOME/.cache/backup"
     [ -d "$BACKUP_DIR" ] || mkdir -p "$BACKUP_DIR"
-    for file in "$HOME/.config/nvim" "$HOME/.vim" "$HOME/.vimrc" "$HOME/.bashrc" "$HOME/.profile"; do 
+    for file in "$HOME/.config/nvim" "$HOME/.vim" "$HOME/.vimrc" "$HOME/.bashrc" "$HOME/.profile"; do
         if [ ! -L "$file" ]; then
             if [ -d "$file" ] || [ -f "$file" ]; then
                 filename=$(basename $file)
@@ -121,15 +121,15 @@ setup_pyenv() {
 
         if [ -d "$PYENV_ROOT" ]; then rm -rf "$PYENV_ROOT"; fi
 
-        checkout "${GITHUB}/pyenv/pyenv.git"            "${PYENV_ROOT}"                             "${PYENV_GIT_TAG:-master}"
-        checkout "${GITHUB}/pyenv/pyenv-doctor.git"     "${PYENV_ROOT}/plugins/pyenv-doctor"        "master"
-        checkout "${GITHUB}/pyenv/pyenv-update.git"     "${PYENV_ROOT}/plugins/pyenv-update"        "master"
-        checkout "${GITHUB}/pyenv/pyenv-virtualenv.git" "${PYENV_ROOT}/plugins/pyenv-virtualenv"    "master"
-        checkout "${GITHUB}/pyenv/pyenv-ccache.git"     "${PYENV_ROOT}/plugins/pyenv-ccache"        "master"
+        checkout "${GITHUB}/pyenv/pyenv.git" "${PYENV_ROOT}" "${PYENV_GIT_TAG:-master}"
+        checkout "${GITHUB}/pyenv/pyenv-doctor.git" "${PYENV_ROOT}/plugins/pyenv-doctor" "master"
+        checkout "${GITHUB}/pyenv/pyenv-update.git" "${PYENV_ROOT}/plugins/pyenv-update" "master"
+        checkout "${GITHUB}/pyenv/pyenv-virtualenv.git" "${PYENV_ROOT}/plugins/pyenv-virtualenv" "master"
+        checkout "${GITHUB}/pyenv/pyenv-ccache.git" "${PYENV_ROOT}/plugins/pyenv-ccache" "master"
 
         cd "$PYENV_ROOT" && src/configure && make -C src
 
-        (   
+        (
             "${PYENV_ROOT}/bin/pyenv" init
             "${PYENV_ROOT}/bin/pyenv" virtualenv-init
         ) >&2
@@ -195,18 +195,18 @@ setup_rbenv() {
 
             if [ -d "$RBENV_ROOT" ]; then rm -rf "$RBENV_ROOT"; fi
 
-            checkout "${GITHUB}/rbenv/rbenv.git"            "${RBENV_ROOT}"                             "${RBENV_GIT_TAG:-master}"
-            checkout "${GITHUB}/rbenv/ruby-build.git"       "${RBENV_ROOT}/plugins/ruby-build"          "master"
-            checkout "${GITHUB}/rbenv/rbenv-default-gems"   "${RBENV_ROOT}/plugins/rbenv-default-gems"  "master"
-            checkout "${GITHUB}/jf/rbenv-gemset.git"        "${RBENV_ROOT}/plugins/rbenv-gemset"        "master"
-            checkout "${GITHUB}/rkh/rbenv-update.git"       "${RBENV_ROOT}/plugins/rbenv-update"        "master"
-            checkout "${GITHUB}/rkh/rbenv-use.git"          "${RBENV_ROOT}/plugins/rbenv-use"           "master"
-            checkout "${GITHUB}/rkh/rbenv-whatis.git"       "${RBENV_ROOT}/plugins/rbenv-whatis"        "master"
-            checkout "${GITHUB}/yyuu/rbenv-ccache.git"      "${RBENV_ROOT}/plugins/rbenv-ccache"        "master"
+            checkout "${GITHUB}/rbenv/rbenv.git" "${RBENV_ROOT}" "${RBENV_GIT_TAG:-master}"
+            checkout "${GITHUB}/rbenv/ruby-build.git" "${RBENV_ROOT}/plugins/ruby-build" "master"
+            checkout "${GITHUB}/rbenv/rbenv-default-gems" "${RBENV_ROOT}/plugins/rbenv-default-gems" "master"
+            checkout "${GITHUB}/jf/rbenv-gemset.git" "${RBENV_ROOT}/plugins/rbenv-gemset" "master"
+            checkout "${GITHUB}/rkh/rbenv-update.git" "${RBENV_ROOT}/plugins/rbenv-update" "master"
+            checkout "${GITHUB}/rkh/rbenv-use.git" "${RBENV_ROOT}/plugins/rbenv-use" "master"
+            checkout "${GITHUB}/rkh/rbenv-whatis.git" "${RBENV_ROOT}/plugins/rbenv-whatis" "master"
+            checkout "${GITHUB}/yyuu/rbenv-ccache.git" "${RBENV_ROOT}/plugins/rbenv-ccache" "master"
 
             "$RBENV_ROOT/bin/rbenv" init >&2
 
-            rbenv install --list 
+            rbenv install --list
             printf "${FMT_PINK}Choose a Ruby version to install: ${FMT_RESET}"
             read -r ruby_version
             rbenv install "$ruby_version" --verbose
@@ -229,7 +229,7 @@ setup_go() {
     if ! command_exists go || ! command_exists g; then
         echo
         if checkyes "Install g (Go Version Manager)?"; then
-            info "Install g (Go Version Manager)..." 
+            info "Install g (Go Version Manager)..."
             curl -sSL https://raw.githubusercontent.com/voidint/g/master/install.sh | bash
             \. "$HOME/.g/env"
             g ls-remote stable
