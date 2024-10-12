@@ -30,17 +30,7 @@ for dir in "${OSH_CUSTOM_DIRS[@]}"; do
 done
 unset dir
 
-# Completions
-completions=(
-    brew
-    docker
-    go
-    helm
-    kubectl
-    minikube
-    npm
-)
-
+# Adding kubectx and kubens completions
 if command -v kubectx > /dev/null 2>&1; then
     KUBECTX_FILES=(
         "$XDG_DATA_HOME/kubernetes/kubectx/completion/kubectx.bash"
@@ -55,6 +45,27 @@ if command -v kubectx > /dev/null 2>&1; then
     done
     unset file
 fi
+
+# Helmfile completion
+if command -v helmfile > /dev/null 2>&1; then
+    if [ ! -f "${OSH_CUSTOM}/completions/helmfile.completion.sh" ]; then
+        helmfile completion bash > "${OSH_CUSTOM}/completions/helmfile.completion.sh"
+    fi
+fi
+
+# Completions
+completions=(
+    brew
+    docker
+    go
+    helm
+    helmfile
+    kubectl
+    kubectx
+    kubens
+    minikube
+    npm
+)
 
 # Source oh-my-bash
 source "$OSH"/oh-my-bash.sh
