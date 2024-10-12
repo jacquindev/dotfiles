@@ -11,6 +11,11 @@ for file in "$DOTFILES/shared/config/"*; do
 done
 unset file
 
+# Oh-my-posh
+if command -v "oh-my-posh" >/dev/null 2>&1; then
+    eval "$(oh-my-posh init bash --config $(brew --prefix oh-my-posh)/themes/hunk.omp.json)"
+fi
+
 # Histfile
 [ -d "$HOME/.cache/bash" ] || mkdir -p "$HOME/.cache/bash"
 [ -f "$HOME/.bash_history" ] && mv -i "$HOME/.bash_history" "$HOME/.cache/bash/bash_history"
@@ -20,14 +25,14 @@ HISTFILE=/home/$USER/.cache/bash/bash_history
 # Oh-my-bash
 export OSH="$XDG_DATA_HOME/bash/oh-my-bash"
 
-OSH_THEME="powerbash10k"
+#OSH_THEME="powerbash10k"
 DISABLE_AUTO_UPDATE=true
 DISABLE_UNTRACKED_FILES_DIRTY="true"
 SCM_GIT_DISABLE_UNTRACKED_DIRTY="true"
 HIST_STAMPS='[dd.mm.yyyy]'
 OMB_USE_SUDO=false
 OMB_DEFAULT_ALIASES="check"
-OMB_PROMPT_SHOW_PYTHON_VENV=true
+#OMB_PROMPT_SHOW_PYTHON_VENV=true
 OSH_CUSTOM="$XDG_CONFIG_HOME/bash/custom"
 
 # Make dirs

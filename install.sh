@@ -106,49 +106,6 @@ setup_zsh() {
     fi
 }
 
-# Nvm
-setup_nvm() {
-    _nvm_latest_release_tag=$(builtin cd "$NVM_DIR" && git fetch --quiet --tags origin && git describe --abbrev=0 --tags --match "v[0-9]*" "$(git rev-list --tags --max-count=1)")
-
-    if ! command_exists nvm && checkyes "Could not find NVM. Install now?"; then
-        echo
-        info "Installing NVM (Node Version Manager)..."
-        if [ -d "$NVM_DIR" ]; then rm -rf "$NVM_DIR"; fi
-        git clone "${GITHUB}/nvm-sh/nvm.git" "$NVM_DIR"
-        builtin cd "$NVM_DIR" && git checkout --quiet "$_nvm_latest_release_tag"
-        
-        \. "$NVM_DIR/nvm.sh"
-
-        if checkyes "Use LTS (Y) or latest node (n)?"; then
-            nvm install --lts
-        else 
-            nvm install node
-        fi
-        nvm install-latest-npm
-        npm i -g git-open git-recent
-        
-    elif command_exists nvm; then
-        echo
-        _nvm_installed_version=$(builtin cd "$NVM_DIR" && git describe --tags)
-        warning "NVM version $_nvm_installed_version already installed."
-        echo
-        echo "${FMT_ORANGE}Checking latest version of NVM...${FMT_RESET}"
-        if [[ "$_nvm_installed_version" = "$_nvm_latest_release_tag" ]]; then
-            echo "${FMT_GREEN}You're already up to date${FMT_RESET}"
-        else
-            echo "${FMT_BLUE}Updating to $_nvm_latest_release_tag..."
-            builtin cd "$NVM_DIR" && git fetch quiet && git checkout "$_nvm_latest_release_tag"
-            \. "$NVM_DIR/nvm.sh"
-        fi
-    fi
-
-    if [ -d "$NVM_DIR" ] && [ ! -f "$NVM_DIR/default_packages" ]; then
-        echo; echo "${FMT_ORANGE}Adding 'git-open' & 'git-recent' as two default packages...${FMT_RESET}" 
-        echo "git-open" >> "$NVM_DIR/default_packages"
-        echo "git-recent" >> "$NVM_DIR/default_packages"
-    fi
-}
-
 setup_pyenv() {
     if ! command_exists pyenv && checkyes "Could not find Pyenv. Install now?"; then
         echo
@@ -324,7 +281,6 @@ main() {
     stow_dotfiles
     setup_homebrew
     setup_zsh
-    setup_nvm
     setup_pyenv
     setup_rust
     setup_rbenv
