@@ -21,7 +21,7 @@ system_update() {
     if command_exists apt || command_exists apt-get; then
         if command_exists apt; then APT=apt; else APT=apt-get; fi
         sudo "$APT" update && sudo "$APT" upgrade -y
-        check_apt_packages atool build-essential bash-completion ccache cmake curl direnv \
+        check_apt_packages ack atool build-essential bash-completion ccache cmake curl direnv \
             file g++ gcc git make moreutils stow unzip usbutils zip wamerican wget
 
         if [[ "$(uname -r)" =~ "WSL" ]]; then

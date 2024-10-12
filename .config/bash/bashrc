@@ -14,7 +14,8 @@ unset file
 # Oh-my-bash
 export OSH="$XDG_DATA_HOME/bash/oh-my-bash"
 
-OSH_THEME="ht"
+OSH_THEME="powerbash10k"
+THEME_SHOW_SUDO=true
 DISABLE_UNTRACKED_FILES_DIRTY="true"
 SCM_GIT_DISABLE_UNTRACKED_DIRTY="true"
 HIST_STAMPS='[dd.mm.yyyy]'
@@ -57,6 +58,7 @@ fi
 completions=(
     brew
     docker
+    git
     go
     helm
     helmfile
@@ -65,6 +67,11 @@ completions=(
     kubens
     minikube
     npm
+)
+
+plugins=(
+    bash-preexec
+    progress
 )
 
 # Source oh-my-bash

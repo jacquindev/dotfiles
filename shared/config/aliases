@@ -7,6 +7,12 @@ mkcd() {
     mkdir "$@" && cd "$@" 
 }
 
+# wget
+alias wget='wget -c'
+
+# less
+alias less='less -FSRXc'
+
 # Custom paths
 alias bdot="cd $XDG_CONFIG_HOME/bash"
 alias zdot="cd $ZDOTDIR"
@@ -27,10 +33,37 @@ alias rupdate="rsync -avzu --progress -h"
 alias rsynch="rsync -avzu --delete --progress -h"
 
 # disk usage
-alias dud='du -d 1 -h'
-alias duf='du -sh *'
+alias dud='du -d 1 -h'          # Short and human-readable directory listing
+alias duf='du -sh *'            # Short and human-readable file listing
 
 # oh-my-posh
-if command -v 'oh-my-posh' >/dev/null 2>&1; then
-    alias omp='oh-my-posh'
-fi
+alias omp='oh-my-posh'
+
+# grep
+alias sgrep='grep -R -n -H -C 5'
+
+# process management
+alias memprocs='ps wwaxm -o pid,stat,vsize,rss,time,command | head -10'
+alias cpuprocs='ps wwaxr -o pid,stat,%cpu,time,command | head -10'
+
+# networking
+alias sockets='lsof -i'                     # Show all open TCP/IP sockets
+alias lsock='sudo lsof -i -P'               # Display open sockets
+alias lsocku='sudo lsof -nP | rg UDP'       # Display open UDP sockets
+alias lsockt='sudo lsof -nP | rg TCP'       # Display open TCP sockets
+alias ports='sudo lsof -i | rg LISTEN'      # All listening connections
+
+# edit /etc/ files
+alias ewsl='sudo nano /etc/wsl.conf'  
+alias ehosts='sudo nano /etc/hosts'
+
+# chmod: 
+# Stolen from: - https://github.com/ohmybash/oh-my-bash/blob/master/aliases/chmod.aliases.sh
+alias perm='stat --printf "%a %n \n "'      # Show permission of target in number
+alias 000='chmod 000'                       # ---------- (nobody)
+alias 640='chmod 640'                       # -rw-r----- (user: rw, group: r)
+alias 644='chmod 644'                       # -rw-r--r-- (user: rw, group: r, other: r)
+alias 755='chmod 755'                       # -rwxr-xr-x (user: rwx, group: rx, other: rx)
+alias 775='chmod 775'                       # -rwxrwxr-x (user: rwx, group: rwx, other: rx)
+alias mx='chmod a+x'                        # ---x--x--x (user: --x, group: --x, other: --x)
+alias ux='chmod u+x'                        # ---x------ (user: --x, group: -, other: -)
