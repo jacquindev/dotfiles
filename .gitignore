@@ -4,8 +4,10 @@
 .config/wslu
 .config/pypoetry/poetry.lock
 .config/zsh/completions
-
-k8s/completions
+.config/bash/custom/completions
+.config/bash/custom/aliases
+.config/bash/custom/plugins
+.config/bash/custom/themes
 
 # Brew
 Brewfile.lock.json

@@ -1,1 +1,0 @@
-/home/jqdev/.local/share/kubernetes/kubectx/completion/kubens.bash
