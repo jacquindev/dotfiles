@@ -34,10 +34,6 @@ err_exit() {
     exit 1
 }
 
-command_exists() {
-    command -v "$@" >/dev/null 2>&1
-}
-
 checkyes() {
     local result=1
     printf '%s🔆 %s [Y/n] %s' "${FMT_ORANGE}" "$*" "${FMT_RESET}" >&2

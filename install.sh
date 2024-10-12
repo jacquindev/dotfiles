@@ -10,6 +10,7 @@ GITHUB="https://github.com"
 
 [ ! -d "$XDG_DATA_HOME/gnupg" ] && (mkdir -p "$XDG_DATA_HOME/gnupg" && chmod 600 "$XDG_DATA_HOME/gnupg")
 [ ! -d "$XDG_CACHE_HOME/wget" ] && mkdir -p "$XDG_CACHE_HOME/wget"
+[ ! -d "$XDG_DATA_HOME/bash" ] && mkdir -p "$XDG_DATA_HOME/bash"
 
 # Update system and install prerequisites
 system_update() {
@@ -61,6 +62,9 @@ stow_dotfiles() {
         fi
     done
     builtin cd "$DOTFILES" && stow .
+    echo
+    info "Installing Oh-My-Bash..."
+    git clone ${GITHUB}/ohmybash/oh-my-bash.git "$XDG_DATA_HOME/bash/oh-my-bash"
 }
 
 # Homebrew

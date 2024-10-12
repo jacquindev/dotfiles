@@ -14,6 +14,7 @@ ohmyzsh/ohmyzsh path:plugins/aliases
 ohmyzsh/ohmyzsh path:plugins/extract
 ohmyzsh/ohmyzsh path:plugins/gitfast
 ohmyzsh/ohmyzsh path:plugins/urltools
+ohmyzsh/ohmyzsh path:plugins/rust
 
 # Nvm support
 lukechilds/zsh-nvm

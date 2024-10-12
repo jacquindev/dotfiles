@@ -1,5 +1,9 @@
+# Profiling loading time
+zmodload zsh/zprof
+
 # Homebrew
 [ -f "$DOTFILES/shared/brew" ] && source "$DOTFILES/shared/brew"
+[ -f "$DOTFILES/shared/helpers" ] && source "$DOTFILES/shared/helpers"
 
 # Oh-my-zsh
 if [[ ${+commands[oh-my-posh]} ]]; then

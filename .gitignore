@@ -3,6 +3,9 @@
 .config/go
 .config/wslu
 .config/pypoetry/poetry.lock
+.config/zsh/completions
+
+k8s/completions
 
 # Brew
 Brewfile.lock.json

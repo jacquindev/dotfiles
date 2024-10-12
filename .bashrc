@@ -8,17 +8,6 @@ case $- in
 *) return ;;
 esac
 
-# don't put duplicate lines or lines starting with space in the history.
-# See bash(1) for more options
-HISTCONTROL=ignoreboth
-
-# append to the history file, don't overwrite it
-shopt -s histappend
-
-# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
-
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
@@ -74,22 +63,13 @@ esac
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
-
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
 fi
 
 # colored GCC warnings and errors
-#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-
-# some more ls aliases
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -115,39 +95,6 @@ if ! shopt -oq posix; then
     fi
 fi
 
-# shared folder
-if [ -d "$HOME/.dotfiles/shared" ]; then
-    [ -f "$HOME/.dotfiles/shared/envs" ] && source "$HOME/.dotfiles/shared/envs"
-    [ -f "$HOME/.dotfiles/shared/paths" ] && source "$HOME/.dotfiles/shared/paths"
-    [ -f "$HOME/.dotfiles/shared/brew" ] && source "$HOME/.dotfiles/shared/brew"
-
-    for file in "$HOME/.dotfiles/shared/config/"*; do
-        source "$file"
-    done
-    unset file
+if [ -f "$HOME/.config/bash/bashrc" ]; then
+    source "$HOME/.config/bash/bashrc"
 fi
-
-# Oh-my-posh
-if command -v oh-my-posh &>/dev/null; then
-    eval "$(oh-my-posh init bash --config $(brew --prefix oh-my-posh)/themes/capr4n.omp.json)"
-fi
-
-# custom bash
-if [ -d "$XDG_CONFIG_HOME/bash/custom" ]; then
-    for file in "$XDG_CONFIG_HOME/bash/custom/"*; do
-        . "$file"
-    done
-    unset file
-fi
-
-[ -s "${HOME}/.g/env" ] && \. "${HOME}/.g/env"  # g shell setup
-
-
-# Added by `rbenv init` on Thu Oct 10 03:46:19 +07 2024
-eval "$(rbenv init - --no-rehash bash)"
-
-[ -s "${HOME}/.g/env" ] && \. "${HOME}/.g/env"  # g shell setup
-
-
-[ -s "${HOME}/.g/env" ] && \. "${HOME}/.g/env"  # g shell setup
-

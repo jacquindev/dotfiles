@@ -40,3 +40,7 @@ brews() {
     printf "\n%s==>%s %sCasks%s\n" "$green" "$magenta" "$bold" "$off"
     echo "$casks"
 }
+
+brew_exists() {
+    brew ls --versions "$@" >/dev/null 2>&1
+}

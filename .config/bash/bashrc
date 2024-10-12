@@ -1,0 +1,60 @@
+#!/bin/bash
+export DOTFILES="$HOME/.dotfiles"
+
+[ -f "$DOTFILES/shared/envs" ] && source "$DOTFILES/shared/envs"
+[ -f "$DOTFILES/shared/paths" ] && source "$DOTFILES/shared/paths"
+[ -f "$DOTFILES/shared/brew" ] && source "$DOTFILES/shared/brew"
+
+# shared folder
+for file in "$DOTFILES/shared/config/"*; do
+    source "$file"
+done
+unset file
+
+# Oh-my-bash
+export OSH="$XDG_DATA_HOME/bash/oh-my-bash"
+
+OSH_THEME="ht"
+DISABLE_UNTRACKED_FILES_DIRTY="true"
+SCM_GIT_DISABLE_UNTRACKED_DIRTY="true"
+HIST_STAMPS='[dd.mm.yyyy]'
+OMB_PROMPT_SHOW_PYTHON_VENV=true
+OSH_CUSTOM="$XDG_CONFIG_HOME/bash/custom"
+
+# Make dirs
+OSH_CUSTOM_DIRS=(aliases completions plugins themes)
+for dir in "${OSH_CUSTOM_DIRS[@]}"; do
+    if [ ! -d "${OSH_CUSTOM}/$dir" ]; then
+        mkdir -p "${OSH_CUSTOM}/$dir"
+    fi
+done
+unset dir
+
+# Completions
+completions=(
+    brew
+    docker
+    go
+    helm
+    kubectl
+    minikube
+    npm
+)
+
+if command -v kubectx > /dev/null 2>&1; then
+    KUBECTX_FILES=(
+        "$XDG_DATA_HOME/kubernetes/kubectx/completion/kubectx.bash"
+        "$XDG_DATA_HOME/kubernetes/kubectx/completion/kubens.bash"
+    )
+    for file in ${KUBECTX_FILES[@]}; do
+        filename=$(basename $file)
+        filename="${filename%.*}"
+        if [ ! -L "${OSH_CUSTOM}/completions/${filename}.completion.sh" ]; then
+            ln -s "$file" "${OSH_CUSTOM}/completions/${filename}.completion.sh"
+        fi
+    done
+    unset file
+fi
+
+# Source oh-my-bash
+source "$OSH"/oh-my-bash.sh

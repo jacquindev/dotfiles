@@ -44,6 +44,9 @@ setup_krew() {
             ./"${KREW}" install krew
         )
         if [ -d "$HOME/.krew" ]; then mv "$HOME/.krew" "$XDG_DATA_HOME/kubernetes/krew"; fi
+        echo; echo "Adding completion for kubectl krew..."
+        echo '#!/bin/sh\nkubectl krew __complete "$@"' > "$KREW_ROOT/bin/kubectl_complete-krew"
+        chmod u+x "$KREW_ROOT/bin/kubectl_complete-krew"
     else
         info "Upgrading Krew and Kubectl's plugins (if they exist)..."
         kubectl krew upgrade

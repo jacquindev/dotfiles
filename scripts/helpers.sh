@@ -1,4 +1,7 @@
 #!/bin/sh
+command_exists() {
+    command -v "$@" >/dev/null 2>&1
+}
 
 check_apt_packages() {
     if [ ! $? = 0 ] || [ ! "$(dpkg-query -W --show-format='${db:Status-Status}' "$@" 2>&1)" = installed ]; then
@@ -15,7 +18,5 @@ check_brew_packages() {
         brew install "$@"
     fi
 }
-
-
 
 true

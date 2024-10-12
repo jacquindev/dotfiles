@@ -14,20 +14,10 @@ if command -v pyenv >/dev/null 2>&1; then
     eval -- "$(pyenv init --path)"
     eval -- "$(pyenv init -)"
     eval -- "$(pyenv virtualenv-init - bash)"
-
-    [ -f "$PYENV_ROOT/completions/pyenv.bash" ] &&
-        \. "$PYENV_ROOT/completions/pyenv.bash"
 fi
 
 # Rbenv
-if command -v rbenv >/dev/null 2>&1; then eval "$(rbenv init - bash)"; fi
-
-# Kubectl
-if command -v kubectl >/dev/null 2>&1; then source <(kubectl completion bash); fi
-
-# Minikube
-if command -v minikube >/dev/null 2>&1; then source <(minikube completion bash); fi
-
-# Helm
-if command -v helm >/dev/null 2>&1; then source <(helm completion bash); fi
-if command -v helmfile >/dev/null 2>&1; then source <(helmfile completion bash); fi
+if command -v rbenv >/dev/null 2>&1; then 
+    eval "$(rbenv init - bash)";
+    eval "$(rbenv init - --no-rehash bash)"
+fi

@@ -22,6 +22,8 @@ _darcs
 ^/LICENSE.*
 ^/COPYING
 
+.config/zsh/completions
+
 .shellcheckrc
 
 install.sh
