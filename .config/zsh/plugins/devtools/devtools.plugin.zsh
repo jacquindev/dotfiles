@@ -1,4 +1,3 @@
-#!/bin/zsh
 # atuin
 if [[ ${+commands[atuin]} ]]; then _evalcache atuin init zsh; fi
 

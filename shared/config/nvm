@@ -1,5 +1,5 @@
 # Rewrite zsh-nvm.plugin.zsh so that it can be used both on bash and zsh
-# Reference: 
+# Reference:
 # - https://github.com/lukechilds/zsh-nvm/blob/master/zsh-nvm.plugin.zsh
 # - https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/nvm/nvm.plugin.zsh
 
@@ -10,7 +10,7 @@ FMT_ORANGE="$(tput setaf 208)"
 FMT_PINK="$(tput setaf 5)"
 FMT_RESET="$(tput sgr0)"
 
-NVM_VERSION="$XDG_DATA_HOME/nvm_version"
+NVM_VERSION="$XDG_CACHE_HOME/nvm_previous_version"
 
 _nvm_rename_function() {
     test -n "$(declare -f $1)" || return
@@ -29,23 +29,23 @@ _nvm_load() {
 
     # Wrap nvm in our own function
     nvm() {
-        case $1 in 
-            'update' | 'upgrade')
-                _nvm_upgrade
-                ;;
-            'revert') 
-                _nvm_revert
-                ;;
-            'use')
-                _nvm_wrapper "$@"
-                export NVM_AUTO_USE_ACTIVE=false
-                ;;
-            'install' | 'i') 
-                _nvm_install_wrapper "$@"
-                ;;
-            *)
-                _nvm_wrapper "$@" 
-                ;;
+        case $1 in
+        'update' | 'upgrade')
+            _nvm_upgrade
+            ;;
+        'revert')
+            _nvm_revert
+            ;;
+        'use')
+            _nvm_wrapper "$@"
+            export NVM_AUTO_USE_ACTIVE=false
+            ;;
+        'install' | 'i')
+            _nvm_install_wrapper "$@"
+            ;;
+        *)
+            _nvm_wrapper "$@"
+            ;;
         esac
     }
 }
@@ -61,13 +61,13 @@ _nvm_lazy_load() {
 
     global_binaries+=($NVM_LAZY_LOAD_EXTRA_COMMANDS)
 
-    for cmd in $global_binaries; do 
+    for cmd in $global_binaries; do
         eval "$cmd(){
             unset -f "$global_binaries" > /dev/null 2>&1
             _nvm_load
             $cmd \"\$@\"
         }"
-    done 
+    done
 }
 
 _nvm_upgrade() {
@@ -85,14 +85,14 @@ _nvm_upgrade() {
         echo "${FMT_GREEN}You're already up to date!${FMT_RESET}"
     else
         echo "Updating to ${FMT_ORANGE}${latest_version}${FMT_RESET}..."
-        echo "$installed_version" > "$NVM_VERSION"
+        echo "$installed_version" >"$NVM_VERSION"
         builtin cd "$NVM_DIR" && git fetch --quiet && git checkout "$latest_version"
         _nvm_load
     fi
 }
 
 _nvm_revert() {
-    local previous_version="$(cat "$NVM_VERSION" > /dev/null 2>&1)"
+    local previous_version="$(cat "$NVM_VERSION" >/dev/null 2>&1)"
 
     if [[ -n "$previous_version" ]]; then
         local installed_version=$(builtin cd "$NVM_DIR" && git describe --tags)
@@ -115,35 +115,34 @@ _nvm_install() {
     _nvm_latest_release_tag=$(builtin cd "$NVM_DIR" && git fetch --quiet --tags origin && git describe --abbrev=0 --tags --match "v[0-9]*" "$(git rev-list --tags --max-count=1)")
     builtin cd "$NVM_DIR" && git checkout --quiet "$_nvm_latest_release_tag"
 
-    echo "git-open" >> "$NVM_DIR/default_packages"
-    echo "git-recent" >> "$NVM_DIR/default_packages"
+    echo "git-open" >>"$NVM_DIR/default_packages"
+    echo "git-recent" >>"$NVM_DIR/default_packages"
     echo "${FMT_GREEN}Done!${FMT_RESET}"
 }
 
 _nvm_install_wrapper() {
     case $2 in
-        'rc')
-            NVM_NODEJS_ORG_MIRROR=https://nodejs.org/download/rc/ nvm install node && nvm alias rc "$(node --version)"
-            echo "${FMT_PINK}Clearing mirror cache${FMT_RESET}"
-            nvm ls-remote > /dev/null 2>&1
-            echo "${FMT_GREEN}Done!${FMT_RESET}"
-            ;;
-        'nightly')
-            NVM_NODEJS_ORG_MIRROR=https://nodejs.org/download/nightly/ nvm install node && nvm alias nightly "$(node --version)"
-            echo "${FMT_PINK}Clearing mirror cache${FMT_RESET}"
-            nvm ls-remote > /dev/null 2>&1
-            echo "${FMT_GREEN}Done!${FMT_RESET}"
-            ;;
-        *)
-            _nvm_wrapper "$@"
-            ;;
+    'rc')
+        NVM_NODEJS_ORG_MIRROR=https://nodejs.org/download/rc/ nvm install node && nvm alias rc "$(node --version)"
+        echo "${FMT_PINK}Clearing mirror cache${FMT_RESET}"
+        nvm ls-remote >/dev/null 2>&1
+        echo "${FMT_GREEN}Done!${FMT_RESET}"
+        ;;
+    'nightly')
+        NVM_NODEJS_ORG_MIRROR=https://nodejs.org/download/nightly/ nvm install node && nvm alias nightly "$(node --version)"
+        echo "${FMT_PINK}Clearing mirror cache${FMT_RESET}"
+        nvm ls-remote >/dev/null 2>&1
+        echo "${FMT_GREEN}Done!${FMT_RESET}"
+        ;;
+    *)
+        _nvm_wrapper "$@"
+        ;;
     esac
 }
 
 _nvm_completion() {
     [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
 }
-
 
 if [[ "$NVM_NO_LOAD" != true ]]; then
     if [[ ! -f "$NVM_DIR/nvm.sh" ]]; then _nvm_install; fi
@@ -153,6 +152,5 @@ if [[ "$NVM_NO_LOAD" != true ]]; then
         [[ "$NVM_COMPLETION" == true ]] && _nvm_completion
     fi
 fi
-
 
 true

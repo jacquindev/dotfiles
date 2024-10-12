@@ -1,0 +1,37 @@
+#!/bin/sh
+
+set -e
+
+case "$1" in 
+    homebrew)
+        echo "Updating Homebrew and Homebrew packages..."
+        brew update && brew upgrade && brew cleanup
+        ;;
+    neovim)
+        echo "Updating Neovim plugins..."
+        nvim --headless "+Lazy! sync" +qa
+        ;;
+    py)
+        echo "Updating pyenv plugins..."
+        pyenv update
+        if command -v poetry > /dev/null 2>&1; then
+            echo "Updating poetry..."
+            poetry self update
+        fi
+        ;;
+    rb)
+        echo "Updating rbenv plugins..."
+        rbenv update
+        ;;
+    nvm)
+        echo "Updating nvm..."
+        nvm upgrade
+    *)
+        echo "$(tput setaf 2)==> $(tput setaf 220)Options:"
+        echo "$(tput setaf 6)brew$(tput sgr0)   - Update homebrew packages."
+        echo "$(tput setaf 6)nvim$(tput sgr0)   - Update neovim plugins."
+        echo "$(tput setaf 6)py$(tput sgr0)     - Update pyenv plugins and/or poetry."
+        echo "$(tput setaf 6)rb$(tput sgr0)     - Update rbenv plugins."
+        echo "$(tput setaf 6)nvm$(tput sgr0)"   - Update nvm.
+        ;;
+esac

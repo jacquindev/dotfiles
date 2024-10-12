@@ -54,3 +54,18 @@ fi
 if [[ ${+commands[rbenv]} ]] && ! brew ls --versions rbenv &>/dev/null; then
     FPATH="$RBENV_ROOT/completions:$FPATH"
 fi
+
+# pipx
+if [[ ${+commands[pipx]} ]] && ! brew ls --versions rbenv &>/dev/null; then
+    eval "$(register-python-argcomplete pipx)"
+fi
+
+# poethepoet
+if [[ ${+commands[poe]} ]] && ! brew ls --versions poethepoet &>/dev/null; then
+    if [[ ! -f "${ZSH_CACHE_DIR}/completions/_poe" ]]; then
+        typeset -g -A _comps
+        autoload -Uz _poe
+        _comps[poe]=_poe
+    fi
+    poe _zsh_completion >| "${ZSH_CACHE_DIR}/completions/_poe" &|
+fi

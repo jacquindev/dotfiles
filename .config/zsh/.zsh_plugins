@@ -7,6 +7,11 @@ zsh-users/zsh-completions path:src kind:fpath
 lukechilds/zsh-better-npm-completion kind:defer
 ahmetb/kubectx path:completion kind:fpath
 
+# custom
+$ZSH_CUSTOM/plugins/devtools
+$ZSH_CUSTOM/plugins/completion
+$ZSH_CUSTOM/plugins/nvm
+
 # Oh-my-zsh
 getantidote/use-omz
 ohmyzsh/ohmyzsh path:lib/grep.zsh
@@ -15,6 +20,7 @@ ohmyzsh/ohmyzsh path:plugins/extract
 ohmyzsh/ohmyzsh path:plugins/gitfast
 ohmyzsh/ohmyzsh path:plugins/urltools
 ohmyzsh/ohmyzsh path:plugins/rust
+ohmyzsh/ohmyzsh path:plugins/poetry-env
 
 # Nvm support
 # lukechilds/zsh-nvm

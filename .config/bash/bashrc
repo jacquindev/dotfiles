@@ -87,5 +87,12 @@ if command -v helmfile > /dev/null 2>&1; then
     completions+=(helmfile)
 fi
 
+if command -v poe > /dev/null 2>&1; then
+    if [ ! -f "${OSH_CUSTOM}/completions/poe.completion.sh" ]; then
+        poe _bash_completion > "${OSH_CUSTOM}/completions/poe.completion.sh"
+    fi
+    completions+=(poe)
+fi
+
 # Source oh-my-bash
 source "$OSH"/oh-my-bash.sh
