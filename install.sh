@@ -50,10 +50,14 @@ stow_dotfiles() {
     BACKUP_DIR="$HOME/.cache/backup"
     [ -d "$BACKUP_DIR" ] || mkdir -p "$BACKUP_DIR"
     for file in "$HOME/.config/nvim" "$HOME/.vim" "$HOME/.vimrc" "$HOME/.bashrc" "$HOME/.profile"; do 
-        if [ ! -L "$file" ] || [ -d "$file" ] || [ -f "$file" ]; then
-            filename=$(basename $file)
-            mv -i "$file" "$BACKUP_DIR/$filename-$(date +%Y-%m-%d_%H-%M-%S)"
-            echo "${FMT_PINK}Backing up $file to ${FMT_GREEN}${BACKUP_DIR}/$filename-$(date +%Y-%m-%d_%H-%M-%S)${FMT_RESET}..."
+        if [ ! -L "$file" ]; then
+            if [ -d "$file" ] || [ -f "$file" ]; then
+                filename=$(basename $file)
+                cp -rf "$file" "$BACKUP_DIR/$filename-$(date +%Y-%m-%d_%H-%M-%S)"
+                echo "${FMT_PINK}Backing up $file to ${FMT_GREEN}${BACKUP_DIR}/$filename-$(date +%Y-%m-%d_%H-%M-%S)${FMT_RESET}..."
+            fi
+        else
+            error "$file does not exist or already a symlink!"
         fi
     done
     builtin cd "$DOTFILES" && stow .
