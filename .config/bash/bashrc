@@ -11,14 +11,22 @@ for file in "$DOTFILES/shared/config/"*; do
 done
 unset file
 
+# Histfile
+[ -d "$HOME/.cache/bash" ] || mkdir -p "$HOME/.cache/bash"
+[ -f "$HOME/.bash_history" ] && mv -i "$HOME/.bash_history" "$HOME/.cache/bash/bash_history"
+
+HISTFILE=/home/$USER/.cache/bash/bash_history
+
 # Oh-my-bash
 export OSH="$XDG_DATA_HOME/bash/oh-my-bash"
 
 OSH_THEME="powerbash10k"
-THEME_SHOW_SUDO=true
+DISABLE_AUTO_UPDATE=true
 DISABLE_UNTRACKED_FILES_DIRTY="true"
 SCM_GIT_DISABLE_UNTRACKED_DIRTY="true"
 HIST_STAMPS='[dd.mm.yyyy]'
+OMB_USE_SUDO=false
+OMB_DEFAULT_ALIASES="check"
 OMB_PROMPT_SHOW_PYTHON_VENV=true
 OSH_CUSTOM="$XDG_CONFIG_HOME/bash/custom"
 
@@ -30,6 +38,24 @@ for dir in "${OSH_CUSTOM_DIRS[@]}"; do
     fi
 done
 unset dir
+
+
+# Completions
+completions=(
+    brew
+    docker
+    git
+    go
+    helm
+    kubectl
+    minikube
+    npm
+)
+
+plugins=(
+    bash-preexec
+    progress
+)
 
 # Adding kubectx and kubens completions
 if command -v kubectx > /dev/null 2>&1; then
@@ -45,6 +71,7 @@ if command -v kubectx > /dev/null 2>&1; then
         fi
     done
     unset file
+    completions+=(kubectx kubens)
 fi
 
 # Helmfile completion
@@ -52,27 +79,8 @@ if command -v helmfile > /dev/null 2>&1; then
     if [ ! -f "${OSH_CUSTOM}/completions/helmfile.completion.sh" ]; then
         helmfile completion bash > "${OSH_CUSTOM}/completions/helmfile.completion.sh"
     fi
+    completions+=(helmfile)
 fi
-
-# Completions
-completions=(
-    brew
-    docker
-    git
-    go
-    helm
-    helmfile
-    kubectl
-    kubectx
-    kubens
-    minikube
-    npm
-)
-
-plugins=(
-    bash-preexec
-    progress
-)
 
 # Source oh-my-bash
 source "$OSH"/oh-my-bash.sh
