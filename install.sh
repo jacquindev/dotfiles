@@ -129,8 +129,8 @@ setup_pyenv() {
         # pipx
         echo
         info "Installing pipx..."
+        export PATH="$HOME/.local/bin:$PATH"
         python3 -m pip install --user pipx
-        python3 -m pipx ensurepath
 
         builtin cd "$DOTFILES"
     elif command_exists pyenv; then
