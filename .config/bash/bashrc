@@ -1,8 +1,8 @@
 #!/bin/bash
 export DOTFILES="$HOME/.dotfiles"
 
-[ -f "$DOTFILES/shared/envs" ] && source "$DOTFILES/shared/envs"
-[ -f "$DOTFILES/shared/paths" ] && source "$DOTFILES/shared/paths"
+[ -f "$DOTFILES/scripts/envs.sh" ] && source "$DOTFILES/scripts/envs.sh"
+[ -f "$DOTFILES/scripts/paths.sh" ] && source "$DOTFILES/scripts/paths.sh"
 [ -f "$DOTFILES/shared/brew" ] && source "$DOTFILES/shared/brew"
 
 # shared folder
@@ -44,7 +44,6 @@ for dir in "${OSH_CUSTOM_DIRS[@]}"; do
 done
 unset dir
 
-
 # Completions
 completions=(
     brew
@@ -63,7 +62,7 @@ plugins=(
 )
 
 # Adding kubectx and kubens completions
-if command -v kubectx > /dev/null 2>&1; then
+if command -v kubectx >/dev/null 2>&1; then
     KUBECTX_FILES=(
         "$XDG_DATA_HOME/kubernetes/kubectx/completion/kubectx.bash"
         "$XDG_DATA_HOME/kubernetes/kubectx/completion/kubens.bash"
@@ -80,16 +79,16 @@ if command -v kubectx > /dev/null 2>&1; then
 fi
 
 # Helmfile completion
-if command -v helmfile > /dev/null 2>&1; then
+if command -v helmfile >/dev/null 2>&1; then
     if [ ! -f "${OSH_CUSTOM}/completions/helmfile.completion.sh" ]; then
-        helmfile completion bash > "${OSH_CUSTOM}/completions/helmfile.completion.sh"
+        helmfile completion bash >"${OSH_CUSTOM}/completions/helmfile.completion.sh"
     fi
     completions+=(helmfile)
 fi
 
-if command -v poe > /dev/null 2>&1; then
+if command -v poe >/dev/null 2>&1; then
     if [ ! -f "${OSH_CUSTOM}/completions/poe.completion.sh" ]; then
-        poe _bash_completion > "${OSH_CUSTOM}/completions/poe.completion.sh"
+        poe _bash_completion >"${OSH_CUSTOM}/completions/poe.completion.sh"
     fi
     completions+=(poe)
 fi

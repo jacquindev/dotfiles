@@ -1,7 +1,7 @@
 export DOTFILES="$HOME/.dotfiles"
 
-[ -f "$DOTFILES/shared/envs" ] && source "$DOTFILES/shared/envs"
-[ -f "$DOTFILES/shared/paths" ] && source "$DOTFILES/shared/paths"
+[ -f "$DOTFILES/scripts/envs.sh" ] && source "$DOTFILES/scripts/envs.sh"
+[ -f "$DOTFILES/scripts/paths.sh" ] && source "$DOTFILES/scripts/paths.sh"
 
 export ZSH_DATA_DIR="$XDG_DATA_HOME/zsh"
 export ZSH_CACHE_DIR="$XDG_CACHE_HOME/zsh"

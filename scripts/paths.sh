@@ -19,7 +19,6 @@ pathprepend() {
 [ -d "$HOME/bin" ] && pathprepend "$HOME/bin"
 [ -d "$HOME/.local/bin" ] && pathprepend "$HOME/.local/bin"
 [ -d /usr/local/sbin ] && pathprepend /usr/local/sbin
-[ -d /home/linuxbrew/.linuxbrew/opt/coreutils/libexec/gnubin ] && pathprepend /home/linuxbrew/.linuxbrew/opt/coreutils/libexec/gnubin
 
 # Uncomment this if you set /etc/wsl.conf [interop] appendWindowsPath=false
 # WSL
@@ -58,3 +57,6 @@ if [ -f "$HOME/.g/env" ]; then source "$HOME/.g/env"; fi
 
 # Krew
 [ -d "$KREW_ROOT/bin" ] && pathappend "$KREW_ROOT/bin"
+
+# gnubin
+[ -d /home/linuxbrew/.linuxbrew/opt/coreutils/libexec/gnubin ] && pathprepend /home/linuxbrew/.linuxbrew/opt/coreutils/libexec/gnubin

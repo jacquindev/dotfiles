@@ -2,6 +2,7 @@ tap "homebrew/bundle"
 
 brew "atuin"
 brew "bat"
+brew "coreutils"
 brew "eza"
 brew "fd"
 brew "fzf"

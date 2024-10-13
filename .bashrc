@@ -16,3 +16,8 @@ shopt -s checkwinsize
 if [ -f "$HOME/.config/bash/bashrc" ]; then
     source "$HOME/.config/bash/bashrc"
 fi
+
+# Check if the alias 'g' exists before trying to unalias it
+if [[ -n $(alias g 2>/dev/null) ]]; then
+    unalias g
+fi

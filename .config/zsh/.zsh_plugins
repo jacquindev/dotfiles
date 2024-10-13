@@ -19,6 +19,7 @@ ohmyzsh/ohmyzsh path:plugins/gitfast
 ohmyzsh/ohmyzsh path:plugins/urltools
 ohmyzsh/ohmyzsh path:plugins/rust
 ohmyzsh/ohmyzsh path:plugins/poetry-env
+ohmyzsh/ohmyzsh path:plugins/golang
 
 # Nvm support
 # lukechilds/zsh-nvm

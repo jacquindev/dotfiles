@@ -2,289 +2,271 @@
 
 # shellcheck source-path=SCRIPTDIR
 DOTFILES="$(pwd)"
-. "$DOTFILES/scripts/utils.sh"
 . "$DOTFILES/scripts/helpers.sh"
-. "$DOTFILES/shared/envs"
+. "$DOTFILES/scripts/envs.sh"
+. "$DOTFILES/scripts/paths.sh"
 
-GITHUB="https://github.com"
-
+# Make dirs
 [ ! -d "$XDG_DATA_HOME/gnupg" ] && (mkdir -p "$XDG_DATA_HOME/gnupg" && chmod 600 "$XDG_DATA_HOME/gnupg")
 [ ! -d "$XDG_CACHE_HOME/wget" ] && mkdir -p "$XDG_CACHE_HOME/wget"
 [ ! -d "$XDG_DATA_HOME/bash" ] && mkdir -p "$XDG_DATA_HOME/bash"
 
-# Update system and install prerequisites
-system_update() {
-    if [[ "$(uname)" == "Darwin" ]]; then
-        xcode-select --install
-    fi
+# github
+GITHUB="https://github.com"
 
-    if command_exists apt || command_exists apt-get; then
-        if command_exists apt; then APT=apt; else APT=apt-get; fi
-        sudo "$APT" update && sudo "$APT" upgrade -y
-        check_apt_packages ack atool build-essential bash-completion ccache cmake curl direnv \
-            file g++ gcc git make moreutils stow unzip usbutils zip wamerican wget
+# Set apt
+if command_exists apt; then APT=apt; else APT=apt-get; fi
 
-        if [[ "$(uname -r)" =~ "WSL" ]]; then
-            check_apt_packages wslu
-            echo
-            if checkyes "Build newest Microsoft Linux Kernel?"; then
-                git clone --depth 1 "${GITHUB}/microsoft/WSL2-Linux-Kernel.git" WSL2-Linux-Kernel
-                check_apt_packages bc bison build-essential dwarves flex libssl-dev libelf-dev python3 pahole
-                builtin cd WSL2-Linux-Kernel
-                make -j$(nproc) KCONFIG_CONFIG=Microsoft/config-wsl
-                sudo make modules_install headers_install
-                printf "Where would you like to put your kernel image on your windows machine? (eg: /mnt/c/)"
-                read -r location
-                cp arch/x86/boot/bzImage $location
-                success "Finished building WSL2 Kernel! After running this script, please exit WSL terminal window."
-                echo "${FMT_BLUE}Please follow the instruction in Step 2 & 3 of this link:"
-                echo "https://learn.microsoft.com/en-us/community/content/wsl-user-msft-kernel-v6${FMT_RESET}"
-                echo
-            fi
-        fi
-    fi
+# apt packages
+update_system() {
+    info "Updating system..."
+    sudo "$APT" update && sudo "$APT" upgrade -y
+    check_apt_packages ack atool bash-completion build-essential ccache cmake curl direnv file \
+        g++ gcc git make moreutils stow unzip usbutils zip wamerican wget
+    if [[ "$(uname -r)" =~ "WSL" ]]; then check_apt_packages wslu; fi
+    success "Done!"
 }
 
-# Apply dotfiles
-stow_dotfiles() {
-    echo
-    BACKUP_DIR="$HOME/.cache/backup"
+# backup
+backup_dot() {
+    BACKUP_DIR="$XDG_CACHE_HOME/backup"
     [ -d "$BACKUP_DIR" ] || mkdir -p "$BACKUP_DIR"
-    for file in "$HOME/.config/nvim" "$HOME/.vim" "$HOME/.vimrc" "$HOME/.bashrc" "$HOME/.profile"; do
-        if [ ! -L "$file" ]; then
-            if [ -d "$file" ] || [ -f "$file" ]; then
-                filename=$(basename $file)
-                cp -rf "$file" "$BACKUP_DIR/$filename-$(date +%Y-%m-%d_%H-%M-%S)"
+    for dfile in "$HOME/.config/nvim" "$HOME/.vim" "$HOME/.vimrc" "$HOME/.bashrc" "$HOME/.profile"; do
+        if [ ! -L "$dfile" ]; then
+            if [ -d "$dfile" ] || [ -f "$dfile" ]; then
+                filename="$(basename $dfile)"
+                cp -rf "$dfile" "$BACKUP_DIR/$filename-$(date +%Y-%m-%d_%H-%M-%S)"
                 echo "${FMT_PINK}Backing up $file to ${FMT_GREEN}${BACKUP_DIR}/$filename-$(date +%Y-%m-%d_%H-%M-%S)${FMT_RESET}..."
             fi
         else
-            error "$file does not exist or already a symlink!"
+            error "$file does not exist / already a symlink!"
         fi
     done
-    builtin cd "$DOTFILES" && stow .
-    echo
-    info "Installing Oh-My-Bash..."
-    git clone ${GITHUB}/ohmybash/oh-my-bash.git "$XDG_DATA_HOME/bash/oh-my-bash"
 }
 
-# Homebrew
+# homebrew
 setup_homebrew() {
     if ! command_exists brew; then
         echo
-        info "Installing Homebrew and Homebrew's packages..."
+        info "Installing Homebrew..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         \. "$DOTFILES/shared/brew"
-        brew bundle
-
-        if [[ "$(uname)" == "Darwin" ]]; then
-            check_brew_packages cmake make moreutils ninja wget
-        fi
-    else
         echo
-        warning "You're already installed Homebrew. Trying to update..."
-        brew update && brew upgrade && brew cleanup --prune=all
+        info "Installing Homebrew packages..."
+        brew bundle
+        success "Done!"
+    elif command_exists brew; then
+        info "Updating Homebrew..."
+        brew update && brew upgrade && brew cleanup
     fi
 }
 
-# Zsh
-setup_zsh() {
-    if ! command_exists zsh && checkyes "Could not find ZSH. Install ZSH now?"; then
+# stow
+stow_dot() {
+    if ! command_exists stow; then check_apt_packages stow || check_brew_packages stow; fi
+    builtin cd "$DOTFILES" && stow .
+}
+
+setup_shell() {
+    export OSH="$XDG_DATA_HOME/bash/oh-my-bash"
+    if [ ! -d "$OSH" ]; then
+        info "Installing Oh-My-Bash..."
+        git clone "$GITHUB"/ohmybash/oh-my-bash.git "$OSH"
         echo
-        if command_exists apt || command_exists apt-get; then
-            check_apt_packages zsh
-        else
-            check_brew_packages zsh
-        fi
-        if checkyes "Make ZSH your default shell?"; then
+    fi
+    if ! command_exists zsh; then
+        info "Installing Zsh..."
+        check_apt_packages zsh || check_brew_packages zsh
+        if checkyes "Make zsh your default shell?"; then
             chsh -s "$(which zsh)" "$USER"
-            success "ZSH was set as your default shell."
-            info "After running this script, please close and reopen your terminal to take effect"
         fi
-    else
-        echo
-        warning "You're already installed ZSH!"
+        success "Done!"
     fi
 }
 
 setup_pyenv() {
-    if ! command_exists pyenv && checkyes "Could not find Pyenv. Install now?"; then
+    if ! command_exists pyenv && checkyes "Install Pyenv?"; then
         echo
-        info "Installing Pyenv..."
-        if command_exists apt || command_exists apt-get; then
+        info "Installing pyenv..."
+        # python build prep
+        if command_exists apt; then
             check_apt_packages libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev \
                 libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
         else
             check_brew_packages openssl readline sqlite3 xz zlib tcl-tk
         fi
 
-        export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions/global/bin:$POETRY_HOME/bin:$PATH"
-
-        if [ -d "$PYENV_ROOT" ]; then rm -rf "$PYENV_ROOT"; fi
-
+        [ -d "$PYENV_ROOT" ] && rm -rf "$PYENV_ROOT"
         checkout "${GITHUB}/pyenv/pyenv.git" "${PYENV_ROOT}" "${PYENV_GIT_TAG:-master}"
         checkout "${GITHUB}/pyenv/pyenv-doctor.git" "${PYENV_ROOT}/plugins/pyenv-doctor" "master"
         checkout "${GITHUB}/pyenv/pyenv-update.git" "${PYENV_ROOT}/plugins/pyenv-update" "master"
         checkout "${GITHUB}/pyenv/pyenv-virtualenv.git" "${PYENV_ROOT}/plugins/pyenv-virtualenv" "master"
         checkout "${GITHUB}/pyenv/pyenv-ccache.git" "${PYENV_ROOT}/plugins/pyenv-ccache" "master"
 
-        cd "$PYENV_ROOT" && src/configure && make -C src
-
+        builtin cd "$PYENV_ROOT" && src/configure && make -C src
         (
-            "${PYENV_ROOT}/bin/pyenv" init
-            "${PYENV_ROOT}/bin/pyenv" virtualenv-init
+            "$PYENV_ROOT/bin/pyenv" init
+            "$PYENV_ROOT/bin/pyenv" virtualenv-init
         ) >&2
 
+        echo
+        info "Installing python..."
         pyenv install --list | grep '^  3.'
-        printf "${FMT_PINK}Choose a python version to install: ${FMT_RESET}"
-        read -r python_version
+        printf "${FMT_PINK}Input a Python version: ${FMT_RESET}" && read -r python_version
         pyenv install "$python_version" --verbose
         pyenv global "$python_version"
         builtin cd "$PYENV_ROOT/versions/" && ln -sf "$python_version" global
         pyenv rehash
 
-        if ! command_exists poetry && checkyes "Could not find Poetry. Install?"; then
-            info "Installing PyPoetry..."
-            curl -sSL https://install.python-poetry.org | python3 -
-            success "Successfully installed PyPoetry in $POETRY_HOME!"
-        fi
+        # pipx
+        echo
+        info "Installing pipx..."
+        python3 -m pip install --user pipx
+        python3 -m pipx ensurepath
+
+        builtin cd "$DOTFILES"
     elif command_exists pyenv; then
-        echo
-        warning "You're already installed Pyenv. Updating..."
-        echo
+        info "Updating Pyenv..."
         pyenv update
-        if command_exists poetry; then
-            info "Trying to updating PyPoetry..."
-            echo
-            poetry self update
-        fi
     fi
 }
 
-setup_rust() {
-    if ! command_exists rustup && checkyes "Install Rustup?"; then
+setup_poetry() {
+    if ! command_exists poetry && checkyes "Install PyPoetry?"; then
         echo
-        info "Installing Rustup..."
+        info "Installing PyPoetry..."
+        curl -sSL https://install.python-poetry.org | python3 -
+        echo
+        info "Installing PyPoetry's plugins..."
+        poetry self add "poetry-dotenv-plugin"
+        poetry self add "poetry-dynamic-versioning[plugin]"
+        poetry self add "poetry-multiproject-plugin"
+        success "Done!"
+    elif command_exists poetry; then
+        info "Updating PyPoetry..."
+        poetry self update
+    fi
+}
+
+setup_rustup() {
+    if (! command_exists rustup || ! command_exists cargo) && checkyes "Install RustUp?"; then
+        echo
+        info "Installing RustUp..."
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path
-        \. "$CARGO_HOME/env"
+        \. "${CARGO_HOME}/env"
         echo
-        echo "${FMT_PINK}Installing cargo-binstall and packages...${FMT_RESET}"
+        info "Adding cargo packages..."
         curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
-        cargo binstall --no-confirm cargo-cache cargo-run-bin cargo-update \
+        cargo binstall --no-confirm cargo-cache cargo-update cargo-run-bin \
             bingrep git-graph hyperfine miniserve tealdeer
     elif command_exists rustup; then
-        echo
-        warning "You're already install Rustup. Trying to update..."
+        info "Updating rustup..."
         rustup self update
     fi
 }
 
 setup_rbenv() {
-    if ! command_exists rbenv; then
+    if ! command_exists rbenv && checkyes "Install Rbenv?"; then
         echo
-        if checkyes "Could not find rbenv. Install?"; then
-            info "Installing Rbenv..."
-            if command_exists apt || command_exists apt-get; then
-                check_apt_packages autoconf patch build-essential libssl-dev libyaml-dev libreadline6-dev \
-                    zlib1g-dev libgmp-dev libncurses5-dev libffi-dev libgdbm6 libgdbm-dev libdb-dev uuid-dev
-            else
-                check_brew_packages openssl@3 readline libyaml gmp
-                if ! command_exists rustc; then check_brew_packages rust; fi
-            fi
-
-            export PATH="$RBENV_ROOT/bin:$RBENV_ROOT/shims:$RBENV_ROOT/versions/global/bin:$PATH"
-
-            if [ -d "$RBENV_ROOT" ]; then rm -rf "$RBENV_ROOT"; fi
-
-            checkout "${GITHUB}/rbenv/rbenv.git" "${RBENV_ROOT}" "${RBENV_GIT_TAG:-master}"
-            checkout "${GITHUB}/rbenv/ruby-build.git" "${RBENV_ROOT}/plugins/ruby-build" "master"
-            checkout "${GITHUB}/rbenv/rbenv-default-gems" "${RBENV_ROOT}/plugins/rbenv-default-gems" "master"
-            checkout "${GITHUB}/jf/rbenv-gemset.git" "${RBENV_ROOT}/plugins/rbenv-gemset" "master"
-            checkout "${GITHUB}/rkh/rbenv-update.git" "${RBENV_ROOT}/plugins/rbenv-update" "master"
-            checkout "${GITHUB}/rkh/rbenv-use.git" "${RBENV_ROOT}/plugins/rbenv-use" "master"
-            checkout "${GITHUB}/rkh/rbenv-whatis.git" "${RBENV_ROOT}/plugins/rbenv-whatis" "master"
-            checkout "${GITHUB}/yyuu/rbenv-ccache.git" "${RBENV_ROOT}/plugins/rbenv-ccache" "master"
-
-            "$RBENV_ROOT/bin/rbenv" init >&2
-
-            rbenv install --list
-            printf "${FMT_PINK}Choose a Ruby version to install: ${FMT_RESET}"
-            read -r ruby_version
-            rbenv install "$ruby_version" --verbose
-            rbenv global "$ruby_version"
-            builtin cd "$RBENV_ROOT/versions/" && ln -sf "$ruby_version" global
-            rbenv rehash
-
-            echo "${FMT_ORANGE}Verifying rbenv installation...${FMT_RESET}"
-            curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-doctor | bash
+        info "Installing Rbenv..."
+        if command_exists apt || command_exists apt-get; then
+            check_apt_packages autoconf patch build-essential libssl-dev libyaml-dev libreadline6-dev \
+                zlib1g-dev libgmp-dev libncurses5-dev libffi-dev libgdbm6 libgdbm-dev libdb-dev uuid-dev
+            if ! command_exists rustc; then check_apt_packages rustc; fi
+        else
+            check_brew_packages openssl@3 readline libyaml gmp
+            if ! command_exists rustc; then check_brew_packages rust; fi
         fi
-    else
-        echo
-        warning "You're already installed Rbenv! Trying to update 'rbenv' and its plugins..."
-        echo
+
+        [ -d "$RBENV_ROOT" ] && rm -rf "$RBENV_ROOT"
+
+        checkout "${GITHUB}/rbenv/rbenv.git" "${RBENV_ROOT}" "${RBENV_GIT_TAG:-master}"
+        checkout "${GITHUB}/rbenv/ruby-build.git" "${RBENV_ROOT}/plugins/ruby-build" "master"
+        checkout "${GITHUB}/rbenv/rbenv-default-gems" "${RBENV_ROOT}/plugins/rbenv-default-gems" "master"
+        checkout "${GITHUB}/jf/rbenv-gemset.git" "${RBENV_ROOT}/plugins/rbenv-gemset" "master"
+        checkout "${GITHUB}/rkh/rbenv-update.git" "${RBENV_ROOT}/plugins/rbenv-update" "master"
+        checkout "${GITHUB}/rkh/rbenv-use.git" "${RBENV_ROOT}/plugins/rbenv-use" "master"
+        checkout "${GITHUB}/rkh/rbenv-whatis.git" "${RBENV_ROOT}/plugins/rbenv-whatis" "master"
+        checkout "${GITHUB}/yyuu/rbenv-ccache.git" "${RBENV_ROOT}/plugins/rbenv-ccache" "master"
+
+        "$RBENV_ROOT/bin/rbenv" ini >&2
+
+        info
+        echo "Installing ruby..."
+        rbenv install --list
+        printf "${FMT_PINK}Input a Ruby version: ${FMT_RESET}" && read -r ruby_version
+        rbenv install "$ruby_version" --verbose
+        rbenv global "$ruby_version"
+        builtin cd "$RBENV_ROOT/versions/" && ln -sf "$ruby_version" global
+        rbenv rehash
+        # rbenv doctor
+        curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-doctor | bash
+
+        builtin cd "$DOTFILES"
+        success "Done!"
+    elif command_exists rbenv; then
+        info "Updating rbenv..."
         rbenv update
     fi
 }
 
-setup_go() {
-    if ! command_exists go || ! command_exists g; then
-        echo
-        if checkyes "Install g (Go Version Manager)?"; then
-            info "Install g (Go Version Manager)..."
+setup_golang() {
+    if ! command_exists go; then
+        if [[ -n $(alias g 2>/dev/null) ]]; then unalias g; fi
+        if ! command_exists g && checkyes "Install g (go version manager)?"; then
+            echo
+            info "Installing g..."
             curl -sSL https://raw.githubusercontent.com/voidint/g/master/install.sh | bash
             \. "$HOME/.g/env"
             g ls-remote stable
             echo
-            printf "Input Go version to install: " && read -r go_version
+            info "Installing go..."
+            printf "${FMT_PINK}Input a Go version: ${FMT_RESET}" && read -r go_version
             g install "$go_version"
             g use "$go_version" && g clean
+            success "Done!"
+        elif command_exists g; then
+            info "Updating g..."
+            g self update
         fi
-    elif command_exists g; then
-        echo
-        warning "You're already installed g (Go version manager)! Trying to update..."
-        echo
-        g self update
     fi
 }
 
-cleanup_home() {
+clean_home() {
     echo
     info "Cleaning up home..."
-    if command_exists apt || command_exists apt-get; then
-        if command_exists apt; then APT=apt; else APT=apt-get; fi
-        sudo "$APT" autoremove && sudo "$APT" autoclean
-    fi
-    if [ -d /etc/update-motd.d ]; then
-        sudo chmod -x /etc/update-motd.d/*
-    fi
-    sleep 5
-    echo
-    echo "${FMT_ORANGE}To disable dynamic motd and news:"
-    echo "Edit the file ${FMT_YELLOW}/etc/default/motd-news${FMT_ORANGE}"
-    echo "FROM: ${FMT_YELLOW}ENABLED=1${FMT_ORANGE} TO: ${FMT_YELLOW}ENABLED=0${FMT_ORANGE}"
-    sleep 2
-    echo
-    echo "${FMT_ORANGE}To disable ~/.sudo_as_admin_successful file, please run this command:"
-    echo "${FMT_YELLOW}sudo visudo"
-    echo "${FMT_ORANGE}Then add the following line:"
-    echo "${FMT_YELLOW}Defaults !admin_flag${FMT_RESET}"
-    sleep 3
+    sudo "$APT" autoremove && sudo "$APT" autoclean
+    if [ -d /etc/update-motd.d ]; then sudo chmod -x /etc/update-motd.d/*; fi
+    # sleep 5
+    # echo
+    # echo "${FMT_ORANGE}To disable dynamic motd and news:"
+    # echo "Edit the file ${FMT_YELLOW}/etc/default/motd-news${FMT_ORANGE}"
+    # echo "FROM: ${FMT_YELLOW}ENABLED=1${FMT_ORANGE} TO: ${FMT_YELLOW}ENABLED=0${FMT_ORANGE}"
+    # sleep 2
+    # echo
+    # echo "${FMT_ORANGE}To disable ~/.sudo_as_admin_successful file, please run this command:"
+    # echo "${FMT_YELLOW}sudo visudo"
+    # echo "${FMT_ORANGE}Then add the following line:"
+    # echo "${FMT_YELLOW}Defaults !admin_flag${FMT_RESET}"
+    # sleep 3
     if [ ! -f "$HOME/.hushlogin" ] || [ ! -L "$HOME/.hushlogin" ]; then touch "$HOME/.hushlogin"; fi
     if [ -f "$HOME/.sudo_as_admin_successful" ]; then rm -f "$HOME/.sudo_as_admin_successful"; fi
     if [ -f "$HOME/.motd_shown" ]; then rm -f "$HOME/.motd_shown"; fi
-    echo
-    sleep 3
-    success "All done!"
+    success "Done!"
 }
 
-main() {
-    system_update
-    stow_dotfiles
+run() {
+    setup_color
+    update_system
+    backup_dot
     setup_homebrew
-    setup_zsh
+    stow_dot
+    setup_shell
     setup_pyenv
-    setup_rust
+    setup_poetry
+    setup_rustup
     setup_rbenv
-    setup_go
-    cleanup_home
+    setup_golang
+    clean_home
 }
-main
+run

@@ -3,12 +3,14 @@
 # - https://github.com/lukechilds/zsh-nvm/blob/master/zsh-nvm.plugin.zsh
 # - https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/nvm/nvm.plugin.zsh
 
-FMT_RED="$(tput setaf 1)"
-FMT_GREEN="$(tput setaf 2)"
-FMT_BLUE="$(tput setaf 4)"
-FMT_ORANGE="$(tput setaf 208)"
-FMT_PINK="$(tput setaf 5)"
-FMT_RESET="$(tput sgr0)"
+_setup_color() {
+    FMT_RED="$(tput setaf 1)"
+    FMT_GREEN="$(tput setaf 2)"
+    FMT_BLUE="$(tput setaf 4)"
+    FMT_ORANGE="$(tput setaf 208)"
+    FMT_PINK="$(tput setaf 5)"
+    FMT_RESET="$(tput sgr0)"
+}
 
 NVM_VERSION="$XDG_CACHE_HOME/nvm_previous_version"
 
@@ -92,6 +94,7 @@ _nvm_lazy_load() {
 }
 
 _nvm_upgrade() {
+    _setup_color
     if [[ -n "$(_nvm_wrapper help | grep 'nvm upgrade')" ]]; then
         _nvm_wrapper upgrade
         return
@@ -113,6 +116,7 @@ _nvm_upgrade() {
 }
 
 _nvm_revert() {
+    _setup_color
     local previous_version="$(cat "$NVM_VERSION" >/dev/null 2>&1)"
 
     if [[ -n "$previous_version" ]]; then
@@ -131,6 +135,7 @@ _nvm_revert() {
 }
 
 _nvm_install() {
+    _setup_color
     echo "${FMT_PINK}Installing NVM...${FMT_RESET}"
     git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR"
     _nvm_latest_release_tag=$(builtin cd "$NVM_DIR" && git fetch --quiet --tags origin && git describe --abbrev=0 --tags --match "v[0-9]*" "$(git rev-list --tags --max-count=1)")
@@ -142,6 +147,7 @@ _nvm_install() {
 }
 
 _nvm_install_wrapper() {
+    _setup_color
     case $2 in
     'rc')
         NVM_NODEJS_ORG_MIRROR=https://nodejs.org/download/rc/ nvm install node && nvm alias rc "$(node --version)"

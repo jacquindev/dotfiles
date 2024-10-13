@@ -2,8 +2,8 @@
 
 # Source files first
 export DOTFILES="$HOME/.dotfiles"
-. "$DOTFILES/shared/envs"
-. "$DOTFILES/scripts/utils.sh"
+. "$DOTFILES/scripts/envs.sh"
+. "$DOTFILES/scripts/paths.sh"
 . "$DOTFILES/scripts/helpers.sh"
 
 # Docker Engine setup
@@ -25,8 +25,8 @@ install_docker() {
         # Add the repository to Apt sources:
         echo \
             "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-            $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-            sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+            $(. /etc/os-release && echo "$VERSION_CODENAME") stable" |
+            sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
         sudo apt update
         check_apt_packages docker-ce docker-ce-cli containerd.io docker-compose-plugin docker-buildx-plugin
 
@@ -34,7 +34,7 @@ install_docker() {
         sudo usermod -aG docker "$USER"
         success "Installed Docker Engine. After running this script, please input: 'newgrp docker' to start Docker!"
         echo
-    fi   
+    fi
 }
 
 install_cri_dockerd() {
@@ -42,7 +42,7 @@ install_cri_dockerd() {
         info "Installing Cri-Dockerd..."
         sudo apt update
         check_apt_packages curl wget git
-        cri_version=$(curl -s https://api.github.com/repos/Mirantis/cri-dockerd/releases/latest|grep tag_name | cut -d '"' -f 4 | sed 's/v//g')
+        cri_version=$(curl -s https://api.github.com/repos/Mirantis/cri-dockerd/releases/latest | grep tag_name | cut -d '"' -f 4 | sed 's/v//g')
         wget --show-progress --timestamping https://github.com/Mirantis/cri-dockerd/releases/download/v${cri_version}/cri-dockerd-${cri_version}.amd64.tgz
         tar xvf cri-dockerd-${cri_version}.amd64.tgz
         sudo mv cri-dockerd/cri-dockerd /usr/local/bin/

@@ -1,8 +1,8 @@
 #!/bin/sh
 
 export DOTFILES="$HOME/.dotfiles"
-. "$DOTFILES/shared/envs"
-. "$DOTFILES/scripts/utils.sh"
+. "$DOTFILES/scripts/envs.sh"
+. "$DOTFILES/scripts/paths.sh"
 . "$DOTFILES/scripts/helpers.sh"
 
 [ ! -d "$XDG_DATA_HOME/kubernetes" ] && mkdir -p "$XDG_DATA_HOME/kubernetes"
@@ -12,9 +12,9 @@ setup_kubectl() {
     if ! command_exists kubectl; then
         sudo apt update
         check_apt_packages apt-transport-https ca-certificates curl gpg
-        curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key |\
+        curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key |
             sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-        echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' |\
+        echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' |
             sudo tee /etc/apt/sources.list.d/kubernetes.list
         sudo apt update
         check_apt_packages kubelet kubeadm kubectl
@@ -35,17 +35,19 @@ setup_krew() {
         export KREW_ROOT="$XDG_DATA_HOME/kubernetes/krew"
         export PATH="$KREW_ROOT/bin:$PATH"
         (
-            set -x; cd "$(mktemp -d)" &&
-            OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
-            ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
-            KREW="krew-${OS}_${ARCH}" &&
-            curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
-            tar zxvf "${KREW}.tar.gz" &&
-            ./"${KREW}" install krew
+            set -x
+            cd "$(mktemp -d)" &&
+                OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+                ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+                KREW="krew-${OS}_${ARCH}" &&
+                curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
+                tar zxvf "${KREW}.tar.gz" &&
+                ./"${KREW}" install krew
         )
         if [ -d "$HOME/.krew" ]; then mv "$HOME/.krew" "$XDG_DATA_HOME/kubernetes/krew"; fi
-        echo; echo "Adding completion for kubectl krew..."
-        echo '#!/bin/sh\nkubectl krew __complete "$@"' > "$KREW_ROOT/bin/kubectl_complete-krew"
+        echo
+        echo "Adding completion for kubectl krew..."
+        echo '#!/bin/sh\nkubectl krew __complete "$@"' >"$KREW_ROOT/bin/kubectl_complete-krew"
         chmod u+x "$KREW_ROOT/bin/kubectl_complete-krew"
     else
         info "Upgrading Krew and Kubectl's plugins (if they exist)..."
@@ -68,13 +70,14 @@ setup_minikube() {
         warning "Starting Minikube..."
         minikube start
         minikube addons enable metrics-server
-        minikube addons enable ingress 
-        minikube addons enable dashboard 
+        minikube addons enable ingress
+        minikube addons enable dashboard
         echo
         underline "${FMT_ORANGE}Enabled Minikube Addons: ${FMT_RESET}"
         minikube addons list | grep STATUS && minikube addons list | grep enabled
 
-        echo; underline "${FMT_GREEN}Current Status of Minikube: ${FMT_RESET}"
+        echo
+        underline "${FMT_GREEN}Current Status of Minikube: ${FMT_RESET}"
         minikube status
     }
 
@@ -115,7 +118,7 @@ setup_helm() {
         helm plugin install https://github.com/hypnoglow/helm-s3
         helm plugin install https://github.com/jkroepke/helm-secrets --version v4.6.1
         echo
-    fi 
+    fi
 
     if ! command_exists helmfile; then
         info "Installing Helmfile..."
@@ -134,7 +137,7 @@ setup_helm() {
         rm -rf helmsman_* LICENSE README.md
         echo
     fi
-    
+
     # info "Add kubernetes-dashboard repository"
     # helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
     # info "Deploy a Helm Release"
