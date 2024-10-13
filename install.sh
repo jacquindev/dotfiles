@@ -93,7 +93,6 @@ setup_pyenv() {
     if ! command_exists pyenv && checkyes "Install Pyenv?"; then
         echo
         info "Installing pyenv..."
-        export PATH = "$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions/global/bin:$PATH"
 
         # python build prep
         if command_exists apt; then
@@ -118,6 +117,7 @@ setup_pyenv() {
         ) >&2
 
         echo
+        export PATH = "$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions/global/bin:$POETRY_HOME/bin:$PATH"
         info "Installing python..."
         pyenv install --list | grep '^  3.'
         printf "${FMT_PINK}Input a Python version: ${FMT_RESET}" && read -r python_version
@@ -126,16 +126,17 @@ setup_pyenv() {
         builtin cd "$PYENV_ROOT/versions/" && ln -sf "$python_version" global
         pyenv rehash
 
-        # pipx
-        echo
-        info "Installing pipx..."
-        export PATH="$HOME/.local/bin:$PATH"
-        python3 -m pip install --user pipx
-
         builtin cd "$DOTFILES"
     elif command_exists pyenv; then
         info "Updating Pyenv..."
         pyenv update
+    fi
+
+    python3 -m ensurepip --upgrade
+    python3 -m pip install --upgrade --user pip --force
+
+    if ! command_exists pipx; then
+        python3 -m pip install --user pipx
     fi
 }
 

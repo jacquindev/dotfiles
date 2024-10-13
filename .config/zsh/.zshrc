@@ -24,3 +24,6 @@ if [ -d "$ZDOTDIR/lib" ]; then
     done
     unset file
 fi
+
+# go version manager
+if [ -f "$HOME/.g/env" ]; then source "$HOME/.g/env"; fi

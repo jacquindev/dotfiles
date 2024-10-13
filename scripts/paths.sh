@@ -52,7 +52,6 @@ if command -v yarn >/dev/null 2>&1; then pathappend "$(yarn global bin)"; fi
 
 # go path
 if [[ -n $(alias g 2>/dev/null) ]]; then unalias g; fi
-if [ -f "$HOME/.g/env" ]; then source "$HOME/.g/env"; fi
 [ -d "$GOPATH/bin" ] && pathappend "$GOPATH/bin"
 
 # Krew
