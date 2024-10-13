@@ -101,7 +101,7 @@ setup_pyenv() {
 
         [ -d "$PYENV_ROOT" ] && rm -rf "$PYENV_ROOT"
 
-        export PATH = "$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions/global/bin:$PATH"
+        export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions/global/bin:$PATH"
         
         checkout "${GITHUB}/pyenv/pyenv.git" "${PYENV_ROOT}" "${PYENV_GIT_TAG:-master}"
         checkout "${GITHUB}/pyenv/pyenv-doctor.git" "${PYENV_ROOT}/plugins/pyenv-doctor" "master"
@@ -111,12 +111,13 @@ setup_pyenv() {
 
         builtin cd "$PYENV_ROOT" && src/configure && make -C src
         
-        "$PYENV_ROOT/bin/pyenv" init
-        "$PYENV_ROOT/bin/pyenv" virtualenv-init
+        {
+            "${PYENV_ROOT}/bin/pyenv" init
+            "${PYENV_ROOT}/bin/pyenv" virtualenv-init
+        } >&2
 
         echo
         info "Installing python..."
-        eval "$(pyenv init -)"
         pyenv install --list | grep '^  3.'
         printf "${FMT_PINK}Input a Python version: ${FMT_RESET}" && read -r python_version
         pyenv install "$python_version" --verbose
@@ -135,6 +136,7 @@ setup_pyenv() {
     python3 -m pip install --upgrade --user pip --force
 
     if ! command_exists pipx; then
+        info "Installing pipx..."
         python3 -m pip install --user pipx
     fi
 }
@@ -200,7 +202,7 @@ setup_rbenv() {
         checkout "${GITHUB}/rkh/rbenv-whatis.git" "${RBENV_ROOT}/plugins/rbenv-whatis" "master"
         checkout "${GITHUB}/yyuu/rbenv-ccache.git" "${RBENV_ROOT}/plugins/rbenv-ccache" "master"
 
-        "$RBENV_ROOT/bin/rbenv" ini >&2
+        "$RBENV_ROOT/bin/rbenv" init >&2
 
         info
         echo "Installing ruby..."
