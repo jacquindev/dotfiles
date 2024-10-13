@@ -10,6 +10,7 @@ install_helm() {
         tar xvf helm-v3.16.2-linux-amd64.tar.gz
         sudo mv linux-amd64/helm /usr/local/bin/
         rm -rf linux-amd64 helm-v3.16.2-linux-amd64.tar.gz
+        success "Done!"
     else
         warning "Already installed Helm!"
     fi
@@ -24,6 +25,7 @@ install_helm_plugins() {
         helm plugin install https://github.com/hayorov/helm-gcs
         helm plugin install https://github.com/hypnoglow/helm-s3
         helm plugin install https://github.com/jkroepke/helm-secrets --version v4.6.1
+        success "Done!"
     else
         error "You must install helm in order to add Helm's plugins!"
     fi
@@ -37,11 +39,12 @@ install_helmfile() {
             tar xzf helmfile_0.168.0_linux_amd64.tar.gz
             sudo mv helmfile /usr/local/bin/helmfile
             rm -rf helmfile_* LICENSE README*
+            success "Done!"
         else
             warning "Already installed helmfile!"
         fi
     else
-        error "You must install Helm in order to use Helmfile!"
+        error "You must install Helm in order to use helmfile!"
     fi
 }
 
@@ -53,11 +56,30 @@ install_helmsman() {
             tar xzf helmsman_3.17.1_linux_amd64.tar.gz
             sudo mv helmsman /usr/local/bin/helmsman
             rm -rf helmsman_* LICENSE README.md
+            success "Done!"
         else
             warning "Already installed helmsman!"
         fi
     else
-        error "You must install Helm in order to use Helmsman!"
+        error "You must install Helm in order to use helmsman!"
+    fi
+}
+
+install_helm_docs() {
+    if command_exists helm; then
+        if ! command_exists helm-docs; then
+            if command_exists go && checkyes "Install helm-docs with Go?"; then
+                info "Installing helm-docs with Go..."
+                go install github.com/norwoodj/helm-docs/cmd/helm-docs@latest
+                success "Done!"
+            else
+                info "Installing helm-docs with Homebrew..."
+                brew install norwoodj/tap/helm-docs
+                success "Done!"
+            fi
+        fi
+    else
+        error "You must install Helm in order to use helm-docs!"
     fi
 }
 
@@ -66,6 +88,7 @@ helm_help() {
     echo "$(tput setaf 2)==> $(tput setaf 220)Parameters:"
     echo
     echo "  $(tput setaf 5)--install$(tput sgr0)        install Helm"
+    echo "  $(tput setaf 5)--docs$(tput sgr0)           install helm-docs command"
     echo "  $(tput setaf 5)--plugin$(tput sgr0)         install Helm plugins"
     echo "  $(tput setaf 5)--helmfile$(tput sgr0)       install Helmfile command"
     echo "  $(tput setaf 5)--helmsman$(tput sgr0)       install Helmsman command"

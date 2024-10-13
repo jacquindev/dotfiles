@@ -5,7 +5,7 @@ set -e
 export DOTFILES="$HOME/.dotfiles"
 . "$DOTFILES/scripts/helpers.sh"
 
-for file in "$DOTFILES/scripts/k8s/tools/"*.sh; do \. "$file"; done
+for file in "$DOTFILES/scripts/kube/tools/"*.sh; do \. "$file"; done
 
 setup_color
 
@@ -52,6 +52,9 @@ case "$1" in
     '--helmsman' | '-m')
         install_helmsman
         ;;
+    '--helm-docs' | '--helmdoc' | '--helm-doc' | '--docs' | '--helmdocs')
+        install_helm_docs
+        ;;
     '--help' | '-h')
         helm_help
         ;;
@@ -68,11 +71,23 @@ case "$1" in
     '--api' | 'apiserver')
         install_kube_apiserver
         ;;
+    '--build' | '--builder')
+        install_kubebuilder
+        ;;
+    '--cm' | '--kubecm')
+        install_kubecm
+        ;;
+    '--conform')
+        install_kubeconform
+        ;;
     '--control' | '--controller')
         install_kube_controller
         ;;
     '--convert' | '-c')
         install_kubectl_convert
+        ;;
+    '--kompose')
+        install_kompose
         ;;
     '--kubectx' | '-x')
         install_kubectx
@@ -85,6 +100,9 @@ case "$1" in
         ;;
     '--kus' | '--kustom' | '--kustomize')
         install_kustomize
+        ;;
+    '--linter' | '--lint')
+        install_kube_linter
         ;;
     '--log' | '--logrunner')
         install_kube_logrunner
@@ -101,6 +119,9 @@ case "$1" in
     '--seal' | '--kubeseal')
         install_kube_seal
         ;;
+    '--shark')
+        install_kubeshark
+        ;;
     '--spy' | '--kubespy')
         install_kubespy
         ;;
@@ -109,7 +130,7 @@ case "$1" in
         ;;
     esac
     ;;
-'minikube')
+'minikube' | 'mini')
     case "$2" in
     '--install' | 'i')
         install_minikube
@@ -146,6 +167,7 @@ case "$1" in
     echo
     echo " $(tput bold)$(tput setaf 208)helm:"
     echo "      $(tput setaf 4)helm --install$(tput sgr0)      install Helm"
+    echo "      $(tput setaf 4)helm --docs$(tput sgr0)         install helm-docs command"
     echo "      $(tput setaf 4)helm --plugin$(tput sgr0)       install Helm plugins"
     echo "      $(tput setaf 4)helm --helmfile$(tput sgr0)     install Helmfile command"
     echo "      $(tput setaf 4)helm --helmsman$(tput sgr0)     install Helmsman command"
@@ -155,18 +177,24 @@ case "$1" in
     echo "      $(tput setaf 4)kube --install$(tput sgr0)      install Kubectl"
     echo "      $(tput setaf 4)kube --api$(tput sgr0)          install Kube-Apiserver plugin"
     echo "      $(tput setaf 4)kube --agg$(tput sgr0)          install Kube-Aggregator plugin"
+    echo "      $(tput setaf 4)kube --builder$(tput sgr0)      install Kubebuilder"
+    echo "      $(tput setaf 4)kube --cm$(tput sgr0)           install Kubecm"
+    echo "      $(tput setaf 4)kube --conform$(tput sgr0)      install Kubeconform tool"
     echo "      $(tput setaf 4)kube --control$(tput sgr0)      install Kube-Controller-Manager plugin"
     echo "      $(tput setaf 4)kube --convert$(tput sgr0)      install Kubectl-Convert plugin"
+    echo "      $(tput setaf 4)kube --kompose$(tput sgr0)      install Kompose tool"
     echo "      $(tput setaf 4)kube --kubent$(tput sgr0)       install Kubent (Kube No Trouble)"
     echo "      $(tput setaf 4)kube --kubectx$(tput sgr0)      install Kubectx and Kubens"
     echo "      $(tput setaf 4)kube --kus$(tput sgr0)          install Kustomize"
     echo "      $(tput setaf 4)kube --krew$(tput sgr0)         install Krew (Kubectl Plugin Manager)"
+    echo "      $(tput setaf 4)kube --linter$(tput sgr0)       install Kube-Linter tool"
     echo "      $(tput setaf 4)kube --log$(tput sgr0)          install Kube-Log-Runner plugin"
     echo "      $(tput setaf 4)kube --proxy$(tput sgr0)        install Kube-Proxy plugin"
-    echo "      $(tput setaf 4)kube --scape$(tput sgr0)        install Kubescape command"
+    echo "      $(tput setaf 4)kube --scape$(tput sgr0)        install Kubescape tool"
     echo "      $(tput setaf 4)kube --schedule$(tput sgr0)     install Kube-Scheduler plugin"
-    echo "      $(tput setaf 4)kube --seal$(tput sgr0)         install Kubeseal command"
-    echo "      $(tput setaf 4)kube --spy$(tput sgr0)          install Kubespy command"
+    echo "      $(tput setaf 4)kube --seal$(tput sgr0)         install Kubeseal tool"
+    echo "      $(tput setaf 4)kube --shark$(tput sgr0)        install Kubeshark tool"
+    echo "      $(tput setaf 4)kube --spy$(tput sgr0)          install Kubespy tool"
     echo "      $(tput setaf 4)kube --help$(tput sgr0)         show help of kube options"
     echo
     echo " $(tput bold)$(tput setaf 208)minikube:"

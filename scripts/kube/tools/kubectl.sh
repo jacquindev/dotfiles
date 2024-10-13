@@ -178,6 +178,7 @@ install_krew() {
         info "Add shell completion for kubectl-krew..."
         echo '#!/bin/sh\nkubectl krew __complete "$@"' >"$KREW_ROOT/bin/kubectl_complete-krew"
         chmod u+x "$KREW_ROOT/bin/kubectl_complete-krew"
+
         success "Done!"
     else
         warning "Krew already installed!"
@@ -189,6 +190,8 @@ install_kubescape() {
         if ! command_exists kubescape; then
             info "Installing kubescape..."
             curl -s https://raw.githubusercontent.com/kubescape/kubescape/master/install.sh | /bin/bash
+            [ -d "$HOME/.kubescape" ] && mv "$HOME/.kubescape" "$XDG_DATA_HOME/kubernetes/kubescape"
+            export PATH="$XDG_DATA_HOME/kubernetes/kubescape/bin:$PATH"
             success "Done!"
         else
             warning "Already installed kubescape!"
@@ -200,12 +203,12 @@ install_kubespy() {
     if command_exists kubectl; then
         if ! command_exists kubespy; then
             info "Installing kubespy"
-            if command_exists go; then
+            if command_exists go && checkyes "Install kubespy with Go?"; then
                 go install github.com/pulumi/kubespy@latest
                 success "Done!"
             else
                 latest_version=$(get_latest_release "pulumi/kubespy")
-                wget --show-progree --timestamping https://github.com/pulumi/kubespy/releases/download/${latest_version}/kubespy-${latest_version}-linux-amd64.tar.gz
+                wget --show-progress --timestamping https://github.com/pulumi/kubespy/releases/download/${latest_version}/kubespy-${latest_version}-linux-amd64.tar.gz
                 tar xvf kubespy-${latest_version}-linux-amd64.tar.gz
                 chmod +x kubespy
                 sudo mv kubespy /usr/local/bin/kubespy
@@ -244,8 +247,29 @@ install_kube_seal() {
                 curl -OL "https://github.com/bitnami-labs/sealed-secrets/releases/download/v${KUBESEAL_VERSION:?}/kubeseal-${KUBESEAL_VERSION:?}-linux-amd64.tar.gz"
                 tar -xvzf kubeseal-${KUBESEAL_VERSION:?}-linux-amd64.tar.gz kubeseal
                 sudo install -m 755 kubeseal /usr/local/bin/kubeseal
+                rm -rf kubeseal kubeseal-${KUBESEAL_VERSION:?}-linux-amd64.tar.gz
                 success "Done!"
             fi
+        fi
+    fi
+}
+
+install_kubeshark() {
+    if command_exists kubectl; then
+        if ! command_exists kubeshark; then
+            if command_exists helm && checkyes "Install kubeshart with Helm?"; then
+                info "Installing kubeshark..."
+                helm repo add kubeshark "https://helm.kubeshark.co"
+                ‍helm install kubeshark kubeshark/kubeshark
+                success "Done!"
+            else
+                latest_version=$(get_latest_release "kubeshark/kubeshark")
+                curl -Lo kubeshark https://github.com/kubeshark/kubeshark/releases/download/${latest_version}/kubeshark_linux_amd64
+                chmod 755 kubeshark
+                sudo mv kubeshark /usr/local/bin/kubeshark
+            fi
+        else
+            warning "Already installed kubeshark!"
         fi
     fi
 }
@@ -262,6 +286,94 @@ install_kustomize() {
                 sudo mv kustomize /usr/local/bin/kustomize
                 success "Done!"
             fi
+        else
+            warning "Already installed kustomize!"
+        fi
+    fi
+}
+
+install_kubeconform() {
+    if command_exists kubectl; then
+        if ! command_exists kubeconform; then
+            if command_exists go; then
+                info "Installing kubeconform with Go..."
+                go install github.com/yannh/kubeconform/cmd/kubeconform@latest
+                success "Done!"
+            else
+                info "Installing kubeconform with Homebrew..."
+                brew install kubeconform
+                success "Done!"
+            fi
+        else
+            warning "Already installed kubeconform!"
+        fi
+    fi
+}
+
+install_kubecm() {
+    if command_exists kubectl; then
+        if ! command_exists kubecm; then
+            info "Installing kubecm"
+            latest_version=$(get_latest_release "sunny0826/kubecm")
+            curl -LO https://github.com/sunny0826/kubecm/releases/download/${latest_version}/kubecm_${latest_version}_Linux_x86_64.tar.gz
+            tar xvf kubecm_${latest_version}_Linux_x86_64.tar.gz
+            chmod 755 kubecm && sudo mv kubecm /usr/local/bin/kubecm
+            rm -rf LICENSE README.md kubecm_${latest_version}_Linux_x86_64.tar.gz
+            success "Done!"
+        else
+            warning "Already installed kubecm!"
+        fi
+    fi
+}
+
+install_kube_linter() {
+    if command_exists kubectl; then
+        if ! command_exists kube-linter; then
+            if command_exists go && checkyes "Install kube-linter with Go?"; then
+                info "Installing kube-linter with Go..."
+                go install golang.stackrox.io/kube-linter/cmd/kube-linter@latest
+                success "Done!"
+            else
+                info "Installing kube-linter..."
+                latest_version=$(get_latest_release "stackrox/kube-linter")
+                wget --show-progress --timestamping https://github.com/stackrox/kube-linter/releases/download/${latest_version}/kube-linter-linux.tar.gz
+                tar xvf kube-linter-linux.tar.gz
+                chmod 755 kube-linter && sudo mv kube-linter /usr/local/bin/kube-linter
+                rm -rf kube-linter-linux.tar.gz LICENSE README.md
+                success "Done!"
+            fi
+        else
+            warning "Already installed kube-linter!"
+        fi
+    fi
+}
+
+install_kubebuilder() {
+    if command_exists kubectl; then
+        if ! command_exists kubebuilder; then
+            info "Installing kubebuilder"
+            curl -L -o kubebuilder "https://go.kubebuilder.io/dl/latest/$(go env GOOS)/$(go env GOARCH)"
+            chmod +x kubebuilder && sudo mv kubebuilder /usr/local/bin/
+            success "Done!"
+        fi
+    fi
+}
+
+install_kompose() {
+    if command_exists kubectl; then
+        if ! command_exists kompose; then
+            if command_exists go && checkyes "Install Kompose with Go?"; then
+                info "Installing Kompose using Go..."
+                go install github.com/kubernetes/kompose@latest
+                success "Done!"
+            else
+                info "Installing Kompose..."
+                latest_version=$(get_latest_release "kubernetes/kompose")
+                curl -L https://github.com/kubernetes/kompose/releases/download/${latest_version}/kompose-linux-amd64 -o kompose
+                chmod +x kompose
+                sudo mv kompose /usr/local/bin/kompose
+                success "Done!"
+            fi
         fi
     fi
 }
@@ -273,18 +385,24 @@ kube_help() {
     echo "  $(tput setaf 5)--install$(tput sgr0)        install Kubectl"
     echo "  $(tput setaf 5)--agg$(tput sgr0)            install Kube-Aggregator plugin"
     echo "  $(tput setaf 5)--api$(tput sgr0)            install Kube-Apiserver plugin"
+    echo "  $(tput setaf 5)--builder$(tput sgr0)        install Kubebuilder"
+    echo "  $(tput setaf 5)--cm$(tput sgr0)             install Kubecm"
+    echo "  $(tput setaf 5)--conform$(tput sgr0)        install Kubeconform tool"
     echo "  $(tput setaf 5)--control$(tput sgr0)        install Kube-Controller-Manager plugin"
     echo "  $(tput setaf 5)--convert$(tput sgr0)        install Kubectl-Convert plugin"
+    echo "  $(tput setaf 5)--kompose$(tput sgr0)        install Kompose tool"
     echo "  $(tput setaf 5)--kubectx$(tput sgr0)        install Kubectx and Kubens"
     echo "  $(tput setaf 5)--kubent$(tput sgr0)         install Kubent (Kube No Trouble)"
     echo "  $(tput setaf 5)--krew$(tput sgr0)           install Krew (Kubectl Plugin Manager)"
     echo "  $(tput setaf 5)--kus$(tput sgr0)            install Kustomize"
+    echo "  $(tput setaf 5)--linter$(tput sgr0)         install Kube-Linter tool"
     echo "  $(tput setaf 5)--log$(tput sgr0)            install Kube-Log-Runner plugin"
     echo "  $(tput setaf 5)--proxy$(tput sgr0)          install Kube-Proxy plugin"
-    echo "  $(tput setaf 5)--scape$(tput sgr0)          install Kubescape command"
+    echo "  $(tput setaf 5)--scape$(tput sgr0)          install Kubescape tool"
     echo "  $(tput setaf 5)--schedule$(tput sgr0)       install Kube-Scheduler plugin"
-    echo "  $(tput setaf 5)--seal$(tput sgr0)           install Kubeseal command"
-    echo "  $(tput setaf 5)--spy$(tput sgr0)            install Kubespy command"
+    echo "  $(tput setaf 5)--seal$(tput sgr0)           install Kubeseal tool"
+    echo "  $(tput setaf 5)--shark$(tput sgr0)          install Kubeshark tool"
+    echo "  $(tput setaf 5)--spy$(tput sgr0)            install Kubespy tool"
     echo "  $(tput setaf 5)--help$(tput sgr0)           show this message"
     echo
 }

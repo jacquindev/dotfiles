@@ -55,7 +55,10 @@ if [[ -n $(alias g 2>/dev/null) ]]; then unalias g; fi
 [ -d "$GOPATH/bin" ] && pathappend "$GOPATH/bin"
 
 # Krew
-[ -d "$KREW_ROOT/bin" ] && pathprepend "$KREW_ROOT/bin"
+[ -d "$KREW_ROOT/bin" ] && pathappend "$KREW_ROOT/bin"
+
+# kubescape
+[ -d "$XDG_DATA_HOME/kubernetes/kubescape/bin" ] && pathappend "$XDG_DATA_HOME/kubernetes/kubescape/bin"
 
 # gnubin
 [ -d /home/linuxbrew/.linuxbrew/opt/coreutils/libexec/gnubin ] && pathprepend /home/linuxbrew/.linuxbrew/opt/coreutils/libexec/gnubin
