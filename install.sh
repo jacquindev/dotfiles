@@ -101,6 +101,8 @@ setup_pyenv() {
 
         [ -d "$PYENV_ROOT" ] && rm -rf "$PYENV_ROOT"
 
+        export PATH = "$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions/global/bin:$PATH"
+        
         checkout "${GITHUB}/pyenv/pyenv.git" "${PYENV_ROOT}" "${PYENV_GIT_TAG:-master}"
         checkout "${GITHUB}/pyenv/pyenv-doctor.git" "${PYENV_ROOT}/plugins/pyenv-doctor" "master"
         checkout "${GITHUB}/pyenv/pyenv-update.git" "${PYENV_ROOT}/plugins/pyenv-update" "master"
@@ -108,13 +110,11 @@ setup_pyenv() {
         checkout "${GITHUB}/pyenv/pyenv-ccache.git" "${PYENV_ROOT}/plugins/pyenv-ccache" "master"
 
         builtin cd "$PYENV_ROOT" && src/configure && make -C src
-        (
-            "$PYENV_ROOT/bin/pyenv" init
-            "$PYENV_ROOT/bin/pyenv" virtualenv-init
-        ) >&2
+        
+        "$PYENV_ROOT/bin/pyenv" init
+        "$PYENV_ROOT/bin/pyenv" virtualenv-init
 
         echo
-        export PATH = "$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions/global/bin:$POETRY_HOME/bin:$PATH"
         info "Installing python..."
         pyenv install --list | grep '^  3.'
         printf "${FMT_PINK}Input a Python version: ${FMT_RESET}" && read -r python_version
@@ -124,6 +124,7 @@ setup_pyenv() {
         pyenv rehash
 
         builtin cd "$DOTFILES"
+        success "Done!"
     elif command_exists pyenv; then
         info "Updating Pyenv..."
         pyenv update
