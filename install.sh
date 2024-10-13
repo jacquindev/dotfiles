@@ -13,13 +13,10 @@ DOTFILES="$(pwd)"
 # github
 GITHUB="https://github.com"
 
-# Set apt
-if command_exists apt; then APT=apt; else APT=apt-get; fi
-
 # apt packages
 update_system() {
     info "Updating system..."
-    sudo "$APT" update && sudo "$APT" upgrade -y
+    update
     check_apt_packages ack atool bash-completion build-essential ccache cmake curl direnv file \
         g++ gcc git make moreutils stow unzip usbutils zip wamerican wget
     if [[ "$(uname -r)" =~ "WSL" ]]; then check_apt_packages wslu; fi
@@ -248,7 +245,7 @@ setup_golang() {
 clean_home() {
     echo
     info "Cleaning up home..."
-    sudo "$APT" autoremove && sudo "$APT" autoclean
+    if command_exists apt; then sudo apt autoremove && sudo apt autoclean; else sudo apt-get autoremove && sudo apt-get autoclean; fi
     if [ -d /etc/update-motd.d ]; then sudo chmod -x /etc/update-motd.d/*; fi
     # sleep 5
     # echo
