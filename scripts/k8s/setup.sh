@@ -77,8 +77,14 @@ case "$1" in
     '--kubectx' | '-x')
         install_kubectx
         ;;
+    '--kubent')
+        install_kubent
+        ;;
     '--krew' | '-w')
         install_krew
+        ;;
+    '--kus' | '--kustom' | '--kustomize')
+        install_kustomize
         ;;
     '--log' | '--logrunner')
         install_kube_logrunner
@@ -88,6 +94,12 @@ case "$1" in
         ;;
     '--schedule' | 'scheduler' | '--sch')
         install_kube_scheduler
+        ;;
+    '--seal' | '--kubeseal')
+        install_kube_seal
+        ;;
+    '--spy' | '--kubespy')
+        install_kubespy
         ;;
     '--help' | '-h')
         kube_help
@@ -142,11 +154,15 @@ case "$1" in
     echo "      $(tput setaf 4)kube --agg$(tput sgr0)          install Kube-Aggregator plugin"
     echo "      $(tput setaf 4)kube --control$(tput sgr0)      install Kube-Controller-Manager plugin"
     echo "      $(tput setaf 4)kube --convert$(tput sgr0)      install Kubectl-Convert plugin"
+    echo "      $(tput setaf 4)kube --kubent$(tput sgr0)       install Kubent (Kube No Trouble)"
     echo "      $(tput setaf 4)kube --kubectx$(tput sgr0)      install Kubectx and Kubens"
+    echo "      $(tput setaf 4)kube --kus$(tput sgr0)          install Kustomize"
     echo "      $(tput setaf 4)kube --krew$(tput sgr0)         install Krew (Kubectl Plugin Manager)"
     echo "      $(tput setaf 4)kube --log$(tput sgr0)          install Kube-Log-Runner plugin"
     echo "      $(tput setaf 4)kube --proxy$(tput sgr0)        install Kube-Proxy plugin"
     echo "      $(tput setaf 4)kube --schedule$(tput sgr0)     install Kube-Scheduler plugin"
+    echo "      $(tput setaf 4)kube --seal$(tput sgr0)         install Kubeseal command"
+    echo "      $(tput setaf 4)kube --spy$(tput sgr0)          install Kubespy command"
     echo "      $(tput setaf 4)kube --help$(tput sgr0)         show help of kube options"
     echo
     echo " $(tput bold)$(tput setaf 208)minikube:"

@@ -1,4 +1,5 @@
 tap "homebrew/bundle"
+tap "martido/homebrew-graph"
 
 brew "atuin"
 brew "bat"

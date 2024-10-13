@@ -81,4 +81,9 @@ checkout() {
     [ -d "$2" ] || git -c advice.detachedHead=0 clone --branch "$3" --depth 1 "$1" "$2"
 }
 
+get_latest_release() {
+    curl --silent "https://api.github.com/repos/$1/releases/latest" |\
+        grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/'
+}
+
 true

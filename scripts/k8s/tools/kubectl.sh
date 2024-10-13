@@ -3,6 +3,9 @@
 export DOTFILES="$HOME/.dotfiles"
 . "$DOTFILES/scripts/helpers.sh"
 
+export GOPATH="$XDG_DATA_HOME/go"
+[ -d "$GOPATH" ] || mkdir -p "$GOPATH"
+
 install_kubectl() {
     if ! command_exists kubectl; then
         update
@@ -181,6 +184,76 @@ install_krew() {
     fi
 }
 
+install_kubespy() {
+    if command_exists kubectl; then
+        if ! command_exists kubespy; then
+            info "Installing kubespy"
+            if command_exists go; then
+                go install github.com/pulumi/kubespy@latest
+                success "Done!"
+            else
+                latest_version=$(get_latest_release "pulumi/kubespy")
+                wget --show-progree --timestamping https://github.com/pulumi/kubespy/releases/download/${latest_version}/kubespy-${latest_version}-linux-amd64.tar.gz
+                tar xvf kubespy-${latest_version}-linux-amd64.tar.gz
+                chmod +x kubespy
+                sudo mv kubespy /usr/local/bin/kubespy
+                rm -rf LICENSE README.md kubespy-${latest_version}-linux-amd64.tar.gz
+                success "Done!"
+            fi
+        else
+            warning "Already installed kubespy!"
+        fi
+    fi
+}
+
+install_kubent() {
+    if command_exists kubectl; then
+        if ! command_exists kubent; then
+            info "Installing kubent..."
+            sh -c "$(curl -sSL https://git.io/install-kubent)"
+            success "Done!"
+        else
+            warning "Already installed kubent!"
+        fi
+    fi
+}
+
+install_kube_seal() {
+    if command_exists kubectl; then
+        if ! command_exists kubeseal; then
+            if command_exists helm && checkyes "Install kubeseal with Helm?"; then
+                helm repo add sealed-secrets https://bitnami-labs.github.io/sealed-secrets
+                success "Done!"
+            elif command_exists go && checkyes "Install kubeseal with Go?"; then
+                go install github.com/bitnami-labs/sealed-secrets/cmd/kubeseal@main
+                success "Done!"
+            else
+                KUBESEAL_VERSION=$(curl -s https://api.github.com/repos/bitnami-labs/sealed-secrets/tags | jq -r '.[0].name' | cut -c 2-) 
+                curl -OL "https://github.com/bitnami-labs/sealed-secrets/releases/download/v${KUBESEAL_VERSION:?}/kubeseal-${KUBESEAL_VERSION:?}-linux-amd64.tar.gz"
+                tar -xvzf kubeseal-${KUBESEAL_VERSION:?}-linux-amd64.tar.gz kubeseal
+                sudo install -m 755 kubeseal /usr/local/bin/kubeseal
+                success "Done!"
+            fi
+        fi
+    fi
+}
+
+install_kustomize() {
+    if command_exists kubectl; then
+        if ! command_exists kustomize; then
+            if command_exists go && checkyes "Install Kustomize with Go?"; then
+                GOBIN=$(pwd)/ GO111MODULE=on go install sigs.k8s.io/kustomize/kustomize/v5@latest
+                mv kustomize "$GOPATH"/bin/kustomize
+                success "Done!"
+            else
+                curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+                sudo mv kustomize /usr/local/bin/kustomize
+                success "Done!"
+            fi
+        fi
+    fi
+}
+
 kube_help() {
     echo
     echo "$(tput setaf 2)==> $(tput setaf 220)Parameters:"
@@ -191,10 +264,14 @@ kube_help() {
     echo "  $(tput setaf 5)--control$(tput sgr0)        install Kube-Controller-Manager plugin"
     echo "  $(tput setaf 5)--convert$(tput sgr0)        install Kubectl-Convert plugin"
     echo "  $(tput setaf 5)--kubectx$(tput sgr0)        install Kubectx and Kubens"
+    echo "  $(tput setaf 5)--kubent$(tput sgr0)         install Kubent (Kube No Trouble)"
     echo "  $(tput setaf 5)--krew$(tput sgr0)           install Krew (Kubectl Plugin Manager)"
+    echo "  $(tput setaf 5)--kus$(tput sgr0)            install Kustomize"
     echo "  $(tput setaf 5)--log$(tput sgr0)            install Kube-Log-Runner plugin"
     echo "  $(tput setaf 5)--proxy$(tput sgr0)          install Kube-Proxy plugin"
     echo "  $(tput setaf 5)--schedule$(tput sgr0)       install Kube-Scheduler plugin"
+    echo "  $(tput setaf 5)--seal$(tput sgr0)           install Kubeseal command"
+    echo "  $(tput setaf 5)--spy$(tput sgr0)            install Kubespy command"
     echo "  $(tput setaf 5)--help$(tput sgr0)           show this message"
     echo
 }
