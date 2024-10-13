@@ -23,7 +23,12 @@ update_system() {
     sudo "$APT" update && sudo "$APT" upgrade -y
     check_apt_packages ack atool bash-completion build-essential ccache cmake curl direnv file \
         g++ gcc git make moreutils stow unzip usbutils zip wamerican wget
-    if [[ "$(uname -r)" =~ "WSL" ]]; then check_apt_packages wslu; fi
+    if [[ "$(uname -r)" =~ "WSL" ]]; then
+        check_apt_packages wslu
+        if checkyes "Install dependencies for building new kernel?"; then
+            check_apt_packages bc bison cpio dwarves flex libssl-dev libelf-dev python3 pahole
+        fi
+    fi
     success "Done!"
 }
 
@@ -88,6 +93,8 @@ setup_pyenv() {
     if ! command_exists pyenv && checkyes "Install Pyenv?"; then
         echo
         info "Installing pyenv..."
+        export PATH = "$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions/global/bin:$PATH"
+
         # python build prep
         if command_exists apt; then
             check_apt_packages libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev \
@@ -97,6 +104,7 @@ setup_pyenv() {
         fi
 
         [ -d "$PYENV_ROOT" ] && rm -rf "$PYENV_ROOT"
+
         checkout "${GITHUB}/pyenv/pyenv.git" "${PYENV_ROOT}" "${PYENV_GIT_TAG:-master}"
         checkout "${GITHUB}/pyenv/pyenv-doctor.git" "${PYENV_ROOT}/plugins/pyenv-doctor" "master"
         checkout "${GITHUB}/pyenv/pyenv-update.git" "${PYENV_ROOT}/plugins/pyenv-update" "master"
@@ -135,6 +143,7 @@ setup_poetry() {
     if ! command_exists poetry && checkyes "Install PyPoetry?"; then
         echo
         info "Installing PyPoetry..."
+        export PATH="$POETRY_HOME/bin:$PATH"
         curl -sSL https://install.python-poetry.org | python3 -
         echo
         info "Installing PyPoetry's plugins..."
@@ -169,6 +178,8 @@ setup_rbenv() {
     if ! command_exists rbenv && checkyes "Install Rbenv?"; then
         echo
         info "Installing Rbenv..."
+        export PATH="$RBENV_ROOT/bin:$RBENV_ROOT/shims:$RBENV_ROOT/versions/global/bin:$PATH"
+
         if command_exists apt || command_exists apt-get; then
             check_apt_packages autoconf patch build-essential libssl-dev libyaml-dev libreadline6-dev \
                 zlib1g-dev libgmp-dev libncurses5-dev libffi-dev libgdbm6 libgdbm-dev libdb-dev uuid-dev
