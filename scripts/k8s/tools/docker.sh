@@ -21,7 +21,7 @@ install_docker() {
         check_apt_packages docker-ce docker-ce-cli containerd.io docker-compose-plugin docker-buildx-plugin
         # Add Docker as a non-root user
         sudo usermod -aG docker "$USER"
-        nrewgrp docker
+        newgrp docker
     else
         warning "Already installed docker! Try to update/reinstall docker."
     fi
