@@ -68,4 +68,4 @@ alias 775='chmod 775'                  # -rwxrwxr-x (user: rwx, group: rwx, othe
 alias mx='chmod a+x'                   # ---x--x--x (user: --x, group: --x, other: --x)
 alias ux='chmod u+x'                   # ---x------ (user: --x, group: -, other: -)
 
-alias setup_kd='$DOTFILES/scripts/k8s/setup.sh'
+alias setkd='$DOTFILES/scripts/kube/setup.sh' # Install kube / docker
