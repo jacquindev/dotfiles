@@ -30,7 +30,7 @@ update_system() {
 backup_dot() {
     BACKUP_DIR="$XDG_CACHE_HOME/backup"
     [ -d "$BACKUP_DIR" ] || mkdir -p "$BACKUP_DIR"
-    for dfile in "$HOME/.config/nvim" "$HOME/.vim" "$HOME/.vimrc" "$HOME/.bashrc" "$HOME/.profile"; do
+    for dfile in "$HOME/.config/nvim" "$HOME/.vim" "$HOME/.vimrc" "$HOME/.bashrc" "$HOME/.profile" "$HOME/.bash_profile"; do
         if [ ! -L "$dfile" ]; then
             if [ -d "$dfile" ] || [ -f "$dfile" ]; then
                 filename="$(basename $dfile)"
@@ -63,6 +63,8 @@ setup_homebrew() {
 # stow
 stow_dot() {
     if ! command_exists stow; then check_apt_packages stow || check_brew_packages stow; fi
+    [ -f "$HOME/.bashrc" ] && rm -f "$HOME/.bashrc"
+    [ -f "$HOME/.profile" ] && rm -f "$HOME/.profile"
     builtin cd "$DOTFILES" && stow .
 }
 
