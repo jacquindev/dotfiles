@@ -39,7 +39,7 @@ export NVM_NO_USE=true
 export NVM_AUTO_USE=true
 export NVM_COMPLETION=true
 export NVM_LAZY_LOAD=true
-export NVM_LAZY_LOAD_EXTRA_COMMANDS=('vim' 'nvim')
+export NVM_LAZY_LOAD_EXTRA_COMMANDS=('vim' 'nvim' 'git-open' 'git-recent')
 
 # python
 export PYENV_ROOT="$XDG_DATA_HOME/pyenv"

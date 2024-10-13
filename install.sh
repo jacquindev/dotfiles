@@ -9,7 +9,6 @@ DOTFILES="$(pwd)"
 # Make dirs
 [ ! -d "$XDG_DATA_HOME/gnupg" ] && (mkdir -p "$XDG_DATA_HOME/gnupg" && chmod 600 "$XDG_DATA_HOME/gnupg")
 [ ! -d "$XDG_CACHE_HOME/wget" ] && mkdir -p "$XDG_CACHE_HOME/wget"
-[ ! -d "$XDG_DATA_HOME/bash" ] && mkdir -p "$XDG_DATA_HOME/bash"
 
 # github
 GITHUB="https://github.com"
@@ -23,12 +22,7 @@ update_system() {
     sudo "$APT" update && sudo "$APT" upgrade -y
     check_apt_packages ack atool bash-completion build-essential ccache cmake curl direnv file \
         g++ gcc git make moreutils stow unzip usbutils zip wamerican wget
-    if [[ "$(uname -r)" =~ "WSL" ]]; then
-        check_apt_packages wslu
-        if checkyes "Install dependencies for building new kernel?"; then
-            check_apt_packages bc bison cpio dwarves flex libssl-dev libelf-dev python3 pahole
-        fi
-    fi
+    if [[ "$(uname -r)" =~ "WSL" ]]; then check_apt_packages wslu; fi
     success "Done!"
 }
 
@@ -73,6 +67,7 @@ stow_dot() {
 }
 
 setup_shell() {
+    [ ! -d "$XDG_DATA_HOME/bash" ] && mkdir -p "$XDG_DATA_HOME/bash"
     export OSH="$XDG_DATA_HOME/bash/oh-my-bash"
     if [ ! -d "$OSH" ]; then
         info "Installing Oh-My-Bash..."

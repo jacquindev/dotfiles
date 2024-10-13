@@ -27,6 +27,28 @@ install_docker() {
     fi
 }
 
+docker_enable() {
+    if command_exists docker; then
+        # Enable services
+        info "Start and enable docker service"
+        sudo systemctl daemon-reload
+        sudo systemctl enable docker.service
+        sudo systemctl enable --now docker.socket
+        success "Done!"
+    fi
+}
+
+docker_status() {
+    if command_exists docker; then
+        echo
+        underline "${FMT_BOLD}${FMT_GREEN}Docker Service Status:${FMT_RESET}"
+        echo
+        systemctl status docker.socket
+    else
+        error "You must install docker to use this option!"
+    fi
+}
+
 purge_docker() {
     if command_exists docker; then
         info "Purging Docker Engine..."
@@ -71,6 +93,17 @@ install_dockerd() {
     fi
 }
 
+dockerd_enable() {
+    if command_exists docker && command_exists cri-dockerd; then
+        # Enable services
+        info "Start and enable cri-dockerd services"
+        sudo systemctl daemon-reload
+        sudo systemctl enable cri-docker.service
+        sudo systemctl enable --now cri-docker.socket
+        success "Done!"
+    fi
+}
+
 dockerd_status() {
     if command_exists cri-dockerd; then
         echo
@@ -87,9 +120,12 @@ docker_help() {
     echo "$(tput setaf 2)==> $(tput setaf 220)Parameters:"
     echo
     echo "  $(tput setaf 5)--install$(tput sgr0)        install Docker Engine"
+    echo "  $(tput setaf 5)--enable$(tput sgr0)         enable Docker service"
+    echo "  $(tput setaf 5)--status$(tput sgr0)         show Docker status"
     echo "  $(tput setaf 5)--purge$(tput sgr0)          uninstall Docker Engine and its packages"
     echo "  $(tput setaf 5)--cri$(tput sgr0)            install cri-dockerd"
-    echo "  $(tput setaf 5)--status$(tput sgr0)         show cri-dockerd status"
+    echo "  $(tput setaf 5)--enable-cri$(tput sgr0)     enable cri-dockerd.service"
+    echo "  $(tput setaf 5)--status-cri$(tput sgr0)     show cri-dockerd status"
     echo "  $(tput setaf 5)--help$(tput sgr0)           show this message"
     echo
 }

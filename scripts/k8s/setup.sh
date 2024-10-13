@@ -18,10 +18,19 @@ case "$1" in
     '--purge' | '-p' | 'rm')
         purge_docker
         ;;
+    '--enable')
+        docker_enable
+        ;;
+    '--status')
+        docker_status
+        ;;
     '--cri' | '-c')
         install_dockerd
         ;;
-    '--status' | '-s')
+    '--enable-cri')
+        dockerd_enable
+        ;;
+    '--status-cri')
         dockerd_status
         ;;
     '--help' | '-h')
@@ -112,9 +121,12 @@ case "$1" in
     echo "$(tput setaf 2)==> $(tput setaf 220)Available Commands: "
     echo " $(tput bold)$(tput setaf 208)docker:"
     echo "      $(tput setaf 4)docker --install$(tput sgr0)     install Docker Engine"
+    echo "      $(tput setaf 4)docker --enable-cri$(tput sgr0)  enable Docker service"
+    echo "      $(tput setaf 4)docker --status-cri$(tput sgr0)  show Docker status"
     echo "      $(tput setaf 4)docker --purge$(tput sgr0)       uninstall Docker Engine and its packages"
     echo "      $(tput setaf 4)docker --cri$(tput sgr0)         install cri-dockerd"
-    echo "      $(tput setaf 4)docker --status$(tput sgr0)      show cri-dockerd status"
+    echo "      $(tput setaf 4)docker --enable-cri$(tput sgr0)  enable cri-dockerd.service"
+    echo "      $(tput setaf 4)docker --status-cri$(tput sgr0)  show cri-dockerd status"
     echo "      $(tput setaf 4)docker --help$(tput sgr0)        show help of docker options"
     echo
     echo " $(tput bold)$(tput setaf 208)helm:"

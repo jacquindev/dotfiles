@@ -19,5 +19,5 @@ make KCONFIG_CONFIG=Microsoft/config-wsl
 sudo make modules_install headers_install
 
 printf "Input a Kernel location (eg: /mnt/c/) " && read -r location
-cp arch/x86/boot/bzImage $location
+cp arch/x86_64/boot/bzImage $location
 exit
