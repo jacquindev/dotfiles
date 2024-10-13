@@ -92,6 +92,9 @@ case "$1" in
     '--proxy')
         install_kube_proxy
         ;;
+    '--scape' | '--kubescape')
+        install_kubescape
+        ;;
     '--schedule' | 'scheduler' | '--sch')
         install_kube_scheduler
         ;;
@@ -160,6 +163,7 @@ case "$1" in
     echo "      $(tput setaf 4)kube --krew$(tput sgr0)         install Krew (Kubectl Plugin Manager)"
     echo "      $(tput setaf 4)kube --log$(tput sgr0)          install Kube-Log-Runner plugin"
     echo "      $(tput setaf 4)kube --proxy$(tput sgr0)        install Kube-Proxy plugin"
+    echo "      $(tput setaf 4)kube --scape$(tput sgr0)        install Kubescape command"
     echo "      $(tput setaf 4)kube --schedule$(tput sgr0)     install Kube-Scheduler plugin"
     echo "      $(tput setaf 4)kube --seal$(tput sgr0)         install Kubeseal command"
     echo "      $(tput setaf 4)kube --spy$(tput sgr0)          install Kubespy command"
