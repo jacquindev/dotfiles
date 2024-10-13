@@ -116,6 +116,7 @@ setup_pyenv() {
 
         echo
         info "Installing python..."
+        eval "$(pyenv init -)"
         pyenv install --list | grep '^  3.'
         printf "${FMT_PINK}Input a Python version: ${FMT_RESET}" && read -r python_version
         pyenv install "$python_version" --verbose
