@@ -45,15 +45,22 @@ if (( ${+commands[kubectx]} )); then
             ln -s "$file" "${ZSH_CACHE_DIR}/completions/${filename}"
         fi
     done
-    unset file
+    unset KUBECTX_FILES file
 fi
 
 # List of commands
 LOCAL_COMMANDS=(
     docker 
     helm 
-    helmfile 
-    kubectl 
+    helmfile
+    kubectl
+    kubeadm
+    kompose
+    kubebuilder
+    kubecm
+    kubescape
+    kubeshark
+    kubespy
     minikube 
 )
 for command in ${LOCAL_COMMANDS[@]}; do
