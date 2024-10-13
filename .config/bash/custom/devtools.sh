@@ -1,8 +1,4 @@
 #!/bin/bash
-# Load bash-preexec
-[[ -f "$XDG_CONFIG_HOME/bash/bash-preexec.sh" ]] &&
-    source "$XDG_CONFIG_HOME/bash/bash-preexec.sh"
-
 # Source atuin
 if command -v atuin >/dev/null 2>&1; then eval "$(atuin init bash)"; fi
 
@@ -17,8 +13,8 @@ if command -v pyenv >/dev/null 2>&1; then
 fi
 
 # Rbenv
-if command -v rbenv >/dev/null 2>&1; then 
-    eval "$(rbenv init - bash)";
+if command -v rbenv >/dev/null 2>&1; then
+    eval "$(rbenv init - bash)"
     eval "$(rbenv init - --no-rehash bash)"
 fi
 
