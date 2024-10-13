@@ -100,7 +100,7 @@ setup_pyenv() {
         [ -d "$PYENV_ROOT" ] && rm -rf "$PYENV_ROOT"
 
         export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions/global/bin:$PATH"
-        
+
         checkout "${GITHUB}/pyenv/pyenv.git" "${PYENV_ROOT}" "${PYENV_GIT_TAG:-master}"
         checkout "${GITHUB}/pyenv/pyenv-doctor.git" "${PYENV_ROOT}/plugins/pyenv-doctor" "master"
         checkout "${GITHUB}/pyenv/pyenv-update.git" "${PYENV_ROOT}/plugins/pyenv-update" "master"
@@ -108,20 +108,22 @@ setup_pyenv() {
         checkout "${GITHUB}/pyenv/pyenv-ccache.git" "${PYENV_ROOT}/plugins/pyenv-ccache" "master"
 
         builtin cd "$PYENV_ROOT" && src/configure && make -C src
-        
+
         {
             "${PYENV_ROOT}/bin/pyenv" init
             "${PYENV_ROOT}/bin/pyenv" virtualenv-init
         } >&2
 
         echo
-        info "Installing python..."
-        pyenv install --list | grep '^  3.'
-        printf "${FMT_PINK}Input a Python version: ${FMT_RESET}" && read -r python_version
-        pyenv install "$python_version" --verbose
-        pyenv global "$python_version"
-        builtin cd "$PYENV_ROOT/versions/" && ln -sf "$python_version" global
-        pyenv rehash
+        if checkyes "Install a python version now (Y) or later (n)?"; then
+            info "Installing python..."
+            pyenv install --list | grep '^  3.'
+            printf "${FMT_PINK}Input a Python version: ${FMT_RESET}" && read -r python_version
+            pyenv install "$python_version" --verbose
+            pyenv global "$python_version"
+            builtin cd "$PYENV_ROOT/versions/" && ln -sf "$python_version" global
+            pyenv rehash
+        fi
 
         builtin cd "$DOTFILES"
         success "Done!"
@@ -133,7 +135,7 @@ setup_pyenv() {
     python3 -m ensurepip --upgrade
     python3 -m pip install --upgrade --user pip --force
 
-    if ! command_exists pipx; then
+    if ! command_exists pipx && checkyes "Install pipx?"; then
         info "Installing pipx..."
         python3 -m pip install --user pipx
     fi
@@ -202,14 +204,16 @@ setup_rbenv() {
 
         "$RBENV_ROOT/bin/rbenv" init >&2
 
-        info
-        echo "Installing ruby..."
-        rbenv install --list
-        printf "${FMT_PINK}Input a Ruby version: ${FMT_RESET}" && read -r ruby_version
-        rbenv install "$ruby_version" --verbose
-        rbenv global "$ruby_version"
-        builtin cd "$RBENV_ROOT/versions/" && ln -sf "$ruby_version" global
-        rbenv rehash
+        echo
+        if checkyes "Install a ruby version now (Y) or later (n)?"; then
+            info "Installing ruby..."
+            rbenv install --list
+            printf "${FMT_PINK}Input a Ruby version: ${FMT_RESET}" && read -r ruby_version
+            rbenv install "$ruby_version" --verbose
+            rbenv global "$ruby_version"
+            builtin cd "$RBENV_ROOT/versions/" && ln -sf "$ruby_version" global
+            rbenv rehash
+        fi
         # rbenv doctor
         curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-doctor | bash
 
