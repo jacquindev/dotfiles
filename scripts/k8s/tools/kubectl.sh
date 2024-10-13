@@ -15,6 +15,7 @@ install_kubectl() {
         check_apt_packages kubelet kubeadm kubectl
         sudo apt-mark hold kubelet kubeadm kubectl
         sudo systemctl enable --now kubelet
+        success "Done!"
     else
         warning "Already installed Kubectl!"
     fi
@@ -27,12 +28,114 @@ install_kubectl_convert() {
             curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl-convert"
             curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl-convert.sha256"
             echo "Validate the binary"
-            echo
             echo "$(cat kubectl-convert.sha256) kubectl-convert" | sha256sum --check
             sudo install -o root -g root -m 0755 kubectl-convert /usr/local/bin/kubectl-convert
             rm -f kubectl-convert kubectl-convert.sha256
+            success "Done!"
         else
-            warning "Already installed kubectl-convert plugin!"
+            warning "Already installed kubectl-convert!"
+        fi
+    fi
+}
+
+install_kube_aggregator() {
+    if command_exists kubectl; then
+        if ! command_exists kube-aggregator; then
+            info "Installing kube-aggregator"
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kube-aggregator"
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kube-aggregator.sha256"
+            echo "Validate the binary"
+            echo "$(cat kube-aggregator.sha256) kube-aggregator" | sha256sum --check
+            sudo install -o root -g root -m 0755 kube-aggregator /usr/local/bin/kube-aggregator
+            rm -f kubectl-aggregator kube-aggregator.sha256
+            success "Done!"
+        else
+            warning "Already installed kube-aggregator!"
+        fi
+    fi
+}
+
+install_kube_apiserver() {
+    if command_exists kubectl; then
+        if ! command_exists kube-apiserver; then
+            info "Installing kube-apiserver"
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kube-apiserver"
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kube-apiserver.sha256"
+            echo "Validate the binary"
+            echo "$(cat kube-apiserver.sha256) kube-apiserver" | sha256sum --check
+            sudo install -o root -g root -m 0755 kube-apiserver /usr/local/bin/kube-apiserver
+            rm -f kube-apiserver kube-apiserver.sha256
+            success "Done!"
+        else
+            warning "Already installed kube-apiserver!"
+        fi
+    fi
+}
+
+install_kube_proxy() {
+    if command_exists kubectl; then
+        if ! command_exists kube-proxy; then
+            info "Installing kube-proxy"
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kube-proxy"
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kube-proxy.sha256"
+            echo "Validate the binary"
+            echo "$(cat kube-proxy.sha256) kube-proxy" | sha256sum --check
+            sudo install -o root -g root -m 0755 kube-proxy /usr/local/bin/kube-proxy
+            rm -f kube-proxy kube-proxy.sha256
+            success "Done!"
+        else
+            warning "Already installed kube-proxy!"
+        fi
+    fi
+}
+
+install_kube_scheduler() {
+    if command_exists kubectl; then
+        if ! command_exists kube-scheduler; then
+            info "Installing kube-scheduler"
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kube-scheduler"
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kube-scheduler.sha256"
+            echo "Validate the binary"
+            echo "$(cat kube-scheduler.sha256) kube-scheduler" | sha256sum --check
+            sudo install -o root -g root -m 0755 kube-scheduler /usr/local/bin/kube-scheduler
+            rm -f kube-scheduler kube-scheduler.sha256
+            success "Done!"
+        else
+            warning "Already installed kube-scheduler!"
+        fi
+    fi
+}
+
+install_kube_controller() {
+    if command_exists kubectl; then
+        if ! command_exists kube-controller-manager; then
+            info "Installing kube-controller-manager"
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kube-controller-manager"
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kube-controller-manager.sha256"
+            echo "Validate the binary"
+            echo "$(cat kube-controller-manager.sha256) kube-controller-manager" | sha256sum --check
+            sudo install -o root -g root -m 0755 kube-controller-manager /usr/local/bin/kube-controller-manager
+            rm -f kube-controller-manager kube-controller-manager.sha256
+            success "Done!"
+        else
+            warning "Already installed kube-controller-manager!"
+        fi
+    fi
+}
+
+install_kube_logrunner() {
+    if command_exists kubectl; then
+        if ! command_exists kube-log-runner; then
+            info "Installing kube-log-runner"
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kube-log-runner"
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kube-log-runner.sha256"
+            echo "Validate the binary"
+            echo "$(cat kube-log-runner.sha256) kube-log-runner" | sha256sum --check
+            sudo install -o root -g root -m 0755 kube-log-runner /usr/local/bin/kube-log-runner
+            rm -f kube-log-runner kube-log-runner.sha256
+            success "Done!"
+        else
+            warning "Already installed kube-log-runner!"
         fi
     fi
 }
@@ -44,6 +147,7 @@ install_kubectx() {
         git clone https://github.com/ahmetb/kubectx "$XDG_DATA_HOME/kubernetes/kubectx"
         sudo ln -s "$XDG_DATA_HOME/kubernetes/kubectx/kubectx" /usr/local/bin/kubectx
         sudo ln -s "$XDG_DATA_HOME/kubernetes/kubectx/kubens" /usr/local/bin/kubens
+        success "Done!"
     else
         warning "Already installed Kubectx!"
     fi
@@ -71,6 +175,7 @@ install_krew() {
         info "Add shell completion for kubectl-krew..."
         echo '#!/bin/sh\nkubectl krew __complete "$@"' >"$KREW_ROOT/bin/kubectl_complete-krew"
         chmod u+x "$KREW_ROOT/bin/kubectl_complete-krew"
+        success "Done!"
     else
         warning "Krew already installed!"
     fi
@@ -81,9 +186,15 @@ kube_help() {
     echo "$(tput setaf 2)==> $(tput setaf 220)Parameters:"
     echo
     echo "  $(tput setaf 5)--install$(tput sgr0)        install Kubectl"
+    echo "  $(tput setaf 5)--agg$(tput sgr0)            install Kube-Aggregator plugin"
+    echo "  $(tput setaf 5)--api$(tput sgr0)            install Kube-Apiserver plugin"
+    echo "  $(tput setaf 5)--control$(tput sgr0)        install Kube-Controller-Manager plugin"
     echo "  $(tput setaf 5)--convert$(tput sgr0)        install Kubectl-Convert plugin"
     echo "  $(tput setaf 5)--kubectx$(tput sgr0)        install Kubectx and Kubens"
     echo "  $(tput setaf 5)--krew$(tput sgr0)           install Krew (Kubectl Plugin Manager)"
+    echo "  $(tput setaf 5)--log$(tput sgr0)            install Kube-Log-Runner plugin"
+    echo "  $(tput setaf 5)--proxy$(tput sgr0)          install Kube-Proxy plugin"
+    echo "  $(tput setaf 5)--schedule$(tput sgr0)       install Kube-Scheduler plugin"
     echo "  $(tput setaf 5)--help$(tput sgr0)           show this message"
     echo
 }
