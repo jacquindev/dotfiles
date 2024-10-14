@@ -164,7 +164,7 @@ setup_rustup() {
     if (! command_exists rustup || ! command_exists cargo) && checkyes "Install RustUp?"; then
         echo
         info "Installing RustUp..."
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path -y
         \. "${CARGO_HOME}/env"
         echo
         info "Adding cargo packages..."

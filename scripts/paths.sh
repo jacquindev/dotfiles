@@ -50,7 +50,6 @@ if command -v yarn >/dev/null 2>&1; then pathappend "$(yarn global bin)"; fi
 [ -f "$CARGO_HOME/env" ] && source "$CARGO_HOME/env"
 
 # go path
-if [[ -n $(alias g 2>/dev/null) ]]; then unalias g; fi
 [ -d "$GOPATH/bin" ] && pathprepend "$GOPATH/bin"
 
 # custom tool: kinst
