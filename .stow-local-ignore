@@ -24,6 +24,7 @@ _darcs
 
 .config/zsh/completions
 .config/kube 
+.config/TabNine
 
 .shellcheckrc
 
