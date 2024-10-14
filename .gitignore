@@ -9,6 +9,7 @@
 .config/bash/custom/plugins
 .config/bash/custom/themes
 .config/kube
+.config/TabNine
 
 # Brew
 Brewfile.lock.json
