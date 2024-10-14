@@ -61,5 +61,21 @@ export BUNDLE_USER_PLUGIN="$XDG_DATA_HOME/bundle"
 # g (go version manager)
 export GOPATH="$XDG_DATA_HOME/go"
 
+# kinst (my custom command line)
+export KINST_LOCATION="$XDG_DATA_HOME/kinst"
+export KINST_BIN="$KINST_LOCATION/bin"
+
+# kubectl config 
+export KUBECONFIG="$XDG_CONFIG_HOME/kube/config"
+
+# minikube
+export MINIKUBE_HOME="$XDG_DATA_HOME/minikube"
+
 # krew
-export KREW_ROOT="$XDG_DATA_HOME/kubernetes/krew"
+export KREW_ROOT="$KINST_LOCATION/krew"
+
+# helm
+export HELM_CONFIG_HOME="$XDG_CONFIG_HOME/helm"
+export HELM_DATA_HOME="$XDG_DATA_HOME/helm"
+export HELM_CACHE_HOME="$XDG_CACHE_HOME/helm"
+

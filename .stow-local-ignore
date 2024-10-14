@@ -23,6 +23,7 @@ _darcs
 ^/COPYING
 
 .config/zsh/completions
+.config/kube 
 
 .shellcheckrc
 

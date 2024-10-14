@@ -9,6 +9,7 @@ DOTFILES="$(pwd)"
 # Make dirs
 [ ! -d "$XDG_DATA_HOME/gnupg" ] && (mkdir -p "$XDG_DATA_HOME/gnupg" && chmod 600 "$XDG_DATA_HOME/gnupg")
 [ ! -d "$XDG_CACHE_HOME/wget" ] && mkdir -p "$XDG_CACHE_HOME/wget"
+[ ! -d "$XDG_PROJECTS_DIR" ] && mkdir -p "$XDG_PROJECTS_DIR"
 
 # github
 GITHUB="https://github.com"

@@ -1,0 +1,161 @@
+#!/bin/sh
+
+set -e
+
+DOTFILES="$HOME/.dotfiles"
+. "$DOTFILES/scripts/helpers.sh"
+
+for file in "$DOTFILES/scripts/kube/functions/"*; do \. "$file"; done
+
+# Helper functions
+installed_warn() {
+    printf '%s💀  Already installed %s! Exit...%s\n' "${FMT_YELLOW}" "$*" "$FMT_RESET" >&2
+}
+
+not_installed_warn() {
+    printf '%s🙊  You must have installed %s to continue.%s\n' "${FMT_RED}" "$*" "$FMT_RESET" >&2
+}
+
+# Defined environment variables
+KINST_LOCATION="$XDG_DATA_HOME/kinst"
+KINST_BIN="$XDG_DATA_HOME/kinst/bin"
+
+[ -d $KINST_LOCATION ] || mkdir -p $KINST_LOCATION
+[ -d $KINST_BIN ] || mkdir -p $KINST_BIN
+
+# Ensure output has color (for prettiness)
+setup_color
+
+# Start
+case "$1" in
+'c' | 'cri')
+    case "$2" in
+    '-i' | '--install')
+        install_cri_dockerd
+        configure_cri_dockerd
+        start_cri_dockerd
+        ;;
+    '-u' | '--uninstall') uninstall_cri_dockerd ;;
+    '-s' | '--start') start_cri_dockerd ;;
+    '-h' | '--help' | '') cri_dockerd_help_message ;;
+    esac
+    ;;
+'d' | 'docker')
+    case "$2" in
+    'i' | '--install') install_docker ;;
+    '-u' | '--uninstall') uninstall_docker ;;
+    '-h' | '--help' | '') docker_help_message ;;
+    esac
+    ;;
+'h' | 'helm')
+    case "$2" in
+    '-i' | '--install')
+        case "$3" in
+        '') install_helm ;;
+        'docs' | 'helm-docs') install_helm_docs ;;
+        'file' | 'helmfile') install_helmfile ;;
+        'sman' | 'helmsman') install_helmsman ;;
+        'plugins') install_helm_plugins ;;
+        esac
+        ;;
+    '-u' | '--uninstall')
+        case "$3" in
+        '') uninstall_helm ;;
+        'docs' | 'helm-docs') if [ -f "$KINST_BIN/helm-docs" ]; then rm -f "$KINST_BIN/helm-docs"; fi ;;
+        'file' | 'helmfile') if [ -f "$KINST_BIN/helmfile" ]; then rm -f "$KINST_BIN/helmfile"; fi ;;
+        'sman' | 'helmsman') if [ -f "$KINST_BIN/helmsman" ]; then rm -f "$KINST_BIN/helmsman"; fi ;;
+        esac
+        ;;
+    '-h' | '--help' | '') helm_help_message ;;
+    esac
+    ;;
+'k' | 'kube')
+    case "$2" in
+    '-i' | '--install')
+        case "$3" in
+        '') install_kubectl ;;
+        'agg' | 'aggregator') install_kube_aggregator ;;
+        'api' | 'apiserver') install_kube_apiserver ;;
+        'control' | 'controller') install_kube_controller_manager ;;
+        'convert') install_kubectl_convert ;;
+        'linter') install_kube_linter ;;
+        'log' | 'log-runner') install_kube_log_runner ;;
+        'proxy') install_kube_proxy ;;
+        'scheduler') install_kube_scheduler ;;
+        'builder') install_kubebuilder ;;
+        'cm') install_kubecm ;;
+        'conform') install_kubeconform ;;
+        'ctx' | 'kubectx') install_kubectx ;;
+        'kompose') install_kompose ;;
+        'ks' | 'kus' | 'kustomize') install_kustomize ;;
+        'kw' | 'krew') install_krew ;;
+        'nt' | 'kubent') install_kubent ;;
+        'scape') install_kubescape ;;
+        'shark') install_kubeshark ;;
+        'spy') install_kubespy ;;
+        esac
+        ;;
+    '-h' | '--help' | '')
+        kube_help_message
+        ;;
+    '-u' | '--uninstall')
+        if [ "$3" = "" ] || [ "$3" = "kubectl" ]; then
+            uninstall_kubectl
+        elif [ "$3" = "all" ]; then
+            info "Uninstalling all kube programs..."
+            cd "$KINST_BIN"
+            find -type f -name '*kube*' ! -name 'kubectl-krew' ! -name 'kubectl_complete-krew' ! -name 'kubectx' ! -name 'kubens' -delete
+            find -type f -name 'kompose' -delete
+            find -type f -name 'kustomize' -delete
+            if command_exists kubectl-krew && checkyes "Remove krew (kubectl plugin manager)?"; then
+                rm -f kubectl-krew kubectl_complete-krew
+                rm -rf "$KINST_LOCATION/krew"
+            fi
+            if command_exists kubectx && checkyes "Remove kubectx and kubens?"; then
+                rm -f kubectx kubens
+                rm -rf "$KINST_LOCATION/kubectx"
+            fi
+            success "Done!"
+        else
+            for file in "$KINST_BIN/"*; do
+                if [ "$3" = "$file" ]; then
+                    info "Uninstalling $file..."
+                    if [ "$file" = "kubectx" ]; then
+                        rm -rf "$KINST_BIN/kubectx" "$KINST_BIN/kubens" "$KINST_LOCATION/kubectx"
+                    elif [ "$file" = "krew" ]; then
+                        rm -rf "$KINST_BIN/kubectl-krew" "$KINST_BIN/kubectl_complete-krew" "$KINST_LOCATION/krew"
+                    else
+                        rm -f "$file"
+                        success "Done!"
+                    fi
+                else
+                    uninstall_warn "$file"
+                fi
+            done
+            unset file
+        fi
+        ;;
+    esac
+    ;;
+'m' | 'minikube')
+    case "$2" in
+    '-i' | '--install') install_minikube ;;
+    '-u' | '--uninstall') uninstall_minikube ;;
+    '-h' | '--help' | '') mini_help_message ;;
+    'addons') mini_addons_list ;;
+    'status') mini_status ;;
+    esac
+    ;;
+'help' | '-h' | '--help' | '')
+    echo
+    echo "Usage: kinst [OPTIONS] [COMMAND]"
+    echo
+    echo "${FMT_GREEN}==> ${FMT_YELLOW}Options:${FMT_RESET}"
+    echo "  ${FMT_PINK}c, cri${FMT_RESET}           cri-docker"
+    echo "  ${FMT_PINK}d, docker${FMT_RESET}        docker engine"
+    echo "  ${FMT_PINK}h, helm${FMT_RESET}          helm"
+    echo "  ${FMT_PINK}k, kube${FMT_RESET}          kubernetes"
+    echo "  ${FMT_PINK}m, minikube${FMT_RESET}      minikube"
+    echo
+    ;;
+esac

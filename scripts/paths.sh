@@ -20,14 +20,13 @@ pathprepend() {
 [ -d "$HOME/.local/bin" ] && pathprepend "$HOME/.local/bin"
 [ -d /usr/local/sbin ] && pathprepend /usr/local/sbin
 
-# Uncomment this if you set /etc/wsl.conf [interop] appendWindowsPath=false
-# WSL
-# if [[ $(uname -r) =~ WSL ]]; then
-#   userprofile=$(wslpath "$(wslvar USERPROFILE)")
-#   # VSCode
-#   pathprepend "$userprofile/AppData/Local/Programs/Microsoft VS Code/bin"g up
-#   pathprepend "mnt/c/Windows/System32/notepad.exe"
-#   pathprepend "mnt/c/Program Files/usbipd-win/"
+# If you're using WSL and you have set /etc/wsl.conf [interop] as
+# appendWindowsPath=false, then you can add the path of the program you want
+# to use on Windows inside your WSL terminal here:
+#
+# if [[ "$(uname -r)" =~ "WSL" ]]; then
+#   USERPROFILE=$(wslpath "$(wslvar USERPROFILE)")
+#   pathprepend "$USERPROFILE/AppData/Local/Programs/Microsoft VS Code/bin"
 # fi
 
 #DEV TOOLS #############################################################################
@@ -54,11 +53,12 @@ if command -v yarn >/dev/null 2>&1; then pathappend "$(yarn global bin)"; fi
 if [[ -n $(alias g 2>/dev/null) ]]; then unalias g; fi
 [ -d "$GOPATH/bin" ] && pathappend "$GOPATH/bin"
 
-# Krew
-[ -d "$KREW_ROOT/bin" ] && pathappend "$KREW_ROOT/bin"
+# custom tool: kinst
+# a tool that I wrote for installing Kubernetes binaries ( including Docker and Minikube )
+# K-kubernetes, INST-installations
+# to see in detail: kinst help
+[ -d "$DOTFILES/scripts/kube/bin" ] && pathprepend "$DOTFILES/scripts/kube/bin"
+[ -d "$KINST_BIN" ] && pathappend "$KINST_BIN"
 
 # kubescape
 [ -d "$XDG_DATA_HOME/kubernetes/kubescape/bin" ] && pathappend "$XDG_DATA_HOME/kubernetes/kubescape/bin"
-
-# gnubin
-[ -d /home/linuxbrew/.linuxbrew/opt/coreutils/libexec/gnubin ] && pathprepend /home/linuxbrew/.linuxbrew/opt/coreutils/libexec/gnubin

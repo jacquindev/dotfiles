@@ -35,8 +35,8 @@ fi
 # Kubectx and Kubens
 if (( ${+commands[kubectx]} )); then
     KUBECTX_FILES=(
-        "$XDG_DATA_HOME/kubernetes/kubectx/completion/_kubectx.zsh"
-        "$XDG_DATA_HOME/kubernetes/kubectx/completion/_kubens.zsh"
+        "$KINST_LOCATION/kubectx/completion/_kubectx.zsh"
+        "$KINST_LOCATION/kubectx/completion/_kubens.zsh"
     )
     for file in ${KUBECTX_FILES[@]}; do
         if [[ ! -f "$file" ]]; then return; fi

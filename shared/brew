@@ -1,15 +1,21 @@
 #!/bin/sh
 # Load homebrew
-if [ -f /opt/homebrew/bin/brew ]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-elif [ -f /usr/local/bin/brew ]; then
-    eval "$(/usr/local/bin/brew shellenv)"
-elif [ -f /home/linuxbrew/.linuxbrew/bin/brew ]; then
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-elif [ -f "$HOME/.linuxbrew/bin/brew" ]; then
-    eval "$("$HOME/.linuxbrew/bin/brew" shellenv)"
-else
-    return
+if ! command -v brew >/dev/null 2>&1; then
+    local BREW_LOCATION
+    if [ -f /opt/homebrew/bin/brew ]; then
+        BREW_LOCATION="/opt/homebrew/bin/brew"
+    elif [ -f /usr/local/bin/brew ]; then
+        BREW_LOCATION="/usr/local/bin/brew"
+    elif [ -f /home/linuxbrew/.linuxbrew/bin/brew ]; then
+        BREW_LOCATION="/home/linuxbrew/.linuxbrew/bin/brew"
+    elif [ -f "$HOME/.linuxbrew/bin/brew" ]; then
+        BREW_LOCATION="$HOME/.linuxbrew/bin/brew"
+    else
+        return
+    fi
+
+    eval "$("${BREW_LOCATION}" shellenv)"
+    unset BREW_LOCATION
 fi
 
 # Aliases

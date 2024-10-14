@@ -8,6 +8,7 @@
 .config/bash/custom/aliases
 .config/bash/custom/plugins
 .config/bash/custom/themes
+.config/kube
 
 # Brew
 Brewfile.lock.json

@@ -62,7 +62,7 @@ case "$1" in
     ;;
 'kube')
     case "$2" in
-    '--install' | '-i')
+    'install' | 'i')
         install_kubectl
         ;;
     '--agg' | '--aggregator')
@@ -150,6 +150,11 @@ case "$1" in
     '--help' | '-h')
         mini_help
         ;;
+    esac
+    ;;
+'list' | 'ls')
+    case "$2" in
+
     esac
     ;;
 'help' | 'h' | '*')

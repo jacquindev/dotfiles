@@ -1,16 +1,16 @@
 if ! command -v kubectl >/dev/null; then return; fi
 
-if [ ! -f "$XDG_DATA_HOME/kubernetes/kubectl-aliases/.kubectl_aliases" ]; then
-    git clone https://github.com/ahmetb/kubectl-aliases.git "$XDG_DATA_HOME/kubernetes/kubectl-aliases"
+if [ ! -f "$KINST_LOCATION/kubectl-aliases/.kubectl_aliases" ]; then
+    git clone https://github.com/ahmetb/kubectl-aliases.git "$KINST_LOCATION/kubectl-aliases"
 fi
-source "$XDG_DATA_HOME/kubernetes/kubectl-aliases/.kubectl_aliases"
+source "$KINST_LOCATION/kubectl-aliases/.kubectl_aliases"
 
-kj() { 
-    k "$@" -o json | jq 
+kj() {
+    k "$@" -o json | jq
 }
-kjx() { 
+kjx() {
     k "$@" -o json | fx
 }
-ky() { 
-    k "$@" -o yaml | yh 
+ky() {
+    k "$@" -o yaml | yh
 }
