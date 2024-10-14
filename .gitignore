@@ -16,3 +16,5 @@ Brewfile.lock.json
 
 # WSL
 WSL2-Linux-Kernel
+
+foo*

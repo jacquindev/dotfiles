@@ -61,6 +61,7 @@ LOCAL_COMMANDS=(
     kubescape
     kubeshark
     kubespy
+    kustomize
     minikube 
 )
 for command in ${LOCAL_COMMANDS[@]}; do

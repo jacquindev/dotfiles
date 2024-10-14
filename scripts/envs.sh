@@ -60,6 +60,7 @@ export BUNDLE_USER_PLUGIN="$XDG_DATA_HOME/bundle"
 
 # g (go version manager)
 export GOPATH="$XDG_DATA_HOME/go"
+export GOROOT="$HOME/.go"
 
 # kinst (my custom command line)
 export KINST_LOCATION="$XDG_DATA_HOME/kinst"

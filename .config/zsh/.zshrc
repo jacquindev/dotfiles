@@ -25,5 +25,5 @@ if [ -d "$ZDOTDIR/lib" ]; then
     unset file
 fi
 
-# go version manager
-if [ -f "$HOME/.g/env" ]; then source "$HOME/.g/env"; fi
+# Unalias g
+if [[ -n $(alias g 2>/dev/null) ]]; then unalias g; fi

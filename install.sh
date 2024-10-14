@@ -232,18 +232,11 @@ setup_golang() {
         if ! command_exists g && checkyes "Install g (go version manager)?"; then
             echo
             info "Installing g..."
-            curl -sSL https://raw.githubusercontent.com/voidint/g/master/install.sh | bash
-            \. "$HOME/.g/env"
-            g ls-remote stable
-            echo
-            info "Installing go..."
-            printf "${FMT_PINK}Input a Go version: ${FMT_RESET}" && read -r go_version
-            g install "$go_version"
-            g use "$go_version" && g clean
-            success "Done!"
+            if [[ -n $(alias g 2>/dev/null) ]]; then unalias g; fi
+            curl -sSL https://git.io/g-install | sh -s
         elif command_exists g; then
             info "Updating g..."
-            g self update
+            g self-upgrade
         fi
     fi
 }

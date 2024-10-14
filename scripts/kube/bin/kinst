@@ -91,6 +91,7 @@ case "$1" in
         'kw' | 'krew') install_krew ;;
         'nt' | 'kubent') install_kubent ;;
         'scape') install_kubescape ;;
+        'seal') install_kubeseal ;;
         'shark') install_kubeshark ;;
         'spy') install_kubespy ;;
         esac
@@ -115,6 +116,7 @@ case "$1" in
                 rm -f kubectx kubens
                 rm -rf "$KINST_LOCATION/kubectx"
             fi
+            if [ -d "$KINST_LOCATION/kubescape" ]; then rm -rf "$KINST_LOCATION/kubescape"; fi
             success "Done!"
         else
             for file in "$KINST_BIN/"*; do

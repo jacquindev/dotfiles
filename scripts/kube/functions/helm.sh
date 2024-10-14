@@ -78,7 +78,7 @@ install_helm_docs() {
         if ! command_exists helm-docs; then
             if command_exists go; then
                 info "Installing helm-docs..."
-                GOPATH="$KINST_BIN" go install github.com/norwoodj/helm-docs/cmd/helm-docs@latest
+                GOPATH="$KINST_LOCATION" go install github.com/norwoodj/helm-docs/cmd/helm-docs@latest
                 success "Done!"
             else
                 info "Installing helm-docs with Homebrew..."

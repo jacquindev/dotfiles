@@ -17,5 +17,5 @@ if [ -f "$HOME/.config/bash/bashrc" ]; then
     source "$HOME/.config/bash/bashrc"
 fi
 
-# g (Go version manager)
-[ -s "${HOME}/.g/env" ] && \. "${HOME}/.g/env" # g shell setup
+# Unalias g
+if [[ -n $(alias g 2>/dev/null) ]]; then unalias g; fi

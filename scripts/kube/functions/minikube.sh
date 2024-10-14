@@ -30,7 +30,7 @@ uninstall_minikube() {
 mini_addons_list() {
     if command_exists minikube; then
         echo
-        underline "${FMT_ORANGE}${FMT_BOLD}Enabled Minikube Addons: ${FMT_RESET}"
+        underline "${FMT_ORANGE}${FMT_BOLD}Enabled Minikube Addons:${FMT_RESET}"
         minikube addons list | grep STATUS && minikube addons list | grep enabled
     else
         not_installed_warn "minikube"
@@ -40,7 +40,7 @@ mini_addons_list() {
 mini_status() {
     if command_exists minikube; then
         echo
-        underline "${FMT_ORANGE}${FMT_BOLD}Current Status of Minikube: ${FMT_RESET}"
+        underline "${FMT_ORANGE}${FMT_BOLD}Current Status of Minikube:${FMT_RESET}"
         minikube status
     else
         not_installed_warn "minikube"

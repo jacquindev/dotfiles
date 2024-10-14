@@ -11,10 +11,10 @@ git clone https://github.com/microsoft/WSL2-Linux-Kernel.git --depth 1 -b linux-
 builtin cd WSL2-Linux-Kernel
 
 # (Optional)
-make menuconfig KCONFIG_CONFIG=Microsoft/config-wsl
+# make menuconfig KCONFIG_CONFIG=Microsoft/config-wsl
 
 # Build the kernel
-make KCONFIG_CONFIG=Microsoft/config-wsl
+make -j$(nproc) KCONFIG_CONFIG=Microsoft/config-wsl
 
 sudo make modules_install headers_install
 

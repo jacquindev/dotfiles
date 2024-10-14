@@ -174,11 +174,15 @@ install_kube_scheduler() {
 install_kubebuilder() {
     if command_exists kubectl; then
         if ! command_exists kubebuilder; then
-            info "Installing kubebuilder..."
-            curl -L -o kubebuilder "https://go.kubebuilder.io/dl/latest/$(go env GOOS)/$(go env GOARCH)"
-            chmod +x kubebuilder
-            mv kubebuilder "$KINST_BIN/kubebuilder"
-            success "Done!"
+            if command_exists go && command_exists docker && command_exists kubectl; then
+                info "Installing kubebuilder..."
+                curl -L -o kubebuilder "https://go.kubebuilder.io/dl/latest/$(go env GOOS)/$(go env GOARCH)"
+                chmod +x kubebuilder
+                mv kubebuilder "$KINST_BIN/kubebuilder"
+                success "Done!"
+            else
+                warning "You must have go, docker and kubectl installed before install kubebuilder!"
+            fi
         else
             installed_warn "kubebuilder"
         fi
@@ -192,12 +196,12 @@ install_kubecm() {
     if command_exists kubectl; then
         if ! command_exists kubecm; then
             info "Installing kubecm"
-            latest_version=$(get_latest_release "sunny0826/kubecm")
-            curl -LO https://github.com/sunny0826/kubecm/releases/download/${latest_version}/kubecm_${latest_version}_Linux_x86_64.tar.gz
-            tar xvf kubecm_${latest_version}_Linux_x86_64.tar.gz
+            KUBECM_VERSION=$(get_latest_release "sunny0826/kubecm")
+            curl -LO https://github.com/sunny0826/kubecm/releases/download/${KUBECM_VERSION}/kubecm_${KUBECM_VERSION}_Linux_x86_64.tar.gz
+            tar xvf kubecm_${KUBECM_VERSION}_Linux_x86_64.tar.gz
             chmod 755 kubecm
             mv kubecm "$KINST_BIN/kubecm"
-            rm -rf LICENSE README.md kubecm_${latest_version}_Linux_x86_64.tar.gz
+            rm -f LICENSE README.md kubecm_${KUBECM_VERSION}_Linux_x86_64.tar.gz
             success "Done!"
         else
             installed_warn "kubecm"
@@ -213,7 +217,7 @@ install_kubeconform() {
         if ! command_exists kubeconform; then
             if command_exists go; then
                 info "Installing kubeconform..."
-                GOPATH="$KINST_BIN" go install github.com/yannh/kubeconform/cmd/kubeconform@latest
+                GOPATH="$KINST_LOCATION" go install github.com/yannh/kubeconform/cmd/kubeconform@latest
                 success "Done!"
             else
                 info "Installing kubeconform..."
@@ -238,12 +242,12 @@ install_kube_linter() {
         if ! command_exists kube-linter; then
             if command_exists go; then
                 info "Installing kube-linter..."
-                GOPATH="$KINST_BIN" go install golang.stackrox.io/kube-linter/cmd/kube-linter@latest
+                GOPATH="$KINST_LOCATION" go install golang.stackrox.io/kube-linter/cmd/kube-linter@latest
                 success "Done!"
             else
                 info "Installing kube-linter..."
-                latest_version=$(get_latest_release "stackrox/kube-linter")
-                wget --show-progress --timestamping https://github.com/stackrox/kube-linter/releases/download/${latest_version}/kube-linter-linux.tar.gz
+                LINTER_VERSION=$(get_latest_release "stackrox/kube-linter")
+                wget --show-progress --timestamping https://github.com/stackrox/kube-linter/releases/download/${LINTER_VERSION}/kube-linter-linux.tar.gz
                 tar xvf kube-linter-linux.tar.gz
                 chmod 755 kube-linter
                 mv kube-linter "$KINST_BIN/kube-linter"
@@ -263,11 +267,11 @@ install_kubent() {
     if command_exists kubectl; then
         if ! command_exists kubent; then
             info "Installing kubent (kube-no-trouble)..."
-            latest_version=$(get_latest_version "doitintl/kube-no-trouble")
-            wget --show-progress --timestamping https://github.com/doitintl/kube-no-trouble/releases/download/${latest_version}/kubent-${latest_version}-linux-amd64.tar.gz
-            tar xvf kubent-${latest_version}-linux-amd64.tar.gz
+            KUBENT_VERSION=$(get_latest_release "doitintl/kube-no-trouble")
+            wget --show-progress --timestamping https://github.com/doitintl/kube-no-trouble/releases/download/${KUBENT_VERSION}/kubent-${KUBENT_VERSION}-linux-amd64.tar.gz
+            tar xvf kubent-${KUBENT_VERSION}-linux-amd64.tar.gz
             mv kubent "$KINST_BIN/kubent"
-            rm -f kubent-${latest_version}-linux-amd64.tar.gz
+            rm -f kubent-${KUBENT_VERSION}-linux-amd64.tar.gz
             success "Done!"
         else
             installed_warn "kubent (kube-no-trouble)"
@@ -300,7 +304,7 @@ install_kubeseal() {
         if ! command_exists kubeseal; then
             if command_exists go; then
                 info "Installing kubeseal..."
-                GOPATH="$KINST_BIN" go install github.com/bitnami-labs/sealed-secrets/cmd/kubeseal@main
+                GOPATH="$KINST_LOCATION" go install github.com/bitnami-labs/sealed-secrets/cmd/kubeseal@main
                 success "Done!"
             else
                 info "Installing kubeseal..."
@@ -349,10 +353,9 @@ install_kubeshark() {
 install_kubespy() {
     if command_exists kubectl; then
         if ! command_exists kubespy; then
-            info "Installing kubespy"
             if command_exists go; then
                 info "Installing kubespy..."
-                GOPATH="$KINST_BIN" go install github.com/pulumi/kubespy@latest
+                GOPATH="$KINST_LOCATION" go install github.com/pulumi/kubespy@latest
                 success "Done!"
             else
                 latest_version=$(get_latest_release "pulumi/kubespy")
@@ -379,7 +382,7 @@ install_kompose() {
         if ! command_exists kompose; then
             if command_exists go; then
                 info "Installing kompose..."
-                GOPATH="$KINST_BIN" go install github.com/kubernetes/kompose@latest
+                GOPATH="$KINST_LOCATION" go install github.com/kubernetes/kompose@latest
                 success "Done!"
             else
                 info "Installing kompose..."
@@ -403,13 +406,16 @@ install_kustomize() {
         if ! command_exists kustomize; then
             if command_exists go; then
                 info "Installing kustomize..."
-                builtin cd "$KINST_BIN"
-                GOBIN=$(pwd)/ GO111MODULE=on go install sigs.k8s.io/kustomize/kustomize/v5@latest
+                GOPATH="$KINST_LOCATION" go install sigs.k8s.io/kustomize/kustomize/v5@latest
                 success "Done!"
             else
                 info "Installing kustomize..."
-                builtin cd "$KINST_BIN"
-                curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+                KUS_VERSION=$(get_latest_release "kubernetes-sigs/kustomize")
+                KUS_VERSION=${KUS_VERSION##*/}
+                curl -LO https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${KUS_VERSION}/kustomize_${KUS_VERSION}_linux_amd64.tar.gz
+                tar xvf kustomize_${KUS_VERSION}_linux_amd64.tar.gz
+                mv kustomize "$KINST_BIN/kustomize"
+                rm -f kustomize_${KUS_VERSION}_linux_amd64.tar.gz
                 success "Done!"
             fi
         else
