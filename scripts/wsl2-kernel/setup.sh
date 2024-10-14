@@ -3,7 +3,10 @@
 export DOTFILES="$HOME/.dotfiles"
 . "$DOTFILES/scripts/helpers.sh"
 
-if [[ ! "$(uname -r)" =~ "WSL" ]]; then return; fi
+if [[ ! "$(uname -r)" =~ "WSL" ]]; then 
+    warning "This script only works on WSL machine! Exiting..."
+    return
+fi
 
 check_apt_packages bc bison cpio dwarves flex libssl-dev libelf-dev python3 pahole
 
@@ -20,4 +23,13 @@ sudo make modules_install headers_install
 
 printf "Input a Kernel location (eg: /mnt/c/) " && read -r location
 cp arch/x86_64/boot/bzImage $location
-exit
+cd .. && rm -rf WSL2-Linux-Kernel
+
+echo
+echo "Please edit your .wslconfig with your kernel location: $location"
+echo "For example, if your location is /mnt/c/ then your config would be:"
+echo "[WSL2]"
+echo 'kernel=C:\\\\bzImage'
+echo
+
+exit 1
