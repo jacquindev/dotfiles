@@ -49,16 +49,9 @@ if command -v yarn >/dev/null 2>&1; then pathappend "$(yarn global bin)"; fi
 # rust
 [ -f "$CARGO_HOME/env" ] && source "$CARGO_HOME/env"
 
-# go path
-if [[ -n $(alias g 2>/dev/null) ]]; then unalias g; fi
-[ -d "$GOPATH/bin" ] && pathappend "$GOPATH/bin"
-
 # custom tool: kinst
 # a tool that I wrote for installing Kubernetes binaries ( including Docker and Minikube )
 # K-kubernetes, INST-installations
 # to see in detail: kinst help
 [ -d "$DOTFILES/scripts/kube/bin" ] && pathprepend "$DOTFILES/scripts/kube/bin"
-[ -d "$KINST_BIN" ] && pathappend "$KINST_BIN"
-
-# kubescape
-[ -d "$XDG_DATA_HOME/kubernetes/kubescape/bin" ] && pathappend "$XDG_DATA_HOME/kubernetes/kubescape/bin"
+[ -d "$KINST_BIN" ] && pathprepend "$KINST_BIN"

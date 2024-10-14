@@ -16,5 +16,6 @@ shopt -s checkwinsize
 if [ -f "$HOME/.config/bash/bashrc" ]; then
     source "$HOME/.config/bash/bashrc"
 fi
-[ -s "${HOME}/.g/env" ] && \. "${HOME}/.g/env"  # g shell setup
 
+# g (Go version manager)
+[ -s "${HOME}/.g/env" ] && \. "${HOME}/.g/env" # g shell setup
