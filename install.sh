@@ -246,21 +246,21 @@ clean_home() {
     info "Cleaning up home..."
     if command_exists apt; then sudo apt autoremove && sudo apt autoclean; else sudo apt-get autoremove && sudo apt-get autoclean; fi
     if [ -d /etc/update-motd.d ]; then sudo chmod -x /etc/update-motd.d/*; fi
-    # sleep 5
-    # echo
-    # echo "${FMT_ORANGE}To disable dynamic motd and news:"
-    # echo "Edit the file ${FMT_YELLOW}/etc/default/motd-news${FMT_ORANGE}"
-    # echo "FROM: ${FMT_YELLOW}ENABLED=1${FMT_ORANGE} TO: ${FMT_YELLOW}ENABLED=0${FMT_ORANGE}"
-    # sleep 2
-    # echo
-    # echo "${FMT_ORANGE}To disable ~/.sudo_as_admin_successful file, please run this command:"
-    # echo "${FMT_YELLOW}sudo visudo"
-    # echo "${FMT_ORANGE}Then add the following line:"
-    # echo "${FMT_YELLOW}Defaults !admin_flag${FMT_RESET}"
-    # sleep 3
     if [ ! -f "$HOME/.hushlogin" ] || [ ! -L "$HOME/.hushlogin" ]; then touch "$HOME/.hushlogin"; fi
     if [ -f "$HOME/.sudo_as_admin_successful" ]; then rm -f "$HOME/.sudo_as_admin_successful"; fi
     if [ -f "$HOME/.motd_shown" ]; then rm -f "$HOME/.motd_shown"; fi
+    #
+    # To disable dynamic .motd-shown file automatically generated, please edit the file /etc/default/motd-news
+    # Change ENABLED=1 to ENABLED=0
+    #
+    # To disable .sudo_as_admin_successful automatically generated in HOME directory, please type: `sudo visudo`
+    # Then add the following line to change where the file will be at:
+    # Defaults      admin_flag=~/.cache/.sudo_as_admin_successful
+    # 
+    # Or else, you can disable auto-generated file completely with the option:
+    # Default       !admin_flag
+    # 
+    #
     success "Done!"
 }
 
