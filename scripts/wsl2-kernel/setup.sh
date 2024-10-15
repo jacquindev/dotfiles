@@ -12,22 +12,22 @@ check_apt_packages bc bison cpio dwarves flex libssl-dev libelf-dev python3 paho
 
 KERNEL_VERSION=$(get_latest_release "microsoft/WSL2-Linux-Kernel")
 wget --show-progress --timestamping https://github.com/microsoft/WSL2-Linux-Kernel/archive/refs/tags/${KERNEL_VERSION}.tar.gz
-mkdir WSL2-Linux-Kernel
-tar -xvzf WSL2-Linux-Kernel-${KERNEL_VERSION}.tar.gz -C WSL2-Linux-Kernel
-rm -f WSL2-Linux-Kernel-${KERNEL_VERSION}.tar.gz
-builtin cd WSL2-Linux-Kernel && make -j$(nproc) KCONFIG_CONFIG=Microsoft/config-wsl
+mkdir WSL2-Linux-Kernel && tar -xvzf WSL2-Linux-Kernel-${KERNEL_VERSION}.tar.gz
+builtin cd WSL2-Linux-Kernel-${KERNEL_VERSION}
 
 # (Optional)
 # make menuconfig KCONFIG_CONFIG=Microsoft/config-wsl
 
 # Build the kernel
-make -j$(nproc) KCONFIG_CONFIG=Microsoft/config-wsl
+echo "Building the kernel. This may took awhile. Please be patient..."
+sleep 5
+echo
 
+make -j$(nproc) KCONFIG_CONFIG=Microsoft/config-wsl
 sudo make modules_install headers_install
 
 printf "Input a Kernel location (eg: /mnt/c/) " && read -r location
-cp arch/x86/boot/bzImage $location
-cd .. && rm -rf WSL2-Linux-Kernel
+cp arch/x86_64/boot/bzImage $location
 
 echo
 echo 'Please edit your .wslconfig with your kernel location: $location'
