@@ -51,7 +51,7 @@ setup_homebrew() {
         echo
         info "Installing Homebrew packages..."
         brew bundle
-        if command_exists oh-my-posh; then oh-my-posh enable autoupgrade; fi
+        # if command_exists oh-my-posh; then oh-my-posh enable autoupgrade; fi
         success "Done!"
     elif command_exists brew; then
         info "Updating Homebrew..."
