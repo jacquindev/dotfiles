@@ -7,7 +7,7 @@ install_cri_dockerd() {
         check_apt_packages curl git wget
 
         latest_version=$(curl -s https://api.github.com/repos/Mirantis/cri-dockerd/releases/latest | grep tag_name | cut -d '"' -f 4 | sed 's/v//g')
-        wget --show-progress --timestamping https://github.com/Mirantis/cri-dockerd/releases/download/v${latest_version}/cri-dockerd-${latest_version}.amd64.tgz tar xvf cri-dockerd-${latest_version}.amd64.tgz
+        wget --show-progress --timestamping https://github.com/Mirantis/cri-dockerd/releases/download/v${latest_version}/cri-dockerd-${latest_version}.amd64.tgz
         tar xvf cri-dockerd-${latest_version}.amd64.tgz
         sudo mv cri-dockerd/cri-dockerd /usr/local/bin/
         rm -rf cri-dockerd cri-dockerd-0.3.15.amd64.tgz
@@ -30,7 +30,7 @@ start_cri_dockerd() {
     sudo systemctl daemon-reload
     sudo systemctl enable cri-docker.service
     sudo systemctl enable --now cri-docker.socket
-    sytemctl status --no-pager cri-docker.service || {
+    systemctl status --no-pager cri-docker.service || {
         err_exit "Failed to start cri-docker"
     }
     crictl --runtime-endpoint "unix:///var/run/cri-dockerd.sock" ps
