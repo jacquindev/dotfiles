@@ -35,11 +35,14 @@ export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
 export npm_config_cache="$XDG_CACHE_HOME/npm"
 export PNPM_HOME="$XDG_DATA_HOME/pnpm"
 
+# Uncomment the line below to not use nvm
+#export NVM_NO_LOAD=true
+
 export NVM_NO_USE=true
 export NVM_AUTO_USE=true
 export NVM_COMPLETION=true
 export NVM_LAZY_LOAD=true
-export NVM_LAZY_LOAD_EXTRA_COMMANDS=('vim' 'nvim' 'git-open' 'git-recent')
+export NVM_LAZY_LOAD_EXTRA_COMMANDS=('vim' 'nvim')
 
 # python
 export PYENV_ROOT="$XDG_DATA_HOME/pyenv"
@@ -63,8 +66,8 @@ export GOPATH="$XDG_DATA_HOME/go"
 export GOROOT="$HOME/.go"
 
 # kinst (my custom command line)
-export KINST_LOCATION="$XDG_DATA_HOME/kinst"
-export KINST_BIN="$KINST_LOCATION/bin"
+# export KINST_LOCATION="$XDG_DATA_HOME/kinst"
+# export KINST_BIN="$KINST_LOCATION/bin"
 
 # kubectl config 
 export KUBECONFIG="$XDG_CONFIG_HOME/kube/config"
@@ -73,7 +76,7 @@ export KUBECONFIG="$XDG_CONFIG_HOME/kube/config"
 export MINIKUBE_HOME="$XDG_DATA_HOME/minikube"
 
 # krew
-export KREW_ROOT="$KINST_LOCATION/krew"
+# export KREW_ROOT="$KINST_LOCATION/krew"
 
 # helm
 export HELM_CONFIG_HOME="$XDG_CONFIG_HOME/helm"

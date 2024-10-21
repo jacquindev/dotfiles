@@ -19,3 +19,6 @@ fi
 
 # Unalias g
 if [[ -n $(alias g 2>/dev/null) ]]; then unalias g; fi
+
+# Added by `rbenv init` on Mon Oct 21 08:59:05 +07 2024
+eval "$(rbenv init - --no-rehash bash)"

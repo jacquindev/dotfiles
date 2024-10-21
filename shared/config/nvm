@@ -140,9 +140,15 @@ _nvm_install() {
     git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR"
     _nvm_latest_release_tag=$(builtin cd "$NVM_DIR" && git fetch --quiet --tags origin && git describe --abbrev=0 --tags --match "v[0-9]*" "$(git rev-list --tags --max-count=1)")
     builtin cd "$NVM_DIR" && git checkout --quiet "$_nvm_latest_release_tag"
-
-    echo "git-open" >>"$NVM_DIR/default_packages"
-    echo "git-recent" >>"$NVM_DIR/default_packages"
+    
+    [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+    printf '%sUse LTS (Y) or latest node (n)? %s' "$(tput setaf 220)" "$(tput sgr0)"
+    read -r opt
+    case $opt in
+    y* | Y*) nvm install --lts; nvm install-latest-npm ;;
+    n* | N*) nvm install node; nvm install-latest-npm ;;
+    *) echo "Skipped installing node. Please do it yourself."; exit 0 ;; 
+    esac
     echo "${FMT_GREEN}Done!${FMT_RESET}"
 }
 
@@ -172,7 +178,7 @@ _nvm_completion() {
 }
 
 if [[ "$NVM_NO_LOAD" != true ]]; then
-    if [[ ! -f "$NVM_DIR/nvm.sh" ]]; then _nvm_install; fi
+    if [[ ! -d "$NVM_DIR" ]]; then _nvm_install; fi
 
     if [[ -f "$NVM_DIR/nvm.sh" ]]; then
         [[ "$NVM_LAZY_LOAD" == true ]] && _nvm_lazy_load || _nvm_load

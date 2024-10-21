@@ -2,6 +2,9 @@
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
 
+vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
+
 -- Improve startup time as preferred in: https://github.com/LazyVim/LazyVim/discussions/4112
 vim.opt.clipboard = ""
 vim.schedule(function()
@@ -21,7 +24,7 @@ end
 
 vim.opt.undofile = true
 
--- Toggle invisible characters 
+-- Toggle invisible characters
 vim.opt.list = true
 vim.opt.listchars = {
   tab = "  ",
@@ -50,3 +53,13 @@ if vim.fn.executable("rg") then
 else
   vim.opt.grepformat = "%f:%l:%c:%m"
 end
+
+vim.opt.ignorecase = true
+vim.opt.incsearch = true
+vim.opt.infercase = true
+vim.opt.smartcase = true
+vim.opt.smartindent = true
+
+vim.opt.path:append("**")
+vim.opt.shortmess:append("s")
+vim.opt.mousemoveevent = true
