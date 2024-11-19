@@ -23,11 +23,7 @@
 > [!NOTE]
 > For Windows 11 Dotfiles Repo is maintained here -> [windots](https://github.com/jacquindev/windots.git)
 
-<div align="center">
-  <a href="#-setup"><kbd> <br> 🔧 Setup <br> </kbd></a>&ensp;&ensp;
-</div>
-
-<br>
+<br/>
 
 ## 🔧 Setup
 
