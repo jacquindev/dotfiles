@@ -1,0 +1,11 @@
+"$schema" = "https://yazi-rs.github.io/schemas/yazi.json"
+
+[[plugin.prepend_fetchers]]
+id = "git"
+name = "*"
+run = "git"
+
+[[plugin.prepend_fetchers]]
+id = "git"
+name = "*/"
+run = "git"

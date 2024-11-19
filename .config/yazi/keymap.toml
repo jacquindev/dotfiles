@@ -1,0 +1,45 @@
+"$schema" = "https://yazi-rs.github.io/schemas/keymap.json"
+
+[completion]
+prepend_keymap = [
+    { on = "<C-k>", run = "arrow -1", desc = "Move cursor up" },
+    { on = "<C-j>", run = "arrow 1", desc = "Move cursor down" },
+]
+
+[input]
+prepend_keymap = [{ on = ["<Esc>"], run = "close", desc = "Cancel input" }]
+
+[[manager.prepend_keymap]]
+on = "!"
+run = 'shell "$SHELL" --block --confirm'
+desc = "Open shell here"
+
+[[manager.prepend_keymap]]
+on = "T"
+run = "plugin --sync hide-preview"
+desc = "Hide or show preview"
+
+[[manager.prepend_keymap]]
+on = "<C-d>"
+run = "plugin diff"
+desc = "Diff the selected with the hovered file"
+
+[[manager.prepend_keymap]]
+on = ["f", "g"]
+run = "plugin fg"
+desc = "find file by content (fuzzy match)"
+
+[[manager.prepend_keymap]]
+on = ["f", "G"]
+run = "plugin fg --args='rg'"
+desc = "find file by content (ripgrep match)"
+
+[[manager.prepend_keymap]]
+on = ["f", "f"]
+run = "plugin fg --args='fzf'"
+desc = "find file by name"
+
+[[manager.prepend_keymap]]
+on = ["f", "F"]
+run = "plugin smart-filter"
+desc = "Smart filter"

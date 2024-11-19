@@ -1,0 +1,8 @@
+cache=~/.cache/npm
+fetch-retry-maxtimeout=6000000
+fetch-retry-mintimeout=1000000
+timeout=60000
+loglevel=warn
+registry=https://registry.npmjs.org
+store-dir=~/.local/share/pnpm-store
+strict-ssl=false
