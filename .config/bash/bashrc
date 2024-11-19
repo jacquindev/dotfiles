@@ -1,0 +1,20 @@
+#!/bin/bash
+
+export DOTFILES="$HOME/dotfiles"
+
+# Unalias g
+if [[ -n $(alias g 2>/dev/null) ]]; then unalias g; fi
+
+# Source scripts
+[ -f "$DOTFILES/scripts/envs.sh" ] && source "$DOTFILES/scripts/envs.sh"
+[ -f "$DOTFILES/scripts/paths.sh" ] && source "$DOTFILES/scripts/paths.sh"
+[ -f "$DOTFILES/scripts/brew.sh" ] && source "$DOTFILES/scripts/brew.sh"
+
+# Oh-my-posh
+if command -v "oh-my-posh" >/dev/null 2>&1; then
+  eval "$(oh-my-posh init bash --config $(brew --prefix oh-my-posh)/themes/hunk.omp.json)"
+fi
+
+# shared folder
+for file in "$DOTFILES/scripts/shared/"*; do source "$file"; done
+unset file

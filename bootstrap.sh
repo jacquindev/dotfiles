@@ -4,16 +4,31 @@
 # shellcheck source-path=SCRIPTDIR
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
-[ ! -d "$HOME/Code" ] && mkdir -p "$HOME/Code"
-
 . "$DOTFILES/scripts/envs.sh"
 . "$DOTFILES/scripts/paths.sh"
+
+make_dir() {
+  if [ ! -d "$1" ]; then mkdir -p "$1"; fi
+}
+
+DIRECTORIES=("$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME" "$XDG_BIN_HOME"
+  "$XDG_PROJECTS_DIR" "$XDG_RUNTIME_DIR" "$HOME/Code" "$XDG_CACHE_HOME/backup" "$XDG_CACHE_HOME/npm")
+for dir in "${DIRECTORIES[@]}"; do make_dir "$dir"; done
+unset dir
 
 GITHUB="https://github.com/"
 
 ##################################################################################
 ###                               HELPER FUNCTIONS                             ###
 ##################################################################################
+backup() {
+  NAME=$(basename "$1")
+  if [ ! -L "$1" ] && [ -f "$1" ] || [ -d "$1" ]; then
+    cp -r "$1" "$XDG_CACHE_HOME/backup/$NAME.bak"
+    rm -rf "$1"
+  fi
+}
+
 command_exists() {
   command -v "$@" >/dev/null 2>&1
 }
@@ -167,12 +182,12 @@ check_pyenv_plugins() {
 
 # PREREQUISITES
 # --------------------------------------------------------------------------------
-if : >/dev/tcp/8.8.8.8/53; then
-  echo "$(tput setaf 4)==> $(tput sgr0)Internet connection available. Continue..."
-else
-  echo "$(tput setaf 4) ==> $(tput sgr0)Internet connection unavailable! Exiting..."
-  exit 0
-fi
+# if : >/dev/tcp/8.8.8.8/53; then
+#   echo "$(tput setaf 4)==> $(tput sgr0)Internet connection available. Continue..."
+# else
+#   echo "$(tput setaf 4) ==> $(tput sgr0)Internet connection unavailable! Exiting..."
+#   exit 0
+# fi
 
 # Homebrew
 eval_brew
@@ -212,7 +227,22 @@ gum spin --title "Cleaning up..." -- brew cleanup
 info "HOMEBREW" "Packages installed can be found at" "$DOTFILES/Brewfile"
 
 # Stow dotfiles (symlinks)
-# builtin cd "$DOTFILES" && stow .
+FILES=("$HOME/.zshrc" "$HOME/.zshenv" "$HOME/.bashrc")
+for file in "${FILES[@]}"; do backup "$file"; done
+unset file
+for folder in "$XDG_CONFIG_HOME/"*; do backup "$folder"; done
+unset folder
+builtin cd "$DOTFILES" && stow .
+
+if command_exists bat; then
+  gum spin --title="Setting up bat theme..." -- bat cache --clear
+  gum spin --title="Setting up bat theme..." -- bat cache --build
+fi
+
+if command_exists yazi && command_exists ya; then
+  gum spin --title="Setting up yazi..." -- ya pack -i
+  gum spin --title="Setting up yazi..." -- ya pack -u
+fi
 
 # visual studio code extensions
 title "VSCODE EXTENSIONS"
@@ -299,14 +329,29 @@ else
   info "nvm v$(nvm --version)" "Dev Tool is already installed at" "$NVM_DIR"
 fi
 
-current_nodes=$(nvm ls --no-alias | cut -d ' ' -f2- | sed 's/[[:space:]]//g')
-node_version=$(nvm ls-remote | cut -d '(' -f1 | sed 's/[[:space:]]//g' | grep '^v2' | gum choose --height=20 --header="Choose a NodeJS Version:" --header.foreground="#f9e2af")
-if [[ $current_nodes == "N/A" ]] || [[ "$current_nodes" != *"$node_version"* ]]; then
-  nvm install "$node_version" >/dev/null 2>&1
-  nvm use "$node_version" >/dev/null
-  output "nvm" "node $(node --version)"
-  gum spin --show-error --title="Installing latest npm..." -- nvm install latest-npm
-  output "nvm" "npm v$(npm --version)"
+if ! command_exists npm; then
+  current_nodes=$(nvm ls --no-alias | cut -d ' ' -f2- | sed 's/[[:space:]]//g')
+  node_version=$(nvm ls-remote | cut -d '(' -f1 | sed 's/[[:space:]]//g' | grep '^v2' | gum choose --height=20 --header="Choose a NodeJS Version:" --header.foreground="#f9e2af")
+  if [[ $current_nodes == "N/A" ]] || [[ "$current_nodes" != *"$node_version"* ]]; then
+    nvm install "$node_version" >/dev/null 2>&1
+    nvm use "$node_version" >/dev/null
+    output "nvm" "node $(node --version)"
+    gum spin --show-error --title="Installing latest npm..." -- nvm install latest-npm
+    output "nvm" "npm v$(npm --version)"
+  fi
+fi
+
+# Default packages for NodeJS
+if command_exists npm; then
+  if [ ! -f "$NVM_DIR/default-packages" ]; then
+    touch "$NVM_DIR/default-packages"
+  fi
+  NPM_PACKAGES=('commitizen' 'cz-git' 'git-open' 'git-recent')
+  for pkg in "${NPM_PACKAGES[@]}"; do
+    gum spin --title="Instaling $pkg..." -- npm install --global --silent "$pkg"
+    echo "$pkg" >>"$NVM_DIR/default-packages"
+  done
+  unset pkg
 fi
 
 echo ""
@@ -332,6 +377,17 @@ if [[ "$go_current_versions" != *"$go_version"* ]]; then
 else
   g set "${go_version}"
   output "g" "go v${go_version}"
+fi
+
+echo ""
+
+# END SCRIPT
+# --------------------------------------------------------------------------------
+if command_exists zsh; then
+  setup_default_zsh() {
+    chsh -s "$(which zsh)" "$USER"
+  }
+  gum confirm --prompt.foreground="#89b4fa" --selected.foreground="#181825" --selected.background="#cba6f7" "Make ZSH your default shell?" && setup_default_zsh || gum style --foreground="#45475a" --italic "Skipping..."
 fi
 
 echo ""

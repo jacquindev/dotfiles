@@ -1,0 +1,198 @@
+# Rewrite zsh-nvm.plugin.zsh so that it can be used both on bash and zsh
+# Reference:
+# - https://github.com/lukechilds/zsh-nvm/blob/master/zsh-nvm.plugin.zsh
+# - https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/nvm/nvm.plugin.zsh
+
+_setup_color() {
+	FMT_RED="$(tput setaf 1)"
+	FMT_GREEN="$(tput setaf 2)"
+	FMT_BLUE="$(tput setaf 4)"
+	FMT_ORANGE="$(tput setaf 208)"
+	FMT_PINK="$(tput setaf 5)"
+	FMT_RESET="$(tput sgr0)"
+}
+
+NVM_VERSION="$XDG_CACHE_HOME/nvm_previous_version"
+
+_nvm_rename_function() {
+	test -n "$(declare -f "$1")" || return
+	eval "${_/$1/$2}"
+	unset -f "$1"
+}
+
+_nvm_load() {
+	if [[ "$NVM_NO_USE" == true ]]; then
+		source "$NVM_DIR/nvm.sh" --no-use
+	else
+		source "$NVM_DIR/nvm.sh"
+	fi
+
+	_nvm_rename_function nvm _nvm_wrapper
+
+	# Wrap nvm in our own function
+	nvm() {
+		case $1 in
+		'update' | 'upgrade')
+			_nvm_upgrade
+			;;
+		'revert')
+			_nvm_revert
+			;;
+		'use')
+			_nvm_wrapper "$@"
+			export NVM_AUTO_USE_ACTIVE=false
+			;;
+		'install' | 'i')
+			_nvm_install_wrapper "$@"
+			;;
+		*)
+			_nvm_wrapper "$@"
+			;;
+		esac
+	}
+}
+
+_nvm_global_binaries() {
+	# Look for global binaries
+	local global_binary_paths=$(find "$NVM_DIR"/versions/*/*/bin/* >/dev/null 2>&1)
+	# If we have some, format them
+	if [ -n "$global_binary_paths" ]; then
+		echo "$global_binary_paths" | xargs -n 1 basename | sort | uniq
+	fi
+}
+
+_nvm_lazy_load() {
+	# All global node binaries including node
+	local global_binaries
+	if [[ "$NVM_NO_USE" == true ]]; then
+		global_binaries=()
+	else
+		global_binaries=($(_nvm_global_binaries))
+	fi
+
+	if type yarn >/dev/null 2>&1; then global_binaries+=('yarn'); fi
+	global_binaries+=('nvm')
+	global_binaries+=($NVM_LAZY_LOAD_EXTRA_COMMANDS)
+
+	local cmds
+	cmds=()
+	local bin
+	for bin in $global_binaries; do
+		[[ "$(which "$bin" 2>/dev/null)" = "$bin: aliased to "* ]] || cmds+=($bin)
+	done
+
+	# Create function for each command
+	local cmd
+	for cmd in $cmds; do
+		# When called, unset all lazy loaders, load nvm then run current command
+		eval "$cmd(){
+            unset -f $cmds > /dev/null 2>&1
+            _nvm_load
+            $cmd \"\$@\"
+        }"
+	done
+}
+
+_nvm_upgrade() {
+	_setup_color
+	if [[ -n "$(_nvm_wrapper help | grep 'nvm upgrade')" ]]; then
+		_nvm_wrapper upgrade
+		return
+	fi
+
+	local installed_version=$(builtin cd "$NVM_DIR" && git describe --tags)
+	local latest_version=$(builtin cd "$NVM_DIR" && git fetch --quiet --tags origin && git describe --abbrev=0 --tags --match "v[0-9]*" "$(git rev-list --tags --max-count=1)")
+
+	echo "Installed version is ${FMT_BLUE}${installed_version}${FMT_RESET}"
+	echo "${FMT_PINK}Checking latest version of nvm...${FMT_RESET}"
+	if [[ "${installed_version}" = "$latest_version" ]]; then
+		echo "${FMT_GREEN}You're already up to date!${FMT_RESET}"
+	else
+		echo "Updating to ${FMT_ORANGE}${latest_version}${FMT_RESET}..."
+		echo "$installed_version" >"$NVM_VERSION"
+		builtin cd "$NVM_DIR" && git fetch --quiet && git checkout "$latest_version"
+		_nvm_load
+	fi
+}
+
+_nvm_revert() {
+	_setup_color
+	local previous_version="$(cat "$NVM_VERSION" >/dev/null 2>&1)"
+
+	if [[ -n "$previous_version" ]]; then
+		local installed_version=$(builtin cd "$NVM_DIR" && git describe --tags)
+		if [[ "$installed_version" = "$previous_version" ]]; then
+			echo "Already reverted to ${FMT_RED}${installed_version}${FMT_RESET}!"
+			return
+		fi
+		echo "Installed version is ${FMT_BLUE}${installed_version}${FMT_RESET}"
+		echo "Reverting to ${FMT_ORANGE}${previous_version}${FMT_RESET}..."
+		builtin cd "$NVM_DIR" && git checkout "$previous_version"
+		_nvm_load
+	else
+		echo "${FMT_RED}No previous version found.${FMT_RESET}"
+	fi
+}
+
+_nvm_install() {
+	_setup_color
+	echo "${FMT_PINK}Installing NVM...${FMT_RESET}"
+	git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR"
+	_nvm_latest_release_tag=$(builtin cd "$NVM_DIR" && git fetch --quiet --tags origin && git describe --abbrev=0 --tags --match "v[0-9]*" "$(git rev-list --tags --max-count=1)")
+	builtin cd "$NVM_DIR" && git checkout --quiet "$_nvm_latest_release_tag"
+
+	[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+	printf '%sUse LTS (Y) or latest node (n)? %s' "$(tput setaf 220)" "$(tput sgr0)"
+	read -r opt
+	case $opt in
+	y* | Y*)
+		nvm install --lts
+		nvm install-latest-npm
+		;;
+	n* | N*)
+		nvm install node
+		nvm install-latest-npm
+		;;
+	*)
+		echo "Skipped installing node. Please do it yourself."
+		exit 0
+		;;
+	esac
+	echo "${FMT_GREEN}Done!${FMT_RESET}"
+}
+
+_nvm_install_wrapper() {
+	_setup_color
+	case $2 in
+	'rc')
+		NVM_NODEJS_ORG_MIRROR=https://nodejs.org/download/rc/ nvm install node && nvm alias rc "$(node --version)"
+		echo "${FMT_PINK}Clearing mirror cache${FMT_RESET}"
+		nvm ls-remote >/dev/null 2>&1
+		echo "${FMT_GREEN}Done!${FMT_RESET}"
+		;;
+	'nightly')
+		NVM_NODEJS_ORG_MIRROR=https://nodejs.org/download/nightly/ nvm install node && nvm alias nightly "$(node --version)"
+		echo "${FMT_PINK}Clearing mirror cache${FMT_RESET}"
+		nvm ls-remote >/dev/null 2>&1
+		echo "${FMT_GREEN}Done!${FMT_RESET}"
+		;;
+	*)
+		_nvm_wrapper "$@"
+		;;
+	esac
+}
+
+_nvm_completion() {
+	[[ -r "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
+}
+
+if [[ "$NVM_NO_LOAD" != true ]]; then
+	if [[ ! -d "$NVM_DIR" ]]; then _nvm_install; fi
+
+	if [[ -f "$NVM_DIR/nvm.sh" ]]; then
+		[[ "$NVM_LAZY_LOAD" == true ]] && _nvm_lazy_load || _nvm_load
+		[[ "$NVM_COMPLETION" == true ]] && _nvm_completion
+	fi
+fi
+
+true
