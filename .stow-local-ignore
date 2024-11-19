@@ -1,0 +1,40 @@
+# shellcheck disable
+# Comments and blank lines are allowed.
+
+RCS
+.+,v
+
+CVS
+\.\#.+ # CVS conflict files / emacs lock files
+\.cvsignore
+
+\.svn
+_darcs
+\.hg
+
+\.git
+\.gitignore
+\.gitmodules
+
+.+~    # emacs backup files
+\#.*\# # emacs autosave files
+
+^/README.*
+^/LICENSE.*
+^/COPYING
+
+# .shellcheckrc
+\.shellcheckrc
+
+# Lists of applications/extensions
+Brewfile
+Brewfile.lock.json
+extensions.txt
+packages.log
+
+# Ignore folders
+assets
+scripts
+
+# bootstrap files
+bootstrap.sh
