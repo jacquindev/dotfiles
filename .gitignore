@@ -1,0 +1,4 @@
+*.log
+Brewfile.lock.json
+
+.config/gh/hosts.yml
