@@ -220,7 +220,7 @@ for pkg in "${APT_PACKAGES[@]}"; do
 done
 unset pkg
 # wslu
-if uname -r | grep -i -q 'Microsoft'; then check_apt_package wslu fi
+if uname -r | grep -i -q 'Microsoft'; then check_apt_package wslu; fi
 # list all installed packages in `packages.log`
 apt list --manual-installed 2>/dev/null | grep -F \[installed\] | tee packages.log >/dev/null
 info "APT" "Packages installed are listed in" "$DOTFILES/packages.log"
@@ -335,7 +335,7 @@ if ! command_exists nvm || [ ! -d "$NVM_DIR" ]; then
   gum spin --title="Installing NVM..." -- git clone "${GITHUB}nvm-sh/nvm.git" "$NVM_DIR"
   _nvm_latest_release_tag=$(builtin cd "$NVM_DIR" && git fetch --quiet --tags origin && git describe --abbrev=0 --tags --match "v[0-9]*" "$(git rev-list --tags --max-count=1)")
   builtin cd "$NVM_DIR" && git checkout --quiet "$_nvm_latest_release_tag"
-  
+
   # Default npm packages
   if [ ! -f "$NVM_DIR/default-packages" ]; then
     touch "$NVM_DIR/default-packages"
@@ -345,7 +345,7 @@ if ! command_exists nvm || [ ! -d "$NVM_DIR" ]; then
     echo "$pkg" >>"$NVM_DIR/default-packages"
   done
   unset pkg
-  
+
   # Source nvm.sh
   source "$NVM_DIR/nvm.sh"
   info "nvm v$(nvm --version)" "was installed at" "$NVM_DIR"
@@ -358,8 +358,8 @@ fi
 current_nodes=$(nvm ls --no-alias | cut -d ' ' -f2- | sed 's/[[:space:]]//g')
 node_version=$(nvm ls-remote | cut -d '(' -f1 | sed 's/[[:space:]]//g' | grep '^v2' | gum choose --height=20 --header="Choose a NodeJS Version:" --header.foreground="#f9e2af")
 if [[ $current_nodes == "N/A" ]] || [[ "$current_nodes" != *"$node_version"* ]]; then
-  nvm install "$node_version" >/dev/null 2>&1
-  nvm use "$node_version" >/dev/null
+  nvm install "$node_version"
+  nvm use "$node_version"
   output "nvm" "node $(node --version)"
   gum spin --show-error --title="Installing latest npm..." -- nvm install latest-npm
   output "nvm" "npm v$(npm --version)"
@@ -394,7 +394,7 @@ fi
 echo ""
 
 # make zsh default shell
-if command_exists zsh && [[ "$(echo $SHELL)" != "$(which zsh)" ]]; then
+if command_exists zsh && [[ "$(echo """$SHE"L"L")" != "$(which zsh)" ]]; then
   setup_default_zsh() {
     chsh -s "$(which zsh)" "$USER"
   }
@@ -402,7 +402,9 @@ if command_exists zsh && [[ "$(echo $SHELL)" != "$(which zsh)" ]]; then
 fi
 
 # cleanup
-if [ -f "$HOME/.wget-hsts" ]; then mv -i "$HOME/.wget-hsts" "$XDG_CACHE_HOME/wget/wget-hsts"; fi
+if [ -f "$HOME/.wget-hsts" ]; then
+  mv -i "$HOME/.wget-hsts" "$XDG_CACHE_HOME/wget/wget-hsts"
+fi
 
 # END SCRIPT
 # --------------------------------------------------------------------------------
