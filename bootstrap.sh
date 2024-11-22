@@ -224,8 +224,8 @@ info "APT" "Packages installed are listed in" "$DOTFILES/packages.log"
 # Homebrew packages
 title "HOMEBREW PACKAGES"
 gum spin --title="Verifying system..." --show-error -- brew doctor
-builtin cd "$DOTFILES" && gum spin --title="Installing Homebrew packages..." -- brew bundle
-gum spin --title "Cleaning up..." -- brew cleanup
+builtin cd "$DOTFILES" && brew bundle install --file="$DOTFILES/Brewfile"
+gum spin --title "Cleaning up..." -- brew bundle --force cleanup
 info "HOMEBREW" "Packages installed can be found at" "$DOTFILES/Brewfile"
 
 # Stow dotfiles (symlinks)
@@ -276,18 +276,21 @@ fi
 # --------------------------------------------------------------------------------
 title "DEV TOOLS"
 
+source "$HOME/.bashrc"
+
 # Pyenv
 gum style --foreground="#fab387" --bold "1) PYENV (Python Version Manager):"
 if ! command_exists pyenv || [ ! -d "$PYENV_ROOT" ] && [[ "$(uname -r)" = *icrosoft* ]]; then
+  export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions/global/bin:$PATH"
   checkout "${GITHUB}pyenv/pyenv.git" "${PYENV_ROOT}" "master"
   check_pyenv_plugins
 
-  builtin cd "$PYENV_ROOT" && src/configure && make -C src >/dev/null 2>&1
+  builtin cd "$PYENV_ROOT" && src/configure && make -C src >/dev/null
 
   {
     "${PYENV_ROOT}/bin/pyenv" init
     "${PYENV_ROOT}/bin/pyenv" virtualenv-init
-  } >/dev/null 2>&1
+  } >&2
 
   info "pyenv v$(pyenv --version | cut -d ' ' -f2-)" "was installed at" "$PYENV_ROOT"
 else
