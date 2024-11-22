@@ -32,6 +32,7 @@
    ```bash
    git clone https://github.com/jacquindev/dotfiles.git
    cd dotfiles
+   git submodule update --init --recursive
    ```
 
 2. **Run setup script**
