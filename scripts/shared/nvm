@@ -187,7 +187,7 @@ _nvm_completion() {
 }
 
 if [[ "$NVM_NO_LOAD" != true ]]; then
-	if [[ ! -d "$NVM_DIR" ]]; then _nvm_install; fi
+	if [[ ! -d "$NVM_DIR" ]]; then return; fi
 
 	if [[ -f "$NVM_DIR/nvm.sh" ]]; then
 		[[ "$NVM_LAZY_LOAD" == true ]] && _nvm_lazy_load || _nvm_load
