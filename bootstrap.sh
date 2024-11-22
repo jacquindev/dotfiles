@@ -254,7 +254,7 @@ fi
 
 # Neovim plugins
 if command_exists nvim; then
-  gum spin --title="Updating Neovim config..." -- nvim --headless +"Lazy! sync" +qa
+  gum spin --title="Updating Neovim plugins..." -- nvim --headless +"Lazy! sync" +qa
 fi
 
 # visual studio code extensions
