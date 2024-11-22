@@ -220,7 +220,7 @@ for pkg in "${APT_PACKAGES[@]}"; do
 done
 unset pkg
 # wslu
-if uname -r | grep -i -q 'Microsoft'; then check_apt_package wslu; fi
+if uname -r | grep -q icrosoft && lsb_release -a | grep -q Ubuntu; then check_apt_package wslu; fi
 # list all installed packages in `packages.log`
 apt list --manual-installed 2>/dev/null | grep -F \[installed\] | tee packages.log >/dev/null
 info "APT" "Packages installed are listed in" "$DOTFILES/packages.log"
@@ -394,7 +394,7 @@ fi
 echo ""
 
 # make zsh default shell
-if command_exists zsh && [[ "$(echo """$SHE"L"L")" != "$(which zsh)" ]]; then
+if command_exists zsh && [[ "$(which $SHELL)" != "$(which zsh)" ]]; then
   setup_default_zsh() {
     chsh -s "$(which zsh)" "$USER"
   }
