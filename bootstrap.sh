@@ -252,6 +252,10 @@ if command_exists yazi && command_exists ya; then
   gum spin --title="Setting up yazi..." -- ya pack -u
 fi
 
+if command_exists nvim; then
+  gum spin --title="Updating neovim plugins..." -- nvim --headless +"Lazy! sync" +qa
+fi
+
 # Neovim plugins
 if command_exists nvim; then
   gum spin --title="Installing Neovim plugins..." -- nvim --headless +"Lazy! sync" +qa
@@ -394,7 +398,7 @@ fi
 echo ""
 
 # make zsh default shell
-if command_exists zsh && [[ "$(which $SHELL)" != "$(which zsh)" ]]; then
+if command_exists zsh && [[ "$(which "$SHELL")" != "$(which zsh)" ]]; then
   setup_default_zsh() {
     chsh -s "$(which zsh)" "$USER"
   }
