@@ -7,22 +7,15 @@ DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 . "$DOTFILES/scripts/envs.sh"
 . "$DOTFILES/scripts/paths.sh"
 
-make_dir() {
-  if [ ! -d "$1" ]; then mkdir -p "$1"; fi
-}
-
-DIRECTORIES=(
-  "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME" "$XDG_BIN_HOME" "$XDG_PROJECTS_DIR" "$XDG_RUNTIME_DIR"
-  "$HOME/Code" "$XDG_CACHE_HOME/backup" "$XDG_CACHE_HOME/npm" "$XDG_CACHE_HOME/wget" "$XDG_CACHE_HOME/less"
-)
-for dir in "${DIRECTORIES[@]}"; do make_dir "$dir"; done
-unset dir
-
 GITHUB="https://github.com/"
 
 ##################################################################################
 ###                               HELPER FUNCTIONS                             ###
 ##################################################################################
+make_dir() {
+  if [ ! -d "$1" ]; then mkdir -p "$1"; fi
+}
+
 backup() {
   NAME=$(basename "$1")
   if [ ! -L "$1" ] && [ -f "$1" ] || [ -d "$1" ]; then
@@ -94,6 +87,7 @@ checkout() {
 ##################################################################################
 ###                            INSTALLATION FUNCTIONS                          ###
 ##################################################################################
+
 # Apt package
 check_apt_package() {
   PACKAGE="$1"
@@ -205,6 +199,13 @@ fi
 
 # START
 # --------------------------------------------------------------------------------
+# Create directories if they don't exist
+DIRECTORIES=(
+  "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME" "$XDG_BIN_HOME" "$XDG_PROJECTS_DIR" "$XDG_RUNTIME_DIR"
+  "$HOME/Code" "$XDG_CACHE_HOME/backup" "$XDG_CACHE_HOME/npm" "$XDG_CACHE_HOME/wget" "$XDG_CACHE_HOME/less"
+)
+for dir in "${DIRECTORIES[@]}"; do make_dir "$dir"; done
+unset dir
 
 # Apt packages
 title "APT PACKAGES"
@@ -218,6 +219,9 @@ for pkg in "${APT_PACKAGES[@]}"; do
   check_apt_package "$pkg"
 done
 unset pkg
+# wslu
+if uname -r | grep -i -q 'Microsoft'; then check_apt_package wslu fi
+# list all installed packages in `packages.log`
 apt list --manual-installed 2>/dev/null | grep -F \[installed\] | tee packages.log >/dev/null
 info "APT" "Packages installed are listed in" "$DOTFILES/packages.log"
 
@@ -275,7 +279,6 @@ fi
 # DEV TOOLS
 # --------------------------------------------------------------------------------
 title "DEV TOOLS"
-
 source "$HOME/.bashrc"
 
 # Pyenv
@@ -332,7 +335,7 @@ if ! command_exists nvm || [ ! -d "$NVM_DIR" ]; then
   gum spin --title="Installing NVM..." -- git clone "${GITHUB}nvm-sh/nvm.git" "$NVM_DIR"
   _nvm_latest_release_tag=$(builtin cd "$NVM_DIR" && git fetch --quiet --tags origin && git describe --abbrev=0 --tags --match "v[0-9]*" "$(git rev-list --tags --max-count=1)")
   builtin cd "$NVM_DIR" && git checkout --quiet "$_nvm_latest_release_tag"
-
+  
   # Default npm packages
   if [ ! -f "$NVM_DIR/default-packages" ]; then
     touch "$NVM_DIR/default-packages"
@@ -342,26 +345,24 @@ if ! command_exists nvm || [ ! -d "$NVM_DIR" ]; then
     echo "$pkg" >>"$NVM_DIR/default-packages"
   done
   unset pkg
-
+  
+  # Source nvm.sh
   source "$NVM_DIR/nvm.sh"
   info "nvm v$(nvm --version)" "was installed at" "$NVM_DIR"
-
   builtin cd "$DOTFILES" || exit
 else
   info "nvm v$(nvm --version)" "Dev Tool is already installed at" "$NVM_DIR"
 fi
 
 # Node installation
-if ! command_exists npm; then
-  current_nodes=$(nvm ls --no-alias | cut -d ' ' -f2- | sed 's/[[:space:]]//g')
-  node_version=$(nvm ls-remote | cut -d '(' -f1 | sed 's/[[:space:]]//g' | grep '^v2' | gum choose --height=20 --header="Choose a NodeJS Version:" --header.foreground="#f9e2af")
-  if [[ $current_nodes == "N/A" ]] || [[ "$current_nodes" != *"$node_version"* ]]; then
-    nvm install "$node_version" >/dev/null 2>&1
-    nvm use "$node_version" >/dev/null
-    output "nvm" "node $(node --version)"
-    gum spin --show-error --title="Installing latest npm..." -- nvm install latest-npm
-    output "nvm" "npm v$(npm --version)"
-  fi
+current_nodes=$(nvm ls --no-alias | cut -d ' ' -f2- | sed 's/[[:space:]]//g')
+node_version=$(nvm ls-remote | cut -d '(' -f1 | sed 's/[[:space:]]//g' | grep '^v2' | gum choose --height=20 --header="Choose a NodeJS Version:" --header.foreground="#f9e2af")
+if [[ $current_nodes == "N/A" ]] || [[ "$current_nodes" != *"$node_version"* ]]; then
+  nvm install "$node_version" >/dev/null 2>&1
+  nvm use "$node_version" >/dev/null
+  output "nvm" "node $(node --version)"
+  gum spin --show-error --title="Installing latest npm..." -- nvm install latest-npm
+  output "nvm" "npm v$(npm --version)"
 fi
 
 echo ""
@@ -370,8 +371,7 @@ echo ""
 gum style --foreground="#fab387" --bold "3) G (Go Version Manager):"
 if alias g >/dev/null 2>&1; then unalias g; fi
 if ! command_exists g || ! command_exists go; then
-  export GOROOT="$HOME/.local/share/go"
-  export GOPATH="$HOME/Code/go"
+  export PATH="$GOPATH/bin:$PATH"
   wget --quiet -P "$GOPATH/bin" "https://raw.githubusercontent.com/stefanmaric/g/refs/heads/next/bin/g"
   chmod +x "$GOPATH/bin/g"
   source "$HOME/.bashrc"
@@ -380,6 +380,7 @@ elif command_exists g; then
   info "g v$(g --version)" "Dev Tool is already installed at" "$(command -v g)"
 fi
 
+# Install go
 go_version=$(g list-all | sed 's/[[:space:]]//g' | gum choose --height=20 --header="Choose a NodeJS Version:" --header.foreground="#f9e2af")
 go_current_versions=$(g list | cut -d '>' -f2 | sed 's/[[:space:]]//g' | grep '^1.')
 if [[ "$go_current_versions" != *"$go_version"* ]]; then
@@ -393,16 +394,16 @@ fi
 echo ""
 
 # make zsh default shell
-if command_exists zsh; then
+if command_exists zsh && [[ "$(echo $SHELL)" != "$(which zsh)" ]]; then
   setup_default_zsh() {
     chsh -s "$(which zsh)" "$USER"
   }
   gum confirm --prompt.foreground="#89b4fa" --selected.foreground="#181825" --selected.background="#cba6f7" "Make ZSH your default shell?" && setup_default_zsh || gum style --foreground="#45475a" --italic "Skipping..."
 fi
 
-# END SCRIPT
-# --------------------------------------------------------------------------------
 # cleanup
 if [ -f "$HOME/.wget-hsts" ]; then mv -i "$HOME/.wget-hsts" "$XDG_CACHE_HOME/wget/wget-hsts"; fi
 
+# END SCRIPT
+# --------------------------------------------------------------------------------
 echo ""
