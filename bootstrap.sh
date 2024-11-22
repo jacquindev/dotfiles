@@ -252,13 +252,9 @@ if command_exists yazi && command_exists ya; then
   gum spin --title="Setting up yazi..." -- ya pack -u
 fi
 
-if command_exists nvim; then
-  gum spin --title="Updating neovim plugins..." -- nvim --headless +"Lazy! sync" +qa
-fi
-
 # Neovim plugins
 if command_exists nvim; then
-  gum spin --title="Installing Neovim plugins..." -- nvim --headless +"Lazy! sync" +qa
+  gum spin --title="Updating Neovim config..." -- nvim --headless +"Lazy! sync" +qa
 fi
 
 # visual studio code extensions
