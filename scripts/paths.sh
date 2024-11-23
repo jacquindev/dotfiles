@@ -43,3 +43,10 @@ if command -v yarn >/dev/null 2>&1; then pathappend "$(yarn global bin)"; fi
 
 # g
 [ -d "$GOPATH/bin" ] && pathprepend "$GOPATH/bin"
+
+# kube-related programs
+# Basically I created a custom dir for all of my kubernetes addons programs (if installed) for easier to mantain.
+# Commented them out if you do not want to use them.
+# The addons installation script is located at `$DOTFILES/scripts/k8s/addons.sh`
+export KUBEBIN="$HOME/Code/kube/bin"
+[ -d "$KUBEBIN" ] && pathappend "$KUBEBIN"
