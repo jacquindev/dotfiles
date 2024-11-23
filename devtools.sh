@@ -198,17 +198,6 @@ setup_go() {
   echo ""
 }
 
-eval_brew
-if ! command_exists brew; then
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  eval_brew
-fi
-
-# Gum Installation
-if ! brew ls --versions 'gum' >/dev/null 2>&1; then
-  brew install gum --quiet
-fi
-
 title "DEV TOOLS"
 
 choose=$(gum choose --header="Choose a dev tool to setup:" --header.foreground="#89b4fa" --selected.foreground="#cba6f7" --cursor.foreground="#cba6f7" "1) NVM" "2) Pyenv" "3) G")
