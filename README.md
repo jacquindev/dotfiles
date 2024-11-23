@@ -27,15 +27,27 @@
 
 ## 🔧 Setup
 
-1. **Clone this repository**
+1. **Install the Prerequisites***
+
+   ```bash
+   # Update system
+   sudo apt update && sudo apt upgrade -y
+
+   # Prerequisites packages
+   sudo apt install -y curl file git lsb-release
+   ```
+   
+2. **Clone this repository**
 
    ```bash
    git clone https://github.com/jacquindev/dotfiles.git
    cd dotfiles
+
+   # Updating the submodule repo
    git submodule update --init --recursive
    ```
 
-2. **Run setup script**
+3. **Run setup script**
 
    ```bash
    . ./bootstrap.sh
