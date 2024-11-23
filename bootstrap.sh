@@ -7,8 +7,6 @@ DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 . "$DOTFILES/scripts/envs.sh"
 . "$DOTFILES/scripts/paths.sh"
 
-GITHUB="https://github.com/"
-
 ##################################################################################
 ###                               HELPER FUNCTIONS                             ###
 ##################################################################################
@@ -80,10 +78,6 @@ eval_brew() {
   eval "$("${BREW_LOCATION}" shellenv)"
 }
 
-checkout() {
-  [ -d "$2" ] || git -c advice.detachedHead=0 clone --branch "$3" --depth 1 "$1" "$2" >/dev/null 2>&1
-}
-
 ##################################################################################
 ###                            INSTALLATION FUNCTIONS                          ###
 ##################################################################################
@@ -150,28 +144,6 @@ setup_gitconfig() {
   info "GIT" "Detailed information of git configuration is in" "$HOME/.gitconfig"
 }
 
-check_pyenv_plugins() {
-  # Based on:
-  # - https://github.com/pyenv/pyenv/wiki#suggested-build-environment
-  # - https://github.com/pyenv/pyenv/wiki/Common-build-problems#prerequisites
-  PYENV_BUILD_PKGS=(
-    'libssl-dev' 'libbz2-dev' 'libreadline-dev' 'libsqlite3-dev' 'libxml2-dev' 'xz-utils'
-    'libncurses5-dev' 'libxmlsec1-dev' 'libffi-dev' 'liblzma-dev' 'tk-dev' 'zlib1g-dev'
-  )
-  for pkg in "${PYENV_BUILD_PKGS[@]}"; do
-    check_apt_package "$pkg"
-  done
-  unset pkg
-
-  PYENV_PLUGINS=('pyenv-doctor' 'pyenv-update' 'pyenv-virtualenv' 'pyenv-ccache')
-  for plugin in "${PYENV_PLUGINS[@]}"; do
-    if [ ! -d "$PYENV_ROOT/plugins/$plugin" ]; then
-      checkout "${GITHUB}pyenv/$plugin.git" "${PYENV_ROOT}/plugins/$plugin" "master"
-      output "pyenv plugin" "$plugin"
-    fi
-  done
-}
-
 ##################################################################################
 ###                                  MAIN SCRIPT                               ###
 ##################################################################################
@@ -194,7 +166,7 @@ fi
 
 # Gum Installation
 if ! brew ls --versions 'gum' >/dev/null 2>&1; then
-  brew install gum
+  brew install gum --quiet
 fi
 
 # START
@@ -274,131 +246,6 @@ if command_exists gh; then
   done
   unset extension
   info "GitHub CLI" "List extensions installed with command:" "gh extension list"
-fi
-
-# DEV TOOLS
-# --------------------------------------------------------------------------------
-title "DEV TOOLS"
-source "$HOME/.bashrc"
-
-# Pyenv
-gum style --foreground="#fab387" --bold "1) PYENV (Python Version Manager):"
-if ! command_exists pyenv || [ ! -d "$PYENV_ROOT" ] && [[ "$(uname -r)" = *icrosoft* ]]; then
-  export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions/global/bin:$PATH"
-  checkout "${GITHUB}pyenv/pyenv.git" "${PYENV_ROOT}" "master"
-  check_pyenv_plugins
-
-  builtin cd "$PYENV_ROOT" && src/configure && make -C src >/dev/null
-
-  {
-    "${PYENV_ROOT}/bin/pyenv" init
-    "${PYENV_ROOT}/bin/pyenv" virtualenv-init
-  } >&2
-
-  info "pyenv v$(pyenv --version | cut -d ' ' -f2-)" "was installed at" "$PYENV_ROOT"
-else
-  gum spin --title="Updating pyenv..." -- pyenv update
-  info "pyenv v$(pyenv --version | cut -d ' ' -f2-)" "Dev Tool is already installed at" "$PYENV_ROOT"
-fi
-
-current_version=$(pyenv versions | cut -d '(' -f1 | sed 's/*//g;s/[[:space:]]//g')
-python_version=$(pyenv install --list | grep '^  3.' | sed 's/[[:space:]]//g' | gum choose --height=20 --header="Choose a Python Version:" --header.foreground="#f9e2af")
-if [[ "$current_version" == "system" ]] || [[ "$current_version" != *"$python_version"* ]]; then
-  gum spin --title="Installing python v${python_version}..." -- pyenv install "$python_version"
-  pyenv global "$python_version"
-  cd "$PYENV_ROOT/versions/" && ln -sf "$python_version" global
-  output "pyenv" "python v${python_version}"
-  builtin cd "$DOTFILES" || exit
-  gum spin --title="Ensuring pip..." -- python -m ensurepip --upgrade
-  gum spin --title="Ensuring pip..." -- python -m pip install --upgrade --user pip --force
-  output "pyenv" "pip v$(pip --version | cut -d ' ' -f2)"
-else
-  output "pyenv" "python v${python_version}"
-  output "pyenv" "pip v$(pip --version | cut -d ' ' -f2)"
-fi
-
-if ! command_exists pipx; then
-  gum spin --title="Installing pipx..." -- python -m pip install --user pipx
-  gum spin --title="Installing pipx..." -- python -m pipx ensurepath
-  source "$HOME/.bashrc"
-  output "pyenv" "pipx v$(pipx --version)"
-else
-  gum spin --title="Updating pipx..." -- python -m pip install --user -U pipx
-  output "pyenv" "pipx v$(pipx --version)"
-fi
-
-echo ""
-
-# nvm
-gum style --foreground="#fab387" --bold "2) NVM (NodeJS Version Manager):"
-if ! command_exists nvm || [ ! -d "$NVM_DIR" ]; then
-  gum spin --title="Installing NVM..." -- git clone "${GITHUB}nvm-sh/nvm.git" "$NVM_DIR"
-  _nvm_latest_release_tag=$(builtin cd "$NVM_DIR" && git fetch --quiet --tags origin && git describe --abbrev=0 --tags --match "v[0-9]*" "$(git rev-list --tags --max-count=1)")
-  builtin cd "$NVM_DIR" && git checkout --quiet "$_nvm_latest_release_tag"
-
-  # Default npm packages
-  if [ ! -f "$NVM_DIR/default-packages" ]; then
-    touch "$NVM_DIR/default-packages"
-  fi
-  NPM_PACKAGES=('commitizen' 'cz-git' 'git-open' 'git-recent')
-  for pkg in "${NPM_PACKAGES[@]}"; do
-    echo "$pkg" >>"$NVM_DIR/default-packages"
-  done
-  unset pkg
-
-  # Source nvm.sh
-  source "$NVM_DIR/nvm.sh"
-  info "nvm v$(nvm --version)" "was installed at" "$NVM_DIR"
-  builtin cd "$DOTFILES" || exit
-else
-  info "nvm v$(nvm --version)" "Dev Tool is already installed at" "$NVM_DIR"
-fi
-
-# Node installation
-current_nodes=$(nvm ls --no-alias | cut -d ' ' -f2- | sed 's/[[:space:]]//g')
-node_version=$(nvm ls-remote | cut -d '(' -f1 | sed 's/[[:space:]]//g' | grep '^v2' | gum choose --height=20 --header="Choose a NodeJS Version:" --header.foreground="#f9e2af")
-if [[ $current_nodes == "N/A" ]] || [[ "$current_nodes" != *"$node_version"* ]]; then
-  nvm install "$node_version"
-  nvm use "$node_version"
-  output "nvm" "node $(node --version)"
-  gum spin --show-error --title="Installing latest npm..." -- nvm install latest-npm
-  output "nvm" "npm v$(npm --version)"
-fi
-
-echo ""
-
-# Go
-gum style --foreground="#fab387" --bold "3) G (Go Version Manager):"
-if alias g >/dev/null 2>&1; then unalias g; fi
-if ! command_exists g || ! command_exists go; then
-  export PATH="$GOPATH/bin:$PATH"
-  wget --quiet -P "$GOPATH/bin" "https://raw.githubusercontent.com/stefanmaric/g/refs/heads/next/bin/g"
-  chmod +x "$GOPATH/bin/g"
-  source "$HOME/.bashrc"
-  info "g v$(g --version)" "was installed at" "$(command -v g)"
-elif command_exists g; then
-  info "g v$(g --version)" "Dev Tool is already installed at" "$(command -v g)"
-fi
-
-# Install go
-go_version=$(g list-all | sed 's/[[:space:]]//g' | gum choose --height=20 --header="Choose a NodeJS Version:" --header.foreground="#f9e2af")
-go_current_versions=$(g list | cut -d '>' -f2 | sed 's/[[:space:]]//g' | grep '^1.')
-if [[ "$go_current_versions" != *"$go_version"* ]]; then
-  gum spin --title="Install Go v${go_version}..." -- g install "$go_version"
-  output "g" "go v${go_version}"
-else
-  g set "${go_version}"
-  output "g" "go v${go_version}"
-fi
-
-echo ""
-
-# make zsh default shell
-if command_exists zsh && [[ "$(which "$SHELL")" != "$(which zsh)" ]]; then
-  setup_default_zsh() {
-    chsh -s "$(which zsh)" "$USER"
-  }
-  gum confirm --prompt.foreground="#89b4fa" --selected.foreground="#181825" --selected.background="#cba6f7" "Make ZSH your default shell?" && setup_default_zsh || gum style --foreground="#45475a" --italic "Skipping..."
 fi
 
 # cleanup
