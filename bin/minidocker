@@ -1,0 +1,10 @@
+#!/bin/sh
+
+if ! command -v minikube >/dev/null && ! command -v docker >/dev/null; then
+  echo "$(tput setaf 1)ERROR: minikube and docker are not available on your system! Exiting...$(tput sgr0)"
+  return
+fi
+
+eval "$(minikube docker-env)"
+
+docker "$@"
