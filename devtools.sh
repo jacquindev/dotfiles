@@ -159,10 +159,16 @@ setup_pyenv() {
     gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Installing python v${python_version}..." -- pyenv install "$python_version"
     pyenv global "$python_version"
     cd "$PYENV_ROOT/versions/" && ln -sf "$python_version" global
-    output "pyenv" "python v${python_version}"
+    output "pyenv" "Python ${python_version}"
     cd "$DOTFILES" || exit
   else
-    exist_output "pyenv" "python v${python_version}"
+    exist_output "pyenv" "$(python --version)"
+  fi
+
+  if [ -n "$BASH_VERSION" ]; then
+    . "$HOME/.bashrc"
+  else
+    . "$ZDOTDIR/.zshrc"
   fi
 
   gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Updating pip..." -- python -m ensurepip --upgrade
