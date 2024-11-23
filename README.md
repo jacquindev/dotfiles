@@ -4,7 +4,7 @@
 
 <br/>
 
-🌿 A WSL/Linux Machine Dotfiles 🌿
+🌿 A WSL (Ubuntu/Debian) Dotfiles 🌿
 
 </div>
 </h3>
@@ -26,6 +26,16 @@
 <br/>
 
 ## 🔧 Setup
+
+> [!WARNING]<br>
+> For **BEST** result, please run: `sudo visudo` <br>
+> Then add the following line at the **end** of the file: <br>
+> *(This will disable password prompt of `sudo` command)*
+> ```bash
+> your_username ALL=(ALL) NOPASSWD:ALL
+> ```
+
+<hr>
 
 1. **Install the Prerequisites**
 
