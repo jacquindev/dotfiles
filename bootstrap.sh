@@ -150,12 +150,12 @@ setup_gitconfig() {
 
 # PREREQUISITES
 # --------------------------------------------------------------------------------
-# if : >/dev/tcp/8.8.8.8/53; then
-#   echo "$(tput setaf 4)==> $(tput sgr0)Internet connection available. Continue..."
-# else
-#   echo "$(tput setaf 4) ==> $(tput sgr0)Internet connection unavailable! Exiting..."
-#   exit 0
-# fi
+if : >/dev/tcp/8.8.8.8/53; then
+  echo "$(tput setaf 4)==> $(tput sgr0)Internet connection available. Continue..."
+else
+  echo "$(tput setaf 4) ==> $(tput sgr0)Internet connection unavailable! Exiting..."
+  exit 0
+fi
 
 # Homebrew
 eval_brew
