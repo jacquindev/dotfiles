@@ -36,3 +36,16 @@ if (( ${+commands[docker]} )); then
   fi
   docker completion zsh >| "${ZSH_CACHE_DIR}/completions/_docker" &|
 fi
+
+KUBE_COMMANDS=('kompose' 'kubecm' 'kubeshark' 'kubespy' 'kustomize')
+for cmd in "${KUBE_COMMANDS[@]}"; do
+  if (( ${+commands[$cmd]} )); then
+    if [[ ! -f "${ZSH_CACHE_DIR}/completions/_${cmd}" ]]; then
+      typeset -g -A _comps
+      autoload -Uz _$cmd
+      _comps[$cmd]=_$cmd
+    fi
+  $cmd completion zsh >| "${ZSH_CACHE_DIR}/completions/_$cmd" &|
+  fi
+done
+unset cmd KUBE_COMMANDS
