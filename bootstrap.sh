@@ -150,12 +150,13 @@ setup_gitconfig() {
 
 # PREREQUISITES
 # --------------------------------------------------------------------------------
-if : >/dev/tcp/8.8.8.8/53; then
-  echo "$(tput setaf 4)==> $(tput sgr0)Internet connection available. Continue..."
-else
-  echo "$(tput setaf 4) ==> $(tput sgr0)Internet connection unavailable! Exiting..."
-  exit 0
-fi
+# TODO: Add proper function to check internet connection
+# if : >/dev/tcp/8.8.8.8/53; then
+#   echo "$(tput setaf 4)==> $(tput sgr0)Internet connection available. Continue..."
+# else
+#   echo "$(tput setaf 4) ==> $(tput sgr0)Internet connection unavailable! Exiting..."
+#   exit 0
+# fi
 
 # Homebrew
 eval_brew
@@ -192,7 +193,11 @@ for pkg in "${APT_PACKAGES[@]}"; do
 done
 unset pkg
 # wslu
-if uname -r | grep -q icrosoft && lsb_release -a | grep -q Ubuntu; then check_apt_package wslu; fi
+if uname -r | grep -q icrosoft; then
+  if lsb_release -a | grep -q Ubuntu; then 
+    check_apt_package wslu
+  fi
+fi
 # list all installed packages in `packages.log`
 apt list --manual-installed 2>/dev/null | grep -F \[installed\] | tee packages.log >/dev/null
 info "APT" "Packages installed are listed in" "$DOTFILES/packages.log"
@@ -231,6 +236,7 @@ fi
 
 # visual studio code extensions
 title "VSCODE EXTENSIONS"
+\. "$DOTFILES/scripts/paths.sh"
 check_code_extension
 
 # Git configuration
