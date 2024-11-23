@@ -21,7 +21,7 @@
 </div>
 
 > [!NOTE]
-> Windows 11 Dotfiles Repository is maintained here ⇒ [windots](https://github.com/jacquindev/windots.git)
+> Windows 11 Dotfiles Repository is maintained here ⇒ **[windots](https://github.com/jacquindev/windots.git)**
 
 <br/>
 
