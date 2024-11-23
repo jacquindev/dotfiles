@@ -76,7 +76,7 @@ https://github.com/user-attachments/assets/ddc7f78b-71a4-40a3-8714-1f0d83e0eb28
    git submodule update --init --recursive
    ```
 
-3. **Run Setup Script**
+3. **Run [Setup Script](./bootstrap.sh)**
 
    ```bash
    . ./bootstrap.sh
@@ -88,7 +88,7 @@ https://github.com/user-attachments/assets/ddc7f78b-71a4-40a3-8714-1f0d83e0eb28
    chsh -s "$(which zsh)" "$USER"
    ```
 
-5. **Dev Tools Installation** _(optional)_
+5. **[Dev Tools Installation](./devtools.sh)** _(optional)_
 
    ```bash
    . ./devtools.sh
