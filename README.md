@@ -35,10 +35,10 @@
 > your_username ALL=(ALL) NOPASSWD:ALL
 > ```
 
-<hr>
+<hr/>
 
 1. **Install the Prerequisites**
-
+   
    ```bash
    # Update system
    sudo apt update && sudo apt upgrade -y
@@ -47,17 +47,17 @@
    sudo apt install -y curl file git lsb-release
    ```
    
-2. **Clone this repository**
+2. **Clone this Repository**
 
    ```bash
-   git clone https://github.com/jacquindev/dotfiles.git
-   cd dotfiles
+   git clone https://github.com/jacquindev/dotfiles.git ~/dotfiles
+   cd ~/dotfiles
 
-   # Updating the submodule repo
+   # Update submodules in the repository
    git submodule update --init --recursive
    ```
-
-3. **Run setup script**
+   
+3. **Run Setup Script**
 
    ```bash
    . ./bootstrap.sh
