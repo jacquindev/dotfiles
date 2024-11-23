@@ -168,12 +168,37 @@ setup_helm() {
   else
     output "helm"
   fi
+
+  PLUGINS_DIR="$XDG_DATA_HOME/helm/plugins"
+  set -- 'databus23/helm-diff' 'jkroepke/helm-secrets'
+  for plugin in "$@"; do
+    dir=$(basename "$plugin")
+    if [ ! -d "$PLUGINS_DIR/$dir" ]; then
+      gum spin --title="Installing $dir" -- helm plugin install "${GITHUB}$plugin"
+      success "$dir"
+    else
+      output "$dir"
+    fi
+  done
+  unset PLUGINS_DIR plugin
+
+  if ! command -v helmfile >/dev/null; then
+    gum spin --title="Instaling helmfile..." -- brew install --quiet helmfile
+    success "helmfile"
+  else
+    output "helmfile"
+  fi
 }
 
-setup_docker
-setup_cri_dockerd
-setup_kubectl
-setup_minikube
-setup_helm
+if ! grep -E 'vmx|svm' /proc/cpuinfo >/dev/null; then
+  echo "CPU does not support virtualization. Exiting..."
+  exit 0
+else
+  setup_docker
+  setup_cri_dockerd
+  setup_kubectl
+  setup_minikube
+  setup_helm
+fi
 
 echo ""
