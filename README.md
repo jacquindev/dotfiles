@@ -32,14 +32,24 @@ https://github.com/user-attachments/assets/e638f52a-899a-4b30-91b8-536e555cf5b6
 
 https://github.com/user-attachments/assets/ddc7f78b-71a4-40a3-8714-1f0d83e0eb28
 
-<hr/>
+<br/>
+
+## 🌼 Preview
+
+![btop](./assets/btop.png)
+
+![nvim](./assets/nvim.png)
+
+![yazi](./assets/yazi.png)
+
+<br/>
 
 ## 🔧 Setup
 
 > [!WARNING]<br>
 > For **BEST** result, please run: `sudo visudo` <br>
-> Then add the following line at the **end** of the file: <br>
-> *(This will disable password prompt of `sudo` command)*
+> Then add the following line at the **end** of the file: <br> > _(This will disable password prompt of `sudo` command)_
+>
 > ```bash
 > your_username ALL=(ALL) NOPASSWD:ALL
 > ```
@@ -47,7 +57,7 @@ https://github.com/user-attachments/assets/ddc7f78b-71a4-40a3-8714-1f0d83e0eb28
 <hr/>
 
 1. **Install the Prerequisites**
-   
+
    ```bash
    # Update system
    sudo apt update && sudo apt upgrade -y
@@ -55,7 +65,7 @@ https://github.com/user-attachments/assets/ddc7f78b-71a4-40a3-8714-1f0d83e0eb28
    # Prerequisites packages
    sudo apt install -y curl file git lsb-release
    ```
-   
+
 2. **Clone this Repository**
 
    ```bash
@@ -65,20 +75,20 @@ https://github.com/user-attachments/assets/ddc7f78b-71a4-40a3-8714-1f0d83e0eb28
    # Update submodules in the repository
    git submodule update --init --recursive
    ```
-   
+
 3. **Run Setup Script**
 
    ```bash
    . ./bootstrap.sh
    ```
 
-4. **Set ZSH Default Shell** *(recommended)*
+4. **Set ZSH Default Shell** _(recommended)_
 
    ```bash
    chsh -s "$(which zsh)" "$USER"
    ```
 
-5. **Dev Tools Installation** *(optional)*
+5. **Dev Tools Installation** _(optional)_
 
    ```bash
    . ./devtools.sh
