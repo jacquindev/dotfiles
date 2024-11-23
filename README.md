@@ -27,7 +27,7 @@
 
 ## 🔧 Setup
 
-1. **Install the Prerequisites***
+1. **Install the Prerequisites**
 
    ```bash
    # Update system
