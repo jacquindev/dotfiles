@@ -161,14 +161,13 @@ setup_pyenv() {
     cd "$PYENV_ROOT/versions/" && ln -sf "$python_version" global
     output "pyenv" "python v${python_version}"
     cd "$DOTFILES" || exit
-
-    gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Updating pip..." -- python -m ensurepip --upgrade
-    gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Updating pip..." -- python -m pip install --upgrade pip --force
-    output "pyenv" "pip v$(pip --version | cut -d ' ' -f2)"
   else
     exist_output "pyenv" "python v${python_version}"
-    exist_output "pyenv" "pip v$(pip --version | cut -d ' ' -f2)"
   fi
+
+  gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Updating pip..." -- python -m ensurepip --upgrade
+  gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Updating pip..." -- python -m pip install --upgrade pip --force
+  output "pyenv" "pip v$(pip --version | cut -d ' ' -f2)"
 
   echo ""
 }
