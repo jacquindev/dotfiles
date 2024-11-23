@@ -63,3 +63,15 @@
    ```bash
    . ./bootstrap.sh
    ```
+
+4. **Set ZSH Default Shell** *(recommended)*
+
+   ```bash
+   chsh -s "$(which zsh)" "$USER"
+   ```
+
+5. **Dev Tools Installation** *(optional)*
+
+   ```bash
+   . ./devtools.sh
+   ```
