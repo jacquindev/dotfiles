@@ -165,16 +165,26 @@ setup_pyenv() {
     exist_output "pyenv" "$(python --version)"
   fi
 
-  if [ -n "$BASH_VERSION" ]; then
-    . "$HOME/.bashrc"
+  if ! command -v pip >/dev/null; then
+    gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Updating pip..." -- python -m ensurepip --upgrade
+    gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Updating pip..." -- python -m pip install --upgrade pip --force
+    if [ -n "$BASH_VERSION" ]; then
+      . "$HOME/.bashrc"
+    else
+      . "$ZDOTDIR/.zshrc"
+    fi
+    output "python" "pip v$(pip --version | cut -d ' ' -f2)"
   else
-    . "$ZDOTDIR/.zshrc"
+    exist_output "python" "pip v$(pip --version | cut -d ' ' -f2)"
   fi
 
-  gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Updating pip..." -- python -m ensurepip --upgrade
-  gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Updating pip..." -- python -m pip install --upgrade pip --force
-  output "pyenv" "pip v$(pip --version | cut -d ' ' -f2)"
-
+  if ! command -v pipx >/dev/null; then
+    gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Installing pipx..." -- python -m pip install --user pipx
+    gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Installing pipx..." -- python -m pipx ensurepath
+    output "python" "pipx v$(pipx --version)"
+  else
+    exist_output "python" "pipx v$(pipx --version)"
+  fi
   echo ""
 }
 
