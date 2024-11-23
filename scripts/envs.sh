@@ -5,7 +5,7 @@ export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_BIN_HOME="$HOME/.local/bin"
 export XDG_RUNTIME_DIR="$HOME/.xdg"
-export XDG_PROJECTS_DIR="$HOME/projects"
+export XDG_PROJECTS_DIR="$HOME/Projects"
 
 # zsh
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
