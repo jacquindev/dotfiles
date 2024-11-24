@@ -54,8 +54,6 @@ https://github.com/user-attachments/assets/ddc7f78b-71a4-40a3-8714-1f0d83e0eb28
 > your_username ALL=(ALL) NOPASSWD:ALL
 > ```
 
-<hr/>
-
 1. **Install the Prerequisites**
 
    ```bash
