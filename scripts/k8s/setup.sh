@@ -142,12 +142,26 @@ setup_minikube() {
   title "MINIKUBE"
   if ! command -v minikube >/dev/null; then
     if command -v brew >/dev/null; then
-      brew install minikube --quiet
+      gum spin --title="Installing minikube..." -- brew install minikube --quiet
+      success "minikube"
     else
       curl -LO "https://storage.googleapis.com/minikube/releases/latest/minikube-${PLATFORM}-${ARCH}"
       sudo install "minikube-${PLATFORM}-${ARCH}" /usr/local/bin/minikube && rm -f "minikube-${PLATFORM}-${ARCH}"
+      success "minikube"
     fi
-    minikube version >/dev/null && success "minikube" || failed "minikube"
+    gum spin --title="Starting minikube..." -- minikube start
+
+    set -- metrics-server dashboard yakd kubevirt
+    for addon in "$@"; do
+      gum spin --title="Enabling $addon..." -- minikube addons enable "$addon"
+      success "$addon" || failed "$addon"
+    done
+    unset addon
+
+    echo ""
+    gum style --foreground="#74c7ec" --bold "==> Enabled Minikube Addons:"
+    minikube addons list | grep -w 'STATUS\|-\|enabled' | sed '1d; $d' | gum format
+    echo ""
   else
     output "minikube"
   fi
