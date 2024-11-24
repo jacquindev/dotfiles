@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if ! command -v docker >/dev/null; then
+  echo "$(tput setaf 1) ERROR: Command not found: docker. Exiting...$(tput sgr0)"
+  return
+fi
+
+docker rm -f -v "$(docker ps -aq)"
+docker rmi -f "$(docker images -q)"
+docker volume rm "$(docker volume ls -q)"
+docker network rm "$(docker network ls -q)"
