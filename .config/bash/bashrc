@@ -12,7 +12,7 @@ if [[ -n $(alias g 2>/dev/null) ]]; then unalias g; fi
 
 # Oh-my-posh
 if command -v "oh-my-posh" >/dev/null 2>&1; then
-  eval "$(oh-my-posh init bash --config $(brew --prefix oh-my-posh)/themes/hunk.omp.json)"
+  eval "$(oh-my-posh init bash --config $(brew --prefix oh-my-posh)/themes/catppuccin_mocha.omp.json)"
 fi
 
 # shared folder
