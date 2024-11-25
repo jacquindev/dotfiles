@@ -29,6 +29,9 @@ export YARN_CACHE_FOLDER="$XDG_CACHE_HOME/npm"
 # python
 export PYENV_ROOT="$HOME/Code/pyenv"
 
+# rbenv
+export RBENV_ROOT="$HOME/Code/rbenv"
+
 # rust
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 export CARGO_HOME="$HOME/Code/cargo"

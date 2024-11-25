@@ -44,6 +44,11 @@ if command -v pnpm >/dev/null 2>&1; then pathappend "$PNPM_HOME"; fi
 # g
 [ -d "$GOPATH/bin" ] && pathprepend "$GOPATH/bin"
 
+# rbenv
+[ -d "$RBENV_ROOT/bin" ] && pathappend "$RBENV_ROOT/bin"
+[ -d "$RBENV_ROOT/shims" ] && pathappend "$RBENV_ROOT/shims"
+[ -d "$RBENV_ROOT/versions/global/bin" ] && pathappend "$RBENV_ROOT/versions/global/bin"
+
 # kube-related programs
 # Basically I created a custom dir for all of my kubernetes addons programs (if installed) for easier to mantain.
 # Commented them out if you do not want to use them.
