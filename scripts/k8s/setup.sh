@@ -66,7 +66,7 @@ setup_cri_dockerd() {
   title "CRI-DOCKERD"
   if ! command -v cri-dockerd >/dev/null; then
     CRI="cri-docker"
-    CRI_DOCKER_URL="https://raw.githubusercontent.com/Mirantis/cri-dockerd/master/packaging/systemd/${CRI}."
+    CRI_DOCKER_URL="https://raw.githubusercontent.com/Mirantis/cri-dockerd/master/packaging/systemd/${CRI}"
     VER=$(curl -s https://api.github.com/repos/Mirantis/cri-dockerd/releases/latest | grep tag_name | cut -d '"' -f 4 | sed 's/v//g')
 
     sudo apt install -y -qq wget >/dev/null 2>&1
@@ -74,8 +74,8 @@ setup_cri_dockerd() {
     tar xvf "cri-dockerd-${VER}.${ARCH}.tgz"
     sudo mv cri-dockerd/cri-dockerd /usr/local/bin/
     rm -rf cri*
-    wget "${CRI_DOCKER_URL}service"
-    wget "${CRI_DOCKER_URL}socket"
+    wget "${CRI_DOCKER_URL}.service"
+    wget "${CRI_DOCKER_URL}.socket"
     sudo mv "${CRI}.socket" "${CRI}.service" /etc/systemd/system/
     sudo sed -i -e 's,/usr/bin/cri-dockerd,/usr/local/bin/cri-dockerd,' "/etc/systemd/system/${CRI}.service"
     sudo systemctl daemon-reload
@@ -139,17 +139,12 @@ setup_minikube() {
     sudo apt install -y -qq conntrack
     curl -LO "https://storage.googleapis.com/minikube/releases/latest/minikube-${PLATFORM}-${ARCH}"
     sudo install "minikube-${PLATFORM}-${ARCH}" /usr/local/bin/minikube && rm -f "minikube-${PLATFORM}-${ARCH}"
-    success "minikube"
-
-    gum spin --title="Starting minikube..." -- minikube start
-
+    minikube start && success "minikube" || failed "minikube"
     set -- metrics-server dashboard yakd kubevirt
     for addon in "$@"; do
-      gum spin --title="Enabling $addon..." -- minikube addons enable "$addon"
-      success "$addon" || failed "$addon"
+      minikube addons enable "$addon" && success "$addon" || failed "$addon"
     done
     unset addon
-
     echo ""
     gum style --foreground="#74c7ec" --bold "==> Enabled Minikube Addons:"
     minikube addons list | grep -w 'STATUS\|-\|enabled' | sed '1d; $d' | gum format
