@@ -255,7 +255,7 @@ fi
 
 echo ""
 echo "$(tput bold)$(tput setaf 2)NOTES:$(tput sgr0)"
-echo "------"
+echo "$(tput bold)$(tput setaf 2)------$(tput sgr0)"
 echo "To suppress new file creation of $HOME/.sudo_as_admin_successful"
 echo "In your terminal, type 'sudo visudo' and add the following to the file:"
 echo ""
