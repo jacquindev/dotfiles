@@ -194,9 +194,7 @@ done
 unset pkg
 # wslu
 if uname -r | grep -q icrosoft; then
-  if lsb_release -a | grep -q Ubuntu; then 
-    check_apt_package wslu
-  fi
+  if lsb_release -i | grep -q Ubuntu; then check_apt_package wslu; fi
 fi
 # list all installed packages in `packages.log`
 apt list --manual-installed 2>/dev/null | grep -F \[installed\] | tee packages.log >/dev/null
