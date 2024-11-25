@@ -22,12 +22,12 @@ pathprepend() {
 # appendWindowsPath=false, then you can add the path of the program you want
 # to use on Windows inside your WSL terminal here:
 #
-if uname -r | grep -i -q 'Microsoft'; then
-  if command -v wslvar >/dev/null 2>&1; then
-    USERPROFILE=$(wslpath "$(wslvar USERPROFILE)")
-    pathprepend "$USERPROFILE/AppData/Local/Programs/Microsoft VS Code/bin"
-  fi
-fi
+# if uname -r | grep -i -q 'Microsoft'; then
+#   if command -v wslvar >/dev/null 2>&1; then
+#     USERPROFILE=$(wslpath "$(wslvar USERPROFILE)")
+#     pathprepend "$USERPROFILE/AppData/Local/Programs/Microsoft VS Code/bin"
+#   fi
+# fi
 
 #DEV TOOLS #############################################################################
 # npm
