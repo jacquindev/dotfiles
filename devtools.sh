@@ -40,6 +40,7 @@ output() {
 exist_output() {
   STATUS=$(gum style --foreground="#cba6f7" --align="left" --bold "⦁  ")
   PROCESS_NAME=$(gum style --foreground="#89b4fa" --align="left" --bold "$1")
+  DIVIDER=$(gum style --foreground="#6c7086" --align="left" " │ ")
   ENTRY_NAME=$(gum style --foreground="#f9e2af" --align="left" " $2 ")
   MESSAGE=$(gum style --foreground="#9399b2" --align="left" --italic "already installed. Skipping...")
 
@@ -75,14 +76,14 @@ setup_go() {
     else
       . "$ZDOTDIR/.zshrc"
     fi
-    output "g" "g v$(g --version)"
+    output "g " "g v$(g --version)"
   else
-    exist_output "g" "g v$(g --version)"
+    exist_output "g " "g v$(g --version)"
   fi
 
   if ! command -v go >/dev/null; then
     gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Installing go latest version..." -- g install latest
-    output "g" "$(go version | cut -d ' ' -f3)"
+    output "go" "$(go version | cut -d ' ' -f3)"
   else
     exist_output "go" "$(go version | cut -d ' ' -f3)"
   fi
@@ -111,10 +112,10 @@ setup_pyenv() {
       pyenv global "$python_version"
       cd "$PYENV_ROOT/versions/" && ln -sf "$python_version" global
       pyenv rehash
-      output "pyenv" "python v${python_version}"
+      output "pyenv " "python v${python_version}"
       cd "$DOTFILES" || exit 1
     else
-      exist_output "pyenv" "python v$(python --version | cut -d ' ' -f2-)"
+      exist_output "pyenv " "python v$(python --version | cut -d ' ' -f2-)"
     fi
 
     # Pip
@@ -210,19 +211,19 @@ setup_nvm() {
     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
     echo ""
-    output "nvm" "nvm v$(nvm --version)"
+    output "nvm " "nvm v$(nvm --version)"
 
     gum confirm "Use LTS (y) or latest node (n)?" && nvm install --lts >/dev/null 2>&1 || nvm install node >/dev/null 2>&1
-    output "nvm" "node $(node --version)"
+    output "nvm " "node $(node --version)"
     gum spin --title "Installing latest npm" -- nvm install-latest-npm
-    output "nvm" "npm v$(npm --version)"
+    output "nvm " "npm v$(npm --version)"
     gum spin --title "Installing pnpm" -- npm install -g pnpm
-    output "npm" "pnpm v$(pnpm --version)"
+    output "npm " "pnpm v$(pnpm --version)"
   else
     \. "$NVM_DIR/nvm.sh"
-    exist_output "nvm" "nvm v$(nvm --version)"
-    if command -v npm >/dev/null 2>&1; then exist_output "nvm" "npm v$(npm --version)"; fi
-    if command -v pnpm >/dev/null 2>&1; then exist_output "npm" "pnpm v$(pnpm --version)"; fi
+    exist_output "nvm " "nvm v$(nvm --version)"
+    if command -v npm >/dev/null 2>&1; then exist_output "nvm " "npm v$(npm --version)"; fi
+    if command -v pnpm >/dev/null 2>&1; then exist_output "npm " "pnpm v$(pnpm --version)"; fi
   fi
 
   export PATH="$(npm config get prefix)/bin:$PNPM_HOME:$PATH"
@@ -237,17 +238,125 @@ setup_nvm() {
     fi
   done
   unset tool
+
+  echo ""
 }
 
-choose=$(gum choose --header="Choose a dev tool to setup:" --header.foreground="#89b4fa" --selected.foreground="#cba6f7" --cursor.foreground="#cba6f7" "1) NVM" "2) Pyenv" "3) G")
+setup_rbenv() {
+  title "RBENV (Ruby Version Manager)"
+
+  export RBENV_ROOT="$HOME/Code/rbenv"
+  export PATH="$RBENV_ROOT/bin:$RBENV_ROOT/shims:$RBENV_ROOT/versions/global/bin:$PATH"
+
+  rbenv_plugins() {
+    set -- 'rbenv/ruby-build' 'rbenv/rbenv-default-gems' 'jf/rbenv-gemset' 'rkh/rbenv-update' \
+      'rkh/rbenv-use' 'rkh/rbenv-whatis' 'yyuu/rbenv-ccache'
+    for repo in "$@"; do
+      pkg=$(basename $repo)
+      if [ ! -d "$RBENV_ROOT/plugins/$pkg" ]; then
+        checkout "${GITHUB}$repo.git" "${RBENV_ROOT}/plugins/$pkg" "master"
+        output "rbenv-plugin" "$pkg"
+      else
+        exist_output "rbenv-plugin" "$pkg"
+      fi
+    done
+    unset repo pkg
+  }
+
+  ruby_install() {
+    if rbenv version | grep -q system; then
+      ruby_version=$(rbenv install --list | gum choose --header="Choose a Ruby Version:" --header.foreground="#f9e2af")
+      gum spin --title="Instaling ruby $ruby_version..." -- rbenv install "$ruby_version"
+      rbenv global "$ruby_version"
+      cd "$RBENV_ROOT/versions/" && ln -sf "$ruby_version" global
+      rbenv rehash
+      cd "$DOTFILES" || return 0
+      output "rbenv" "ruby v$(ruby --version | cut -d ' ' -f2)"
+    else
+      exist_output "rbenv" "ruby v$(ruby --version | cut -d ' ' -f2)"
+    fi
+  }
+
+  if ! command -v rbenv >/dev/null; then
+    set -- autoconf patch build-essential libssl-dev libyaml-dev libreadline6-dev \
+      zlib1g-dev libgmp-dev libncurses5-dev libffi-dev libgdbm6 libgdbm-dev libdb-dev uuid-dev
+    for pkg in "$@"; do
+      check_apt_package "$pkg"
+    done
+    unset pkg
+
+    [ -d "$RBENV_ROOT" ] && rm -rf "$RBENV_ROOT"
+
+    checkout "${GITHUB}/rbenv/rbenv.git" "$RBENV_ROOT" "master"
+    "$RBENV_ROOT/bin/rbenv" init >&2
+    output "rbenv" "rbenv v$(rbenv --version | cut -d ' ' -f2-)"
+    rbenv_plugins
+    ruby_install
+
+  else
+    exist_output "rbenv" "rbenv v$(rbenv --version | cut -d ' ' -f2-)"
+    ruby_install
+    rbenv_plugins
+  fi
+
+  echo ""
+}
+
+setup_rust() {
+  title "RUSTUP (Rust Programming Language Installer)"
+
+  export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
+  export CARGO_HOME="$HOME/Code/cargo"
+
+  cargo_packages() {
+    set -- cargo-update cargo-cache cargo-run-bin
+    for pkg in "$@"; do
+      if ! cargo install --list | grep -q "$pkg"; then
+        gum spin --title="Installing $pkg..." -- cargo binstall --no-confirm "$pkg"
+        output "cargo " "$pkg"
+      else
+        exist_output "cargo " "$pkg"
+      fi
+    done
+  }
+
+  if ! command -v rustup >/dev/null || ! command -v cargo >/dev/null || [[ "$(which cargo)" != *"$CARGO_HOME"* ]]; then
+    rustup_file="$(pwd)/install.sh"
+    wget --quiet -O "$rustup_file" https://sh.rustup.rs
+    chmod +x "$rustup_file"
+    "$rustup_file" -y --quiet --no-modify-path
+    rm -f "$rustup_file"
+    \. "$CARGO_HOME/env"
+    output "rustup" "$(rustup --version)"
+  else
+    \. "$CARGO_HOME/env"
+    exist_output "rustup" "$(rustup --version)"
+  fi
+
+  if ! command -v cargo-binstall >/dev/null 2>&1; then
+    wget -O- https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
+    output "cargo " "cargo-binstall $(cargo-binstall -V)"
+    cargo_packages
+  else
+    exist_output "cargo " "cargo-binstall v$(cargo-binstall -V)"
+    cargo_packages
+  fi
+
+  echo ""
+}
+
+choose=$(gum choose --header="Choose a dev tool to setup:" --header.foreground="#89b4fa" --selected.foreground="#cba6f7" --cursor.foreground="#cba6f7" "1) NVM" "2) Pyenv" "3) Rbenv" "4) Rustup" "5) Go")
 
 if [ "$choose" = "1) NVM" ]; then
   setup_nvm
 elif [ "$choose" = "2) Pyenv" ]; then
   setup_pyenv
-elif [ "$choose" = "3) G" ]; then
+elif [ "$choose" = "3) Rbenv" ]; then
+  setup_rbenv
+elif [ "$choose" = "4) Rustup" ]; then
+  setup_rust
+elif [ "$choose" = "5) Go" ]; then
   setup_go
 else
-  echo "Invalid option. Exiting..."
-  exit 1
+  return
 fi
