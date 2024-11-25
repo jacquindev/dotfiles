@@ -25,7 +25,7 @@ output() {
   if [ $? -eq 0 ]; then
     STATUS=$(gum style --foreground="#a6e3a1" --align="left" --bold "✓  ")
     PROCESS_NAME=$(gum style --foreground="#a6e3a1" --align="left" --bold "$1")
-    ENTRY_NAME=$(gum style --foreground="#f9e2af" --align="left" "$2 ")
+    ENTRY_NAME=$(gum style --foreground="#f9e2af" --align="left" " $2 ")
     MESSAGE=$(gum style --foreground="#cdd6f4" --align="left" --italic "installed successfully.")
   else
     STATUS=$(gum style --foreground="#f38ba8" --align="left" --bold "✗  ")
@@ -40,7 +40,7 @@ output() {
 exist_output() {
   STATUS=$(gum style --foreground="#cba6f7" --align="left" --bold "⦁  ")
   PROCESS_NAME=$(gum style --foreground="#89b4fa" --align="left" --bold "$1")
-  ENTRY_NAME=$(gum style --foreground="#f9e2af" --align="left" "$2 ")
+  ENTRY_NAME=$(gum style --foreground="#f9e2af" --align="left" " $2 ")
   MESSAGE=$(gum style --foreground="#9399b2" --align="left" --italic "already installed. Skipping...")
 
   gum join --align="left" --horizontal "$STATUS" "$PROCESS_NAME" "$DIVIDER" "$ENTRY_NAME" "$MESSAGE"
@@ -113,81 +113,6 @@ setup_nvm() {
   echo ""
 }
 
-setup_pyenv() {
-  title "PYENV (Python Version Manager)"
-
-  export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims/$PYENV_ROOT/versions/global/bin:$PATH"
-
-  pyenv_plugins() {
-    set -- pyenv-doctor pyenv-update pyenv-virtualenv pyenv-ccache
-    for plugin in "$@"; do
-      if [ ! -d "$PYENV_ROOT/plugins/$plugin" ]; then
-        checkout "${GITHUB}pyenv/$plugin.git" "$PYENV_ROOT/plugins/$plugin" "master"
-        output "pyenv-plugin" "$plugin"
-      else
-        exist_output "pyenv-plugin" "$plugin"
-      fi
-    done
-  }
-
-  if ! command -v pyenv >/dev/null || [ ! -d "$PYENV_ROOT" ] && [[ "$(uname -r)" == *icrosoft* ]]; then
-    checkout "${GITHUB}pyenv/pyenv.git" "${PYENV_ROOT}" "master"
-    pyenv_plugins
-
-    # Python Build Dependencies
-    set -- libssl-dev libbz2-dev libreadline-dev libsqlite3-dev libxml2-dev xz-utils libncurses5-dev libxmlsec1-dev libffi-dev liblzma-dev tk-dev zlib1g-dev
-    for dep in "$@"; do
-      check_apt_package "$dep"
-    done
-    unset dep
-
-    cd "$PYENV_ROOT" && src/configure && make -C src >/dev/null
-
-    {
-      "$PYENV_ROOT/bin/pyenv" init
-      "$PYENV_ROOT/bin/pyenv" virtualenv-init
-    } >/dev/null 2>&1
-
-    cd "$DOTFILES" && output "pyenv" "pyenv v$(pyenv --version | cut -d ' ' -f2-)" || exit
-  else
-    exist_output "pyenv" "pyenv v$(pyenv --version | cut -d ' ' -f2-) "
-  fi
-
-  # Install python version
-  if pyenv version | grep -q system; then
-    python_version=$(pyenv install --list | grep '^  3.' | sed 's/[[:space:]]//g' | gum choose --height=20 --header="Choose a Python Version:" --header.foreground="#f9e2af")
-    gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Installing python v${python_version}..." -- pyenv install "$python_version"
-    pyenv global "$python_version"
-    cd "$PYENV_ROOT/versions/" && ln -sf "$python_version" global
-    output "pyenv" "Python ${python_version}"
-    cd "$DOTFILES" || exit
-  else
-    exist_output "pyenv" "$(python --version)"
-  fi
-
-  if ! command -v pip >/dev/null; then
-    gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Updating pip..." -- python -m ensurepip --upgrade
-    gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Updating pip..." -- python -m pip install --upgrade pip --force
-    if [ -n "$BASH_VERSION" ]; then
-      . "$HOME/.bashrc"
-    else
-      . "$ZDOTDIR/.zshrc"
-    fi
-    output "python" "pip v$(pip --version | cut -d ' ' -f2)"
-  else
-    exist_output "python" "pip v$(pip --version | cut -d ' ' -f2)"
-  fi
-
-  if ! command -v pipx >/dev/null; then
-    gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Installing pipx..." -- python -m pip install --user pipx
-    gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Installing pipx..." -- python -m pipx ensurepath
-    output "python" "pipx v$(pipx --version)"
-  else
-    exist_output "python" "pipx v$(pipx --version)"
-  fi
-  echo ""
-}
-
 setup_go() {
   title "G (Go Version Manager)"
 
@@ -210,6 +135,109 @@ setup_go() {
   gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Installing go latest version..." -- g install latest
   output "g" "$(go version | cut -d ' ' -f3)"
 
+  echo ""
+}
+
+setup_pyenv() {
+  title "PYENV (Python Version Manager)"
+
+  FOUND_PYENV=0
+  if [[ "${commands[pyenv]}" == */pyenv-win/* && "$(uname -r)" == *icrosoft* ]]; then
+    FOUND_PYENV=0
+  elif ! command -v pyenv &>/dev/null; then
+    FOUND_PYENV=0
+  else
+    FOUND_PYENV=1
+  fi
+
+  python_programs() {
+    if pyenv version | grep -q system; then
+      python_version=$(pyenv install --list | grep '^  3.' | sed 's/[[:space:]]//g' | gum choose --height=20 --header="Choose a Python Version:" --header.foreground="#f9e2af")
+      gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Installing python v${python_version}..." -- pyenv install "$python_version"
+      pyenv global "$python_version"
+      cd "$PYENV_ROOT/versions/" && ln -sf "$python_version" global
+      pyenv rehash
+      output "pyenv" "Python ${python_version}"
+      cd "$DOTFILES" || exit 1
+    fi
+
+    # Pip
+    if ! command -v pip >/dev/null; then
+      gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Updating pip..." -- python -m ensurepip --upgrade
+      gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Updating pip..." -- python -m pip install --upgrade pip --force
+      if [ -n "$BASH_VERSION" ]; then \. "$HOME/.bashrc"; else \. "$ZDOTDIR/.zshrc"; fi
+      output "python" "pip v$(pip --version | cut -d ' ' -f2)"
+    else
+      exist_output "python" "pip v$(pip --version | cut -d ' ' -f2)"
+    fi
+
+    # Pipx
+    if ! command -v pipx >/dev/null; then
+      gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Installing pipx..." -- python -m pip install --user pipx --force
+      gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Installing pipx..." -- python -m pipx ensurepath
+      if [ -n "$BASH_VERSION" ]; then \. "$HOME/.bashrc"; else \. "$ZDOTDIR/.zshrc"; fi
+      output "python" "pipx v$(pipx --version)"
+    else
+      exist_output "python" "pipx v$(pipx --version)"
+    fi
+
+    # pipenv
+    if ! command -v pipenv >/dev/null; then
+      gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Installing pipenv..." -- python -m pip install --user pipenv --force
+      if [ -n "$BASH_VERSION" ]; then \. "$HOME/.bashrc"; else \. "$ZDOTDIR/.zshrc"; fi
+      output "python" "pipenv"
+    else
+      exist_output "python" "pipenv"
+    fi
+
+    # Poetry
+    if ! command -v poetry >/dev/null; then
+      gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Installing poetry..." -- pipx install poetry --force
+      if [ -n "$BASH_VERSION" ]; then \. "$HOME/.bashrc"; else \. "$ZDOTDIR/.zshrc"; fi
+      output "python" "poetry"
+    else
+      exist_output "python" "poetry"
+    fi
+  }
+
+  if [[ $FOUND_PYENV -eq 0 ]]; then
+    export PYENV_ROOT="$HOME/Code/pyenv"
+    export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions/global/bin:$PATH"
+
+    # Python Build Dependencies
+    set -- libssl-dev libbz2-dev libreadline-dev libsqlite3-dev libxml2-dev xz-utils libncurses5-dev libxmlsec1-dev libffi-dev liblzma-dev tk-dev zlib1g-dev
+    for dep in "$@"; do
+      check_apt_package "$dep"
+    done
+    unset dep
+
+    # Pyenv & Pyenv Plugins
+    checkout "${GITHUB}pyenv/pyenv.git" "$PYENV_ROOT" "master"
+    cd "$PYENV_ROOT" && src/configure && make -C src >/dev/null
+    {
+      "$PYENV_ROOT/bin/pyenv" init
+      "$PYENV_ROOT/bin/pyenv" virtualenv-init
+    } >/dev/null 2>&1
+
+    output "pyenv" "pyenv v$(pyenv --version | cut -d ' ' -f2-)"
+    set -- pyenv-doctor pyenv-update pyenv-virtualenv pyenv-ccache
+    for plugin in "$@"; do
+      if [ ! -d "$PYENV_ROOT/plugins/$plugin" ]; then
+        checkout "${GITHUB}pyenv/$plugin.git" "$PYENV_ROOT/plugins/$plugin" "master"
+        output "pyenv-plugin" "$plugin"
+      fi
+    done
+    unset plugin
+
+    python_programs
+    cd "$DOTFILES" || return 0
+
+  elif [[ $FOUND_PYENV -eq 1 ]]; then
+    exist_output "pyenv" "pyenv v$(pyenv --version | cut -d ' ' -f2-)"
+    python_programs
+  fi
+
+  unset FOUND_PYENV
   echo ""
 }
 
