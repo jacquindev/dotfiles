@@ -3,6 +3,12 @@
 # Currently this script only works with Ubuntu/Debian machines.
 # Any further modifications are welcomed!!
 
+# Return if kubectl command not found
+if ! command -v kubectl >/dev/null 2>&1; then
+  echo "$(tput setaf 1)ERROR: Command not found: kubectl. Exiting...$(tput sgr0)"
+  return
+fi
+
 PREFIX="$HOME/Code/kube"
 KUBEBIN="$PREFIX/bin"
 GITHUB="https://github.com/"
