@@ -61,58 +61,6 @@ check_apt_package() {
   fi
 }
 
-setup_nvm() {
-  title "NVM (Node Version Manager)"
-  if ! command -v nvm >/dev/null || [ ! -d "$NVM_DIR" ]; then
-    gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Installing nvm..." -- git clone "${GITHUB}nvm-sh/nvm.git" "$NVM_DIR"
-    _nvm_latest_release_tag=$(cd "$NVM_DIR" && git describe --abbrev=0 --tags --match "v[0-9]*" "$(git rev-list --tags --max-count=1)")
-    cd "$NVM_DIR" && git checkout --quiet "$_nvm_latest_release_tag"
-    \. "$NVM_DIR/nvm.sh"
-    output "nvm" "nvm v$(nvm --version)"
-  else
-    exist_output "nvm" "nvm v$(nvm --version)"
-  fi
-
-  cd "$DOTFILES" && \. "$NVM_DIR/nvm.sh" || exit
-
-  node_lts() {
-    nvm install --lts
-    nvm install-latest-npm
-  }
-
-  node_latest() {
-    nvm install node
-    nvm install-latest-npm
-  }
-
-  if ! command -v npm >/dev/null; then
-    gum confirm "Install LTS (y) or latest Node (n)?" && node_lts || node_latest
-  fi
-
-  if ! command -v cz >/dev/null; then
-    npm install -g --quiet commitizen cz-git
-    output "npm" "commitizen"
-    output "npm" "cz-git"
-  else
-    exist_output "npm" "commitizen"
-    exist_output "npm" "cz-git"
-  fi
-  if ! command -v git-open >/dev/null; then
-    npm install -g --quiet git-open
-    output "npm" "git-open"
-  else
-    exist_output "npm" "git-open"
-  fi
-  if ! command -v git-recent >/dev/null; then
-    npm install -g --quiet git-recent
-    output "npm" "git-recent"
-  else
-    exist_output "npm" "git-recent"
-  fi
-
-  echo ""
-}
-
 setup_go() {
   title "G (Go Version Manager)"
 
@@ -132,8 +80,12 @@ setup_go() {
     exist_output "g" "g v$(g --version)"
   fi
 
-  gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Installing go latest version..." -- g install latest
-  output "g" "$(go version | cut -d ' ' -f3)"
+  if ! command -v go >/dev/null; then
+    gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Installing go latest version..." -- g install latest
+    output "g" "$(go version | cut -d ' ' -f3)"
+  else
+    exist_output "go" "$(go version | cut -d ' ' -f3)"
+  fi
 
   echo ""
 }
@@ -241,7 +193,51 @@ setup_pyenv() {
   echo ""
 }
 
-title "DEV TOOLS"
+setup_nvm() {
+  title "NVM (Node Version Manager)"
+
+  export NVM_DIR="$HOME/Code/nvm"
+  export PNPM_HOME="$XDG_DATA_HOME/pnpm"
+
+  [ -d "$XDG_DATA_HOME/nvm" ] && rm -rf "$XDG_DATA_HOME/nvm"
+  [ -d "$HOME/.nvm" ] && rm -rf "$HOME/.nvm"
+
+  if [ ! -d "$HOME/Code/nvm" ]; then
+    mkdir -p "$NVM_DIR"
+    curl --silent -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash >/dev/null
+
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+    echo ""
+    output "nvm" "nvm v$(nvm --version)"
+
+    gum confirm "Use LTS (y) or latest node (n)?" && nvm install --lts >/dev/null 2>&1 || nvm install node >/dev/null 2>&1
+    output "nvm" "node $(node --version)"
+    gum spin --title "Installing latest npm" -- nvm install-latest-npm
+    output "nvm" "npm v$(npm --version)"
+    gum spin --title "Installing pnpm" -- npm install -g pnpm
+    output "npm" "pnpm v$(pnpm --version)"
+  else
+    \. "$NVM_DIR/nvm.sh"
+    exist_output "nvm" "nvm v$(nvm --version)"
+    if command -v npm >/dev/null 2>&1; then exist_output "nvm" "npm v$(npm --version)"; fi
+    if command -v pnpm >/dev/null 2>&1; then exist_output "npm" "pnpm v$(pnpm --version)"; fi
+  fi
+
+  export PATH="$(npm config get prefix)/bin:$PNPM_HOME:$PATH"
+
+  set -- bun commitizen cz-git git-open git-recent
+  for tool in "$@"; do
+    if ! pnpm ls -g | grep -q "$tool"; then
+      gum spin --title "Instaling $tool..." -- pnpm install -g "$tool"
+      output "pnpm" "$tool"
+    else
+      exist_output "pnpm" "$tool"
+    fi
+  done
+  unset tool
+}
 
 choose=$(gum choose --header="Choose a dev tool to setup:" --header.foreground="#89b4fa" --selected.foreground="#cba6f7" --cursor.foreground="#cba6f7" "1) NVM" "2) Pyenv" "3) G")
 
