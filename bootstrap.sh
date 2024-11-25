@@ -254,8 +254,7 @@ fi
 [ -f "$HOME/.motd_shown" ] && rm -f "$HOME/.motd_shown"
 
 echo ""
-echo "$(tput bold)$(tput setaf 2)NOTES:$(tput sgr0)"
-echo "$(tput bold)$(tput setaf 2)------$(tput sgr0)"
+echo "$(tput bold)$(tput setaf 3)NOTES:$(tput sgr0)"
 echo "To suppress new file creation of $HOME/.sudo_as_admin_successful"
 echo "In your terminal, type 'sudo visudo' and add the following to the file:"
 echo ""
@@ -265,7 +264,9 @@ echo ""
 # END SCRIPT
 # --------------------------------------------------------------------------------
 echo ""
-echo "$(tput sgr0)For more information, please visit: $(tput setaf 4)https://github.com/jacquindev/dotfiles"
+echo "$(tput setaf 8)--------------------------------------------------------------------------$(tput sgr0)"
+echo "$(tput setaf 7)For more information, please visit: $(tput setaf 4)https://github.com/jacquindev/dotfiles"
 echo "$(tput setaf 7)- Submit an issue via: $(tput setaf 4)https://github.com/jacquindev/dotfiles/issues/new"
-echo "$(tput setaf 7)- Contact me via email: $(tput setaf 4)jacquindev@outlook.com$(tput sgr0)"
+echo "$(tput setaf 7)- Contact me via email: $(tput setaf 4)jacquindev@outlook.com"
+echo ""
 echo ""
