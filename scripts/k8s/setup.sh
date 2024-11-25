@@ -95,9 +95,6 @@ setup_kubectl() {
   VER=$(curl -L -s https://dl.k8s.io/release/stable.txt)
 
   if ! command -v kubectl >/dev/null; then
-    if command -v brew >/dev/null; then
-      brew install kubectl --quiet
-    else
       curl -LO "https://dl.k8s.io/release/${VER}/bin/${PLATFORM}/${ARCH}/kubectl"
       curl -LO "https://dl.k8s.io/release/${VER}/bin/${PLATFORM}/${ARCH}/kubectl.sha256"
       SHA_VALID=$(echo "$(cat kubectl.sha256) kubectl" | sha256sum --check | grep -q OK)
@@ -111,7 +108,6 @@ setup_kubectl() {
       fi
       rm -f kubectl kubectl.sha256
       unset SHA_VALID
-    fi
   else
     output "kubectl"
   fi
@@ -141,14 +137,11 @@ setup_kubectl() {
 setup_minikube() {
   title "MINIKUBE"
   if ! command -v minikube >/dev/null; then
-    if command -v brew >/dev/null; then
-      gum spin --title="Installing minikube..." -- brew install minikube --quiet
-      success "minikube"
-    else
-      curl -LO "https://storage.googleapis.com/minikube/releases/latest/minikube-${PLATFORM}-${ARCH}"
-      sudo install "minikube-${PLATFORM}-${ARCH}" /usr/local/bin/minikube && rm -f "minikube-${PLATFORM}-${ARCH}"
-      success "minikube"
-    fi
+    sudo apt install -y -qq conntrack
+    curl -LO "https://storage.googleapis.com/minikube/releases/latest/minikube-${PLATFORM}-${ARCH}"
+    sudo install "minikube-${PLATFORM}-${ARCH}" /usr/local/bin/minikube && rm -f "minikube-${PLATFORM}-${ARCH}"
+    success "minikube"
+
     gum spin --title="Starting minikube..." -- minikube start
 
     set -- metrics-server dashboard yakd kubevirt
@@ -170,15 +163,10 @@ setup_minikube() {
 setup_helm() {
   title "HELM"
   if ! command -v helm >/dev/null; then
-    if command -v brew >/dev/null; then
-      brew install helm --quiet
-    else
-      curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-      chmod 700 get_helm.sh
-      ./get_helm.sh
-      rm -f get_helm.sh
-    fi
-    helm version >/dev/null && success "helm" || failed "helm"
+    curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+    chmod 700 get_helm.sh
+    ./get_helm.sh success "helm" || failed "helm"
+    rm -f get_helm.sh
   else
     output "helm"
   fi
@@ -197,8 +185,12 @@ setup_helm() {
   unset PLUGINS_DIR plugin
 
   if ! command -v helmfile >/dev/null; then
-    gum spin --title="Instaling helmfile..." -- brew install --quiet helmfile
-    success "helmfile"
+    ARCH=$(dpkg --print-architecture)
+    PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
+    VERSION=$(curl -s https://api.github.com/repos/helmfile/helmfile/releases/latest | grep tag_name | cut -d '"' -f 4 | sed 's/v//g')
+    curl -sL "https://github.com/helmfile/helmfile/releases/download/v${VERSION}/helmfile_${VERSION}_${PLATFORM}_${ARCH}.tar.gz" | tar xz
+    sudo mv helmfile /usr/local/bin/helmfile && success "helmfile" || failed "helmfile"
+    rm -f LICENSE README*
   else
     output "helmfile"
   fi
