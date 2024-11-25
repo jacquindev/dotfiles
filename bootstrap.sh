@@ -105,21 +105,6 @@ check_gh_extension() {
   fi
 }
 
-check_code_extension() {
-  # VSCode extensions
-  if command_exists code; then
-    INSTALLED_EXTENSIONS=$(code --list-extensions)
-    while read -r extension; do
-      if [[ $INSTALLED_EXTENSIONS != *"$extension"* ]]; then
-        gum spin --title "Installing $extension..." -- code --install-extension "$extension"
-      fi
-    done <"$DOTFILES/extensions.txt"
-    info "VSCODE" "Extensions installed can be found at" "$DOTFILES/extensions.txt"
-  else
-    info "VSCODE" "Command not found:" "'code'"
-  fi
-}
-
 setup_gitconfig() {
   if [ ! -f "$HOME/.gitconfig" ] || ([ -f "$HOME/.gitconfig" ] && ! grep -q \[user\] "$HOME/.gitconfig"); then
     GIT_NAME=$(gum input --prompt="▶  Input Git Name: " --prompt.foreground="#cba6f7" --placeholder="Your Name" --placeholder.foreground="#6c7086")
@@ -235,7 +220,18 @@ fi
 # visual studio code extensions
 title "VSCODE EXTENSIONS"
 \. "$DOTFILES/scripts/paths.sh"
-check_code_extension
+# VSCode extensions
+if command_exists code; then
+  INSTALLED_EXTENSIONS=$(code --list-extensions)
+  while read -r extension; do
+    if [[ $INSTALLED_EXTENSIONS != *"$extension"* ]]; then
+      gum spin --title "Installing $extension..." -- code --install-extension "$extension"
+    fi
+  done <"$DOTFILES/extensions.txt"
+  info "VSCODE" "Extensions installed can be found at" "$DOTFILES/extensions.txt"
+else
+  info "VSCODE" "Command not found:" "code"
+fi
 
 # Git configuration
 title "GIT CONFIGURATION"
