@@ -38,5 +38,5 @@ done
 unset cmd KUBE_COMMANDS
 
 # source files
-for file in "$BASH_COMPLETION_DIR/"*; do \. "$file"; done
+for file in "$BASH_COMPLETION_DIR"/*; do \. "$file"; done
 unset file
