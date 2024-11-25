@@ -10,7 +10,7 @@ DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 ##################################################################################
 ###                               HELPER FUNCTIONS                             ###
 ##################################################################################
-make_dir() {
+createdir() {
   if [ ! -d "$1" ]; then mkdir -p "$1"; fi
 }
 
@@ -177,7 +177,7 @@ DIRECTORIES=(
   "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME" "$XDG_BIN_HOME" "$XDG_PROJECTS_DIR" "$XDG_RUNTIME_DIR"
   "$HOME/Code" "$XDG_CACHE_HOME/backup" "$XDG_CACHE_HOME/npm" "$XDG_CACHE_HOME/wget" "$XDG_CACHE_HOME/less"
 )
-for dir in "${DIRECTORIES[@]}"; do make_dir "$dir"; done
+for dir in "${DIRECTORIES[@]}"; do createdir "$dir"; done
 unset dir
 
 # Apt packages
