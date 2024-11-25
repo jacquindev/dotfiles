@@ -3,5 +3,7 @@ Brewfile.lock.json
 
 .config/gh/hosts.yml
 
+.profile
 .zcompdump
 .zsh_plugins.zsh
+.zprofile
