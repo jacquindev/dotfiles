@@ -55,7 +55,7 @@ setup_docker() {
     for pkg in "$@"; do
       sudo apt install -y -qq "$pkg" 
     done
-    sudo usermod -aG docker "$USER"
+    sudo usermod -aG docker "$USER" && newgrp docker
     sudo docker run hello-world >/dev/null 2>&1 && success "docker" || failed "docker"
   else
     output "docker"
