@@ -17,6 +17,15 @@ if (( ${+commands[poetry]} )); then
   poetry completions zsh >| "${ZSH_CACHE_DIR}/completions/_poetry" &|
 fi
 
+if (( ${+commands[pipenv]} )); then
+  if [[ ! -f "${ZSH_CACHE_DIR}/completions/_pipenv" ]]; then
+    typeset -g -A _comps
+    autoload -Uz _pipenv
+    _comps[pipenv]=_pipenv
+  fi
+  _PIPENV_COMPLETE=zsh_source pipenv >| "${ZSH_CACHE_DIR}/completions/_poetry" &|
+fi
+
 # docker
 if (( ${+commands[docker]} )); then
   if [[ ! -f "${ZSH_CACHE_DIR}/completions/_docker" ]]; then
