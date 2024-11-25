@@ -222,7 +222,7 @@ setup_pyenv() {
     } >/dev/null 2>&1
 
     output "pyenv" "pyenv v$(pyenv --version | cut -d ' ' -f2-)"
-    set -- pyenv-doctor pyenv-update pyenv-virtualenv pyenv-ccache
+    set -- pyenv-doctor pyenv-update pyenv-virtualenv pyenv-ccache pyenv-pip-migrate
     for plugin in "$@"; do
       if [ ! -d "$PYENV_ROOT/plugins/$plugin" ]; then
         checkout "${GITHUB}pyenv/$plugin.git" "$PYENV_ROOT/plugins/$plugin" "master"
