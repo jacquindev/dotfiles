@@ -157,8 +157,10 @@ setup_pyenv() {
       pyenv global "$python_version"
       cd "$PYENV_ROOT/versions/" && ln -sf "$python_version" global
       pyenv rehash
-      output "pyenv" "Python ${python_version}"
+      output "pyenv" "python v${python_version}"
       cd "$DOTFILES" || exit 1
+    else
+      exist_output "pyenv" "python v$(python --version | cut -d ' ' -f2-)"
     fi
 
     # Pip
@@ -185,18 +187,18 @@ setup_pyenv() {
     if ! command -v pipenv >/dev/null; then
       gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Installing pipenv..." -- python -m pip install --user pipenv --force
       if [ -n "$BASH_VERSION" ]; then \. "$HOME/.bashrc"; else \. "$ZDOTDIR/.zshrc"; fi
-      output "python" "pipenv"
+      output "python" "pipenv ($(pipenv --version | cut -d ' ' -f2-))"
     else
-      exist_output "python" "pipenv"
+      exist_output "python" "pipenv ($(pipenv --version | cut -d ' ' -f2-))"
     fi
 
     # Poetry
     if ! command -v poetry >/dev/null; then
       gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Installing poetry..." -- pipx install poetry --force
       if [ -n "$BASH_VERSION" ]; then \. "$HOME/.bashrc"; else \. "$ZDOTDIR/.zshrc"; fi
-      output "python" "poetry"
+      output "python" "poetry $(poetry --version | cut -d ' ' -f2-)"
     else
-      exist_output "python" "poetry"
+      exist_output "python" "poetry $(poetry --version | cut -d ' ' -f2-)"
     fi
   }
 
