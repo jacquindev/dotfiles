@@ -185,9 +185,10 @@ setup_helm() {
 
   if ! command -v helmfile >/dev/null; then
     VERSION=$(curl -s https://api.github.com/repos/helmfile/helmfile/releases/latest | grep tag_name | cut -d '"' -f 4 | sed 's/v//g')
-    curl -sL "https://github.com/helmfile/helmfile/releases/download/v${VERSION}/helmfile_${VERSION}_${PLATFORM}_${ARCH}.tar.gz" | tar xz
+    curl -sL "${GITHUB}helmfile/helmfile/releases/download/v${VERSION}/helmfile_${VERSION}_${PLATFORM}_${ARCH}.tar.gz" | tar xz
     sudo mv helmfile /usr/local/bin/helmfile && success "helmfile" || failed "helmfile"
     rm -f LICENSE README*
+    unset VERSION
   else
     output "helmfile"
   fi
