@@ -29,11 +29,11 @@ pathprepend() {
 #   fi
 # fi
 
-#DEV TOOLS #############################################################################
+# DEV TOOLS #############################################################################
 # npm
 if command -v npm >/dev/null 2>&1; then pathappend "$(npm config get prefix)/bin"; fi
-if command -v pnpm >/dev/null 2>&1; then pathappend "$(pnpm config get prefix)"; fi
-if command -v yarn >/dev/null 2>&1; then pathappend "$(yarn global bin)"; fi
+# if command -v pnpm >/dev/null 2>&1; then pathappend "$(pnpm config get prefix)"; fi
+# if command -v yarn >/dev/null 2>&1; then pathappend "$(yarn global bin)"; fi
 
 # python (pyenv/poetry)
 [ -d "$PYENV_ROOT/bin" ] && pathprepend "$PYENV_ROOT/bin"
