@@ -68,9 +68,9 @@ kompose_install() {
     chmod +x kompose
     mv ./kompose "$KUBEBIN/kompose"
     unset VERSION
-    success "kompose"
+    success "kompose v$(kompose version | cut -d ' ' -f1)"
   else
-    exists "kompose"
+    exists "kompose v$(kompose version | cut -d ' ' -f1)"
   fi
 }
 
@@ -102,9 +102,9 @@ kubecm_install() {
     chmod +x kubecm
     mv ./kubecm "$KUBEBIN/kubecm"
     unset VERSION PLATFORM
-    success "kubecm"
+    success "kubecm v$(kubecm version | head -n1 | cut -d ' ' -f2)"
   else
-    exists "kubecm"
+    exists "kubecm v$(kubecm version | head -n1 | cut -d ' ' -f2)"
   fi
 }
 
@@ -118,9 +118,9 @@ kubeconform_install() {
     chmod +x kubeconform
     mv ./kubeconform "$KUBEBIN/kubeconform"
     unset VERSION
-    success "kubeconform"
+    success "kubeconform $(kubeconform -v)"
   else
-    exists "kubeconform"
+    exists "kubeconform $(kubeconform -v)"
   fi
 }
 
@@ -141,10 +141,13 @@ kubectx_install() {
   # Completions for zsh shell
   set -- _kubectx _kubens
   for file in "$@"; do
-    if [ ! -f "$XDG_CACHE_HOME/zsh/completions/$file" ]; then
-      wget -O "$XDG_CACHE_HOME/zsh/completions/$file" "https://raw.githubusercontent.com/ahmetb/kubectx/refs/heads/master/completion/$file.zsh"
+    if [ -n "$ZSH_VERSION" ]; then
+      if [ ! -f "$XDG_CACHE_HOME/zsh/completions/$file" ]; then
+        wget -O "$XDG_CACHE_HOME/zsh/completions/$file" "https://raw.githubusercontent.com/ahmetb/kubectx/refs/heads/master/completion/$file.zsh"
+      fi
     fi
   done
+  unset file
 }
 
 # kubent: (kube-no-trouble) Check your clusters for use of deprecated APIs
@@ -172,9 +175,9 @@ kubeseal_install() {
     chmod +x kubeseal
     mv ./kubeseal "$KUBEBIN/kubeseal"
     unset VERSION
-    success "kubeseal"
+    success "kubeseal v$(kubeseal --version | cut -d ' ' -f3)"
   else
-    exists "kubeseal"
+    exists "kubeseal v$(kubeseal --version | cut -d ' ' -f3)"
   fi
 }
 
@@ -187,9 +190,9 @@ kubeshark_install() {
     chmod +x kubeshark
     mv ./kubeshark "$KUBEBIN/kubeshark"
     unset VERSION
-    success "kubeshark"
+    success "kubeshark $(kubeshark version)"
   else
-    exists "kubeshark"
+    exists "kubeshark $(kubeshark version)"
   fi
 }
 
@@ -203,9 +206,9 @@ kubespy_install() {
     chmod +x kubespy
     mv ./kubespy "$KUBEBIN/kubespy"
     unset VERSION
-    success "kubespy"
+    success "kubespy $(kubespy version)"
   else
-    exists "kubespy"
+    exists "kubespy $(kubespy version)"
   fi
 }
 
@@ -218,9 +221,9 @@ kustomize_install() {
     chmod +x kustomize
     mv ./kustomize "$KUBEBIN/kustomize"
     unset VERSION
-    success "kustomize"
+    success "kustomize $(kustomize version)"
   else
-    exists "kustomize"
+    exists "kustomize $(kustomize version)"
   fi
 }
 
