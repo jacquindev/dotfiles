@@ -18,3 +18,8 @@ fi
 # shared folder
 for file in "$DOTFILES/scripts/shared/"*; do source "$file"; done
 unset file
+
+if [ -d "$XDG_CONFIG_HOME/bash/lib" ]; then
+  for file in "$XDG_CONFIG_HOME/bash/lib/"*; do source "$file"; done
+  unset file
+fi
