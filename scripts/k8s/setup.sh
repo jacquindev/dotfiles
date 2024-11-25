@@ -35,8 +35,8 @@ PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
 setup_docker() {
   title "Docker Engine"
   if ! command -v docker >/dev/null; then
-    sudo apt update -qq >/dev/null 2>&1
-    sudo apt install -y -qq ca-certificates curl >/dev/null 2>&1
+    sudo apt update -qq
+    sudo apt install -y -qq ca-certificates curl
     sudo install -m 0755 -d /etc/apt/keyrings
 
     DOCKER_URL="https://download.docker.com/$PLATFORM/$DISTRO"
@@ -50,11 +50,10 @@ setup_docker() {
       $(. /etc/os-release && echo "$VERSION_CODENAME") stable" |
       sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
 
-    sudo apt -qq update >/dev/null
-
+    sudo apt update -qq
     set -- docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
     for pkg in "$@"; do
-      sudo apt install -y -qq "$pkg" >/dev/null 2>&1
+      sudo apt install -y -qq "$pkg" 
     done
     sudo usermod -aG docker "$USER"
     sudo docker run hello-world >/dev/null 2>&1 && success "docker" || failed "docker"
