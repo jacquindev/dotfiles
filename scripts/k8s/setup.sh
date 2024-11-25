@@ -170,8 +170,7 @@ setup_helm() {
   for plugin in "$@"; do
     dir=$(basename "$plugin")
     if [ ! -d "$PLUGINS_DIR/$dir" ]; then
-      gum spin --title="Installing $dir" -- helm plugin install "${GITHUB}$plugin"
-      success "$dir"
+      helm plugin install "${GITHUB}$plugin" && success "$dir" || failed "$dir"
     else
       output "$dir"
     fi
