@@ -188,6 +188,15 @@ setup_helm() {
   fi
 }
 
+if uname -r | grep -q icrosoft; then
+  if lsb_release -i | grep -q Ubuntu; then
+    current_dir="$(pwd)"
+    cd "$DOTFILES/scripts/k8s/ubuntu-wsl2-systemd-script" || return $?
+    bash ubuntu-wsl2-systemd-script.sh
+    cd "$current_dir" || exit 0
+  fi
+fi
+
 if ! grep -E 'vmx|svm' /proc/cpuinfo >/dev/null; then
   echo "CPU does not support virtualization. Exiting..."
   exit 0
