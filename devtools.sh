@@ -141,16 +141,18 @@ setup_go() {
 setup_pyenv() {
   title "PYENV (Python Version Manager)"
 
+  # Look for pyenv in $PATH and verify that it's not a part of pyenv-win in WSL
   FOUND_PYENV=0
-  if [[ "${commands[pyenv]}" == */pyenv-win/* && "$(uname -r)" == *icrosoft* ]]; then
+  if [[ "$(command -v pyenv)" == */pyenv-win/* && "$(uname -r)" == *icrosoft* ]]; then
     FOUND_PYENV=0
-  elif ! command -v pyenv &>/dev/null; then
+  elif ! command -v pyenv >/dev/null 2>&1; then
     FOUND_PYENV=0
   else
     FOUND_PYENV=1
   fi
 
   python_programs() {
+    # Install python & set global python version
     if pyenv version | grep -q system; then
       python_version=$(pyenv install --list | grep '^  3.' | sed 's/[[:space:]]//g' | gum choose --height=20 --header="Choose a Python Version:" --header.foreground="#f9e2af")
       gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Installing python v${python_version}..." -- pyenv install "$python_version"
@@ -164,14 +166,10 @@ setup_pyenv() {
     fi
 
     # Pip
-    if ! command -v pip >/dev/null; then
-      gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Updating pip..." -- python -m ensurepip --upgrade
-      gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Updating pip..." -- python -m pip install --upgrade pip --force
-      if [ -n "$BASH_VERSION" ]; then \. "$HOME/.bashrc"; else \. "$ZDOTDIR/.zshrc"; fi
-      output "python" "pip v$(pip --version | cut -d ' ' -f2)"
-    else
-      exist_output "python" "pip v$(pip --version | cut -d ' ' -f2)"
-    fi
+    gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Updating pip..." -- python -m ensurepip --upgrade
+    gum spin --spinner.foreground="#c6a0f6" --title.foreground="#8aadf4" --title="Updating pip..." -- python -m pip install --upgrade pip --force
+    if [ -n "$BASH_VERSION" ]; then \. "$HOME/.bashrc"; else \. "$ZDOTDIR/.zshrc"; fi
+    exist_output "python" "pip v$(pip --version | cut -d ' ' -f2)"
 
     # Pipx
     if ! command -v pipx >/dev/null; then
