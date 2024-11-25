@@ -2,11 +2,11 @@
 deps = [
     { use = "imsi32/yatline-githead", rev = "a6377a8" },
     { use = "imsi32/yatline", rev = "e255f5c" },
-    { use = "yazi-rs/plugins:git", rev = "776b160" },
-    { use = "yazi-rs/plugins:full-border", rev = "776b160" },
-    { use = "yazi-rs/plugins:hide-preview", rev = "776b160" },
-    { use = "yazi-rs/plugins:smart-filter", rev = "776b160" },
-    { use = "yazi-rs/plugins:diff", rev = "776b160" },
+    { use = "yazi-rs/plugins:git", rev = "f1fb6cc" },
+    { use = "yazi-rs/plugins:full-border", rev = "f1fb6cc" },
+    { use = "yazi-rs/plugins:hide-preview", rev = "f1fb6cc" },
+    { use = "yazi-rs/plugins:smart-filter", rev = "f1fb6cc" },
+    { use = "yazi-rs/plugins:diff", rev = "f1fb6cc" },
     { use = "lpnh/fg", rev = "a7e1a82" },
 ]
 
