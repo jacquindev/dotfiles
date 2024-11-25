@@ -3,16 +3,6 @@
 [ -d "$ZSH_CACHE_DIR/completions" ] || mkdir -p "$ZSH_CACHE_DIR/completions"
 
 # pipx
-if (( ${+commands[pip]} )); then
-  if [[ ! -f "${ZSH_CACHE_DIR}/completions/_pip" ]]; then
-    typeset -g -A _comps
-    autoload -Uz _pip
-    _comps[pip]=_pip
-  fi
-  pip completion --zsh >| "${ZSH_CACHE_DIR}/completions/_pip" &|
- fi
-
-# pipx
 if (( ${+commands[pipx]} )); then
   _evalcache register-python-argcomplete pipx
 fi
