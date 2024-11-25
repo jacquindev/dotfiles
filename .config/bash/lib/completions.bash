@@ -1,7 +1,7 @@
 #!/bin/bash
 
 BASH_COMPLETION_DIR="$XDG_DATA_HOME/bash_completion.d"
-[ ! -d "$BASH_COMPLETION_DIR" ] && mkdir -p "$BASH_COMPLETION_DIR"
+if [ ! -d "$BASH_COMPLETION_DIR" ]; then mkdir -p "$BASH_COMPLETION_DIR"; fi
 
 command_exists() {
   command -v "$@" >/dev/null 2>&1
