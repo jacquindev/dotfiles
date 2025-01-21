@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# Environment variables & Paths
+set -o allexport && source "$DOTFILES/shared/.env" && set +o allexport
+
+source "$DOTFILES/shared/path.sh"
+source "$DOTFILES/shared/brew.sh"
+
+# Custom prompt
+if command -v starship >/dev/null 2>&1; then
+	eval "$(starship init bash)"
+elif command -v oh-my-posh >/dev/null 2>&1; then
+	eval "$(oh-my-posh init bash --config "$(brew --prefix oh-my-posh)/themes/catppuccin_mocha.omp.json")"
+	source <(oh-my-posh completion bash)
+fi
+
+# Forgit
+if brew ls --versions forgit >/dev/null 2>&1; then
+	source "$(brew --prefix)/share/forgit/forgit.plugin.sh"
+fi
