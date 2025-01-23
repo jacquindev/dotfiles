@@ -1,30 +1,28 @@
 #!/bin/bash
 
-export PADDING="0"
-
 py_title() {
 	echo ''
-	tool=$(gum style " $1" --border="none" --bold --italic --foreground="#eba0ac")
-	msg=$(gum style "PYTHON TOOL SETUP:" --bold --border="none" --foreground="#74c7ec")
+	tool=$(gum style " $1" --border="none" --padding="0 0" --bold --italic --foreground="#eba0ac")
+	msg=$(gum style "PYTHON TOOL SETUP:" --padding="0 0" --bold --border="none" --foreground="#74c7ec")
 	gum join --align left "$msg" "$tool"
 }
 
 py_msg_ok() {
-	tool=$(gum style "$1" --border="none" --bold --italic --foreground="#fab387")
-	msg=$(gum style " installed successfully." --border="none" --foreground="#a6e3a")
+	tool=$(gum style "$1" --border="none" --padding="0 0" --bold --italic --foreground="#fab387")
+	msg=$(gum style " installed successfully." --padding="0 0" --border="none" --foreground="#a6e3a")
 	gum join --align left "$tool" "$msg"
 }
 
 py_msg_err() {
-	tool=$(gum style "$1" --border="none" --bold --italic --foreground="#fab387")
-	msg=$(gum style " failed to install." --border="none" --foreground="#f38ba8")
+	tool=$(gum style "$1" --border="none" --padding="0 0" --bold --italic --foreground="#fab387")
+	msg=$(gum style " failed to install." --padding="0 0" --border="none" --foreground="#f38ba8")
 	gum join --align left "$tool" "$msg"
 	return
 }
 
 py_msg_installed() {
-	tool=$(gum style "$1" --border="none" --bold --italic --foreground="#fab387")
-	msg=$(gum style " already installed." --border="none" --italic --foreground="#f9e2af")
+	tool=$(gum style "$1" --border="none" --padding="0 0" --bold --italic --foreground="#fab387")
+	msg=$(gum style " already installed." --padding="0 0" --border="none" --italic --foreground="#f9e2af")
 	gum join --align left "$tool" "$msg"
 }
 
@@ -83,7 +81,9 @@ setup_poetry() {
 setup_rye() {
 	py_title rye
 	if ! command_exists rye; then
+		export RYE_HOME="$HOME/.local/share/rye"
 		curl -sSf https://rye.astral.sh/get | RYE_INSTALL_OPTION="--yes" bash
+		source "$RYE_HOME/rye/env"
 		py_msg_ok rye || py_msg_err rye
 	else
 		py_msg_installed rye

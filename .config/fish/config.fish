@@ -44,6 +44,16 @@ if test -e (brew --prefix)"/share/forgit/forgit.plugin.fish"
 	source (brew --prefix)"/share/forgit/forgit.plugin.fish"
 end
 
+# atuin
+if type -q atuin
+	atuin init fish | source
+end
+
+# rye
+if test -e $RYE_HOME/env
+	bass source $RYE_HOME/env
+end
+
 # zoxide
 if type -q zoxide
 	zoxide init fish | source

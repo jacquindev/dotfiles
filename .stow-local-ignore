@@ -27,6 +27,8 @@ _darcs
 
 # Homebrew
 Brewfile
+
+# fish-shell
 dotfiles.fish
 
 # Folders

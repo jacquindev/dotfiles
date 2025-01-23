@@ -55,6 +55,12 @@ fi
 # poetry
 pathprepend "$POETRY_HOME/bin"
 
+# rye
+pathprepend "$RYE_HOME/shims"
+
+# pdm
+pathprepend "$PDM_HOME/bin"
+
 # goenv
 pathprepend "$GOENV_ROOT/bin"
 pathprepend "$GOENV_ROOT/shims"

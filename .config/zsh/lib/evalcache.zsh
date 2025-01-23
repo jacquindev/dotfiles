@@ -13,3 +13,8 @@ fi
 if (( ${+commands[rbenv]} )); then
 	_evalcache rbenv init -
 fi
+
+# goenv
+if (( ${+commands[goenv]} )); then
+	_evalcache goenv init -
+fi

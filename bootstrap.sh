@@ -17,6 +17,13 @@ NC='\033[0m'
 
 GITHUB="https://github.com"
 
+print_title() {
+	title="$1"
+	echo; i=0; while [ "$i" -lt ${#title} ]; do printf "${BLUE}#${NC}"; i=$((i+1)); done; echo
+	printf "${BLUE}$title${NC}"
+	echo; i=0; while [ "$i" -lt ${#title} ]; do printf "${BLUE}#${NC}"; i=$((i+1)); done; echo
+}
+
 load_envs() {
 	set -o allexport && \. "$SHARED_DIR/.env" && set +o allexport
 	\. "$SHARED_DIR/path.sh"
@@ -24,6 +31,14 @@ load_envs() {
 }
 
 main() {
+	# Specify ditribution name of the machine
+	if type lsb_release >/dev/null 2>&1; then
+		DISTRO="$(lsb_release -i | cut -f2 | tr '[:lower:]' '[:upper:]')"
+	else
+		DISTRO="$(awk -F'=' '/^ID=/ {print toupper($2)}' /etc/*-release | tr -d '"')"
+	fi
+
+	print_title "Start Setup for $DISTRO Machine"
 	load_envs
 
 	# Define package manager
@@ -55,7 +70,24 @@ checkout() {
 	[ -d "$2" ] || git -c advice.detachedHead=0 clone --branch "$3" --depth 1 "$1" "$2" >/dev/null 2>&1
 }
 
+create_dirs() {
+	# Create XDG directories
+	print_title 'Create XDG Directories'
+	LOCATIONS="$XDG_CONFIG_HOME $XDG_CACHE_HOME $XDG_DATA_HOME $XDG_STATE_HOME $XDG_BIN_HOME $XDG_RUNTIME_DIR $XDG_PROJECTS_DIR $XDG_CACHE_HOME/backup"
+	echo "$LOCATIONS" | tr ' ' '\n' | while read -r loc; do
+		sleep 0.05
+		if [ ! -d "$loc" ]; then
+			mkdir -p "$loc"
+			if [ $? -eq 0 ]; then printf "${GREEN}$loc${NC} created successfully.\n"; fi
+		else
+			printf "${YELLOW}$loc${NC} already exists.\n"
+		fi
+	done
+	unset loc
+}
+
 setup_docker() {
+	print_title 'Setup Docker & Docker Rootless Mode'
 	load_envs
 	cleanup_docker
 
@@ -93,6 +125,7 @@ setup_docker() {
 }
 
 setup_homebrew() {
+	print_title "Setup Homebrew"
 	load_envs
 
 	# Setup Homebrew
@@ -105,6 +138,7 @@ setup_homebrew() {
 }
 
 setup_gitconfig() {
+	print_title "Setup Git"
   if [ ! -f "$HOME/.gitconfig" ] || ([ -f "$HOME/.gitconfig" ] && ! grep -q \[user\] "$HOME/.gitconfig"); then
     GIT_NAME=$(gum input --prompt="▶  Input Git Name: " --prompt.foreground="#cba6f7" --placeholder="Your Name" --placeholder.foreground="#6c7086")
     GIT_EMAIL=$(gum input --prompt="▶  Input Git Email: " --prompt.foreground="#cba6f7" --placeholder="youremail@domain.com" --placeholder.foreground="#6c7086")
@@ -129,6 +163,7 @@ setup_gitconfig() {
 
 # shellcheck disable=SC2016
 stow_dotfiles() {
+	print_title "Stow Dotfiles"
 	if ! command_exists stow; then brew install stow --quiet; fi
 	if ! grep -q '$HOME/dotfiles.sh' "$HOME/.bashrc"; then
 		{
@@ -150,9 +185,13 @@ stow_dotfiles() {
 	fi
 
 	if [ -f "$HOME/.zshenv" ]; then mv "$HOME/.zshenv" "$HOME/.cache/backup/.zshenv.bak"; fi
+	stow .
+	sleep 5
 }
 
 setup_devtools() {
+	print_title "Setup Development Tools"
+
 	# gum settings
 	export ALIGN="center"
 	export BORDER_FOREGROUND="#89b4fa"
@@ -353,7 +392,7 @@ setup_devtools() {
 		if command_exists cargo && command_exists cargo-binstall; then
 			for pkg in cargo-update cargo-cache cargo-run-bin; do
 				if ! cargo install --list | grep -q "$pkg"; then
-					cargo binstall --noconfirm "$pkg"
+					cargo binstall --no-confirm "$pkg"
 				fi
 			done
 		fi
@@ -408,10 +447,12 @@ cleanup() {
 	[ -f "$HOME/.motd_shown" ] && rm -f "$HOME/.motd_shown"
 }
 
+create_dirs
 main
 setup_docker
 setup_homebrew
 setup_gitconfig
+stow_dotfiles
 setup_devtools
 setup_bat
 setup_yazi

@@ -13,9 +13,8 @@ ohmyzsh/ohmyzsh path:plugins/extract
 ohmyzsh/ohmyzsh path:plugins/gitfast
 ohmyzsh/ohmyzsh path:plugins/urltools
 
-# nvm
-lukechilds/zsh-nvm
-
-# End
+# Defer
 zdharma-continuum/fast-syntax-highlighting kind:defer
 zsh-users/zsh-autosuggestions kind:defer
+
+# Dev tools supported
