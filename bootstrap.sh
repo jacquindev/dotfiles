@@ -74,6 +74,7 @@ checkout() {
 create_dirs() {
 	# Create XDG directories
 	print_title 'Create XDG Directories'
+	load_envs
 	LOCATIONS="$XDG_CONFIG_HOME $XDG_CACHE_HOME $XDG_DATA_HOME $XDG_STATE_HOME $XDG_BIN_HOME $XDG_RUNTIME_DIR $XDG_PROJECTS_DIR $XDG_CACHE_HOME/backup"
 	echo "$LOCATIONS" | tr ' ' '\n' | while read -r loc; do
 		sleep 0.05
