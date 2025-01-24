@@ -209,6 +209,16 @@ setup_gitconfig() {
   git config --global delta.hyperlinks "true"
   git config --global delta.features "catppuccin-macchiato"
   git config --global merge.conflictstyle "zdiff3"
+
+	# Gh auth login
+	if command_exists gh; then
+		if ! gh auth status; then
+			printf "${YELLOW}Log into GitHub hosts${NC}\n"
+			gh auth login
+		else
+			printf "${GREEN}Already logged in to GitHub host.${NC}\n"
+		fi
+	fi
 }
 
 # shellcheck disable=SC2016
