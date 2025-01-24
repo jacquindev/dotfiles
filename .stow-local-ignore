@@ -28,10 +28,12 @@ _darcs
 # Homebrew
 Brewfile
 
-# fish-shell
-dotfiles.fish
-
 # Folders
 assets
 scripts
 shared
+
+# Files
+install.fish
+install.zsh
+bootstrap.sh

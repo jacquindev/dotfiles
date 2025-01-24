@@ -4,8 +4,9 @@
 
 # shellcheck source-path=SCRIPTDIR
 CURRENT_LOCATION=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
-SHARED_DIR="$CURRENT_LOCATION/shared"
-SCRIPTS_DIR="$CURRENT_LOCATION/scripts"
+export CURRENT_LOCATION
+export SHARED_DIR="$CURRENT_LOCATION/shared"
+export SCRIPTS_DIR="$CURRENT_LOCATION/scripts"
 
 # Colors output
 RED='\033[0;31m'
@@ -86,6 +87,24 @@ create_dirs() {
 	unset loc
 }
 
+eval_brew() {
+	BREW_LOCATION=""
+	if [ -f /opt/homebrew/bin/brew ]; then
+		BREW_LOCATION="/opt/homebrew/bin/brew"
+	elif [ -f /usr/local/bin/brew ]; then
+		BREW_LOCATION="/usr/local/bin/brew"
+	elif [ -f /home/linuxbrew/.linuxbrew/bin/brew ]; then
+		BREW_LOCATION="/home/linuxbrew/.linuxbrew/bin/brew"
+	elif [ -f "$HOME/.linuxbrew/bin/brew" ]; then
+		BREW_LOCATION="$HOME/.linuxbrew/bin/brew"
+	else
+		return
+	fi
+
+	eval "$("${BREW_LOCATION}" shellenv)"
+	unset BREW_LOCATION
+}
+
 setup_docker() {
 	print_title 'Setup Docker & Docker Rootless Mode'
 	load_envs
@@ -127,38 +146,69 @@ setup_docker() {
 setup_homebrew() {
 	print_title "Setup Homebrew"
 	load_envs
+	eval_brew
 
 	# Setup Homebrew
 	if ! command_exists brew; then
 		NON_INTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 		brew doctor
 		echo
+		eval_brew
+	else
+		printf "${GREEN}Homebrew already installed.${NC}\n"
 	fi
 	brew bundle install --file="$CURRENT_LOCATION/Brewfile" --quiet
 }
 
 setup_gitconfig() {
 	print_title "Setup Git"
-  if [ ! -f "$HOME/.gitconfig" ] || ([ -f "$HOME/.gitconfig" ] && ! grep -q \[user\] "$HOME/.gitconfig"); then
-    GIT_NAME=$(gum input --prompt="▶  Input Git Name: " --prompt.foreground="#cba6f7" --placeholder="Your Name" --placeholder.foreground="#6c7086")
-    GIT_EMAIL=$(gum input --prompt="▶  Input Git Email: " --prompt.foreground="#cba6f7" --placeholder="youremail@domain.com" --placeholder.foreground="#6c7086")
-    git config --global user.name "$GIT_NAME"
-    git config --global user.email "$GIT_EMAIL"
-  fi
-  if grep -i Microsoft /proc/version >/dev/null; then
-    git config --global credential.helper "/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe"
-  fi
-  if [ -f "$HOME/.gitconfig" ] && ! grep -q delta "$HOME/.gitconfig"; then
-    git config --global include.path "$HOME/.config/delta/themes/catppuccin.gitconfig"
-    git config --global core.pager "delta"
-    git config --global interactive.diffFilter "delta --color-only"
-    git config --global delta.navigate "true"
-    git config --global delta.dark "true"
-    git config --global delta.side-by-side "true"
-    git config --global delta.hyperlinks "true"
-    git config --global delta.features "catppuccin-macchiato"
-    git config --global merge.conflictstyle "zdiff3"
-  fi
+
+	# Git name & email
+	GIT_NAME=$(git config user.name)
+	GIT_EMAIL=$(git config user.email)
+
+	if [ -z "$GIT_NAME" ]; then
+		GIT_NAME=$(gum input --prompt="▶  Input Git Name: " --prompt.foreground="#cba6f7" --placeholder="Your Name" --placeholder.foreground="#6c7086")
+		git config --global user.name "$GIT_NAME"
+	fi
+	if [ -z "$GIT_EMAIL" ]; then
+		GIT_EMAIL=$(gum input --prompt="▶  Input Git Email: " --prompt.foreground="#cba6f7" --placeholder="youremail@domain.com" --placeholder.foreground="#6c7086")
+		git config --global user.email "$GIT_EMAIL"
+	fi
+	unset GIT_NAME GIT_EMAIL
+
+	# Git Credential Manager setup
+	# https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-git#git-credential-manager-setup
+	if grep -i 'icrosoft' /proc/version >/dev/null; then
+		current_git="$(git --version | cut -d ' ' -f3)"
+		required_ver="2.36.1"
+		if [ "$(printf '%s\n' "$required_ver" "$current_git" | sort -V | head -n1)" = "$required_ver" ]; then
+			if [ "$(printf '%s\n' "2.39.0" "$current_git" | sort -V | head -n1)" = "2.39.0" ]; then
+				echo "Git Version is greater than or equal v2.39.0."
+				git config --global credential.helper "/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe"
+			else
+				echo "Git Version is greater than or equal v${required_ver}."
+				git config --global credential.helper "/mnt/c/Program\ Files/Git/mingw64/libexec/git-core/git-credential-manager.exe"
+			fi
+		else
+			echo "Git Version is less than v${required_ver}."
+			git config --global credential.helper "/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager-core.exe"
+		fi
+		unset current_git required_ver
+	fi
+
+	# Delta config
+  if [ -z $(git config include.path | grep "$HOME/.config/delta/themes/catppuccin.gitconfig") ]; then
+		git config --global include.path "$HOME/.config/delta/themes/catppuccin.gitconfig"
+	fi
+	git config --global core.pager delta
+	git config --global interactive.diffFilter "delta --color-only"
+  git config --global delta.navigate "true"
+  git config --global delta.dark "true"
+  git config --global delta.side-by-side "true"
+  git config --global delta.hyperlinks "true"
+  git config --global delta.features "catppuccin-macchiato"
+  git config --global merge.conflictstyle "zdiff3"
 }
 
 # shellcheck disable=SC2016
@@ -218,14 +268,14 @@ setup_devtools() {
 			if [ -d "$NVM_DIR" ]; then rm -rf "$NVM_DIR"; fi
 			mkdir -p "$NVM_DIR"
 			curl --silent -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+
+			[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+			[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
 			gum confirm "Use LTS (Y) or latest (n) node?" && nvm install --lts || nvm install node
 			nvm install-latest-npm
 			npm install --global pnpm@latest
 		fi
-
-		export NVM_DIR="$HOME/.local/share/nvm"
-		[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-		[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 		PATH="$(npm config get prefix)/bin:$PNPM_HOME:$PATH"
 		export PATH
@@ -428,23 +478,17 @@ setup_devtools() {
 setup_bat() {
 	# Bat theme
 	if command_exists bat; then
-		gum spin --title="Setting up bat theme..." -- bat cache --clear
-		gum spin --title="Setting up bat theme..." -- bat cache --build
+		gum spin --title="Cleaning bat cache..." -- bat cache --clear
+		gum spin --title="Building bat theme..." -- bat cache --build
 	fi
 }
 
 setup_yazi() {
 	# Yazi plugins
 	if command_exists yazi && command_exists ya; then
-		gum spin --title="Setting up yazi..." -- ya pack -i
-		gum spin --title="Setting up yazi..." -- ya pack -u
+		gum spin --title="Installing yazi plugins..." -- ya pack -i
+		gum spin --title="Upgrading yazi plugins..." -- ya pack -u
 	fi
-}
-
-cleanup() {
-	[ -f "$HOME/.wget-hsts" ] && mv -i "$HOME/.wget-hsts" "$XDG_CACHE_HOME/wget/wget-hsts"
-	[ -f "$HOME/.sudo_as_admin_successful" ] && rm -f "$HOME/.sudo_as_admin_successful"
-	[ -f "$HOME/.motd_shown" ] && rm -f "$HOME/.motd_shown"
 }
 
 create_dirs
@@ -456,7 +500,8 @@ stow_dotfiles
 setup_devtools
 setup_bat
 setup_yazi
-cleanup
+
+unset CURRENT_LOCATION SCRIPTS_DIR SHARED_DIR
 
 echo; echo
 echo "$(tput bold)$(tput setaf 3)NOTES:$(tput sgr0)"

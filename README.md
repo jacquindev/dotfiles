@@ -79,11 +79,22 @@ https://github.com/user-attachments/assets/ddc7f78b-71a4-40a3-8714-1f0d83e0eb28
 
 ### Optional
 
+After following the above steps, if you decided to use *Fish/Zsh* shell, please run:
+
 #### **Fish Shell**
 
-Run [dotfiles.fish](./dotfiles.fish) to setup fish's plugins and configurations
+Run [install.fish](./install.fish) to setup fish's plugins and configurations
 
 ```sh
-# In `fish` terminal run the `dotfiles.fish` file
-source dotfiles.fish
+# In `fish` terminal run the `install.fish` file
+source install.fish
+```
+
+#### **Zsh shell**
+
+Run [install.zsh](./install.zsh) to setup Zsh shell
+
+```sh
+# In `zsh` terminal run the `install.zsh` file
+source install.zsh
 ```
