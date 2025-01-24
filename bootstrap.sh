@@ -199,17 +199,17 @@ setup_gitconfig() {
 	fi
 
 	# Delta config
-  if [ -z $(git config include.path | grep "$HOME/.config/delta/themes/catppuccin.gitconfig") ]; then
+  	if [ -z $(git config include.path | grep "$HOME/.config/delta/themes/catppuccin.gitconfig") ]; then
 		git config --global include.path "$HOME/.config/delta/themes/catppuccin.gitconfig"
 	fi
 	git config --global core.pager delta
 	git config --global interactive.diffFilter "delta --color-only"
-  git config --global delta.navigate "true"
-  git config --global delta.dark "true"
-  git config --global delta.side-by-side "true"
-  git config --global delta.hyperlinks "true"
-  git config --global delta.features "catppuccin-macchiato"
-  git config --global merge.conflictstyle "zdiff3"
+  	git config --global delta.navigate "true"
+  	git config --global delta.dark "true"
+  	git config --global delta.side-by-side "true"
+  	git config --global delta.hyperlinks "true"
+  	git config --global delta.features "catppuccin-macchiato"
+  	git config --global merge.conflictstyle "zdiff3"
 
 	# Gh auth login
 	if command_exists gh; then
