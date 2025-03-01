@@ -1,0 +1,7 @@
+# zsh
+.zcompdump*
+.zsh_plugins.zsh
+
+# files has tokens
+.config/gh/hosts.yml
+.config/ngrok/ngrok.yml
