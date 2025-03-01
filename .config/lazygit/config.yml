@@ -1,0 +1,68 @@
+gui:
+  theme:
+    activeBorderColor:
+      - "#eba0ac"
+      - bold
+    inactiveBorderColor:
+      - "#a6adc8"
+    optionsTextColor:
+      - "#89b4fa"
+    selectedLineBgColor:
+      - "#313244"
+    cherryPickedCommitBgColor:
+      - "#45475a"
+    cherryPickedCommitFgColor:
+      - "#eba0ac"
+    unstagedChangesColor:
+      - "#f38ba8"
+    defaultFgColor:
+      - "#cdd6f4"
+    searchingActiveBorderColor:
+      - "#f9e2af"
+
+  authorColors:
+    "*": "#b4befe"
+
+  scrollHeight: 2
+  scrollPastBottom: true
+  sidePanelWidth: 0.25
+  expandFocusedSidePanel: true
+  mainPanelSplitMode: "flexible"
+  mouseEvents: true
+  showFileTree: true
+  showListFooter: true
+  showRandomTip: true
+  showBottomLine: true
+  showCommandLog: true
+  nerdFontsVersion: "3"
+  splitDiff: "auto"
+
+os:
+  editPreset: nvim
+git:
+  paging:
+    colorArg: always
+    useConfig: false
+    pager: delta --features=mantis-shrimp --paging=never
+  log:
+    showGraph: "when-maximised"
+    showWholeGraph: false
+  skipHookPrefix: WIP
+  autoFetch: true
+  autoRefresh: true
+  branchLogCmd: "git log --graph --color=always --abbrev-commit --decorate --date=relative --pretty=medium {{branchName}} --"
+  allBranchesLogCmd: "git log --graph --all --color=always --abbrev-commit --decorate --date=relative  --pretty=medium"
+  overrideGpg: false # prevents lazygit from spawning a separate process when using GPG
+  disableForcePushing: false
+  parseEmoji: true
+update:
+  method: prompt
+  days: 14
+refresher:
+  refreshInterval: 10
+  fetchInterval: 600
+confirmOnQuit: false
+quitOnTopLevelReturn: false
+disableStartupPopups: false
+promptToReturnFromSubprocess: true
+notARepository: "prompt"
