@@ -5,5 +5,5 @@
 # files has tokens
 .config/gh/hosts.yml
 .config/ngrok/ngrok.yml
-
+.config/TabNine
 .config/wslu
