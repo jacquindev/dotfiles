@@ -70,7 +70,7 @@ $battery\
 $time\
 """
 
-add_newline = false
+add_newline = true
 follow_symlinks = true
 continuation_prompt = "[❯❯ ](subtext0)"
 
@@ -99,8 +99,8 @@ time_format = "%R"
 
 [cmd_duration]
 min_time = 2000
-format = "took [$duration]($style) "
-style = "yellow bold"
+format = "[$duration]($style) "
+style = "dimmed blue"
 show_milliseconds = false
 disabled = false
 show_notifications = false
