@@ -14,11 +14,7 @@
 
 <div align="center">
 <br>
-<p>
-  <a href="https://skillicons.dev">
-  	<img src="https://skillicons.dev/icons?i=git,docker,redhat,debian,ubuntu,neovim,py,nodejs,java,go,rust,ruby&theme=dark">
-  </a>
-</p>
+
 <p>
   <a href="https://github.com/jacquindev/commits/main"><img alt="Last Commit" src="https://img.shields.io/github/last-commit/jacquindev/dotfiles?style=for-the-badge&logo=github&logoColor=eba0ac&label=Last%20Commit&labelColor=302D41&color=eba0ac"></a>&nbsp;&nbsp;
   <a href="https://github.com/jacquindev/dotfiles/"><img src="https://img.shields.io/github/repo-size/jacquindev/dotfiles?style=for-the-badge&logo=hyprland&logoColor=f9e2af&label=Size&labelColor=302D41&color=f9e2af" alt="REPO SIZE"></a>&nbsp;&nbsp;
