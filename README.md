@@ -53,15 +53,21 @@ https://github.com/user-attachments/assets/ddc7f78b-71a4-40a3-8714-1f0d83e0eb28
 
 ## 🔧 Setup
 
-This repository is meant to use with my **[ansible automated repo](https://github.com/jacquindev/automated-devops-wsl2)**
+This repository is meant to use with my **[ansible automated repo](https://github.com/jacquindev/automated-wsl2-setup)**
 
-### No-Ansible
+### With Ansible
+
+Rather than cloned this repository, please check out my [automated-wsl2-setup](https://github.com/jacquindev/automated-wsl2-setup) repository for instructions.
+
+### Without Ansible
 
 - Clone this repo locally
 
 ```bash
 git clone https://github.com/jacquindev/dotfiles.git ~/.dotfiles
 ```
+
+- Ensure `stow` is installed and run:
 
 ```bash
 cd ~/.dotfiles && stow .
