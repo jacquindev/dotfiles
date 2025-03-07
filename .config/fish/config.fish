@@ -16,7 +16,12 @@ if type -q starship
     starship init fish | source
 end
 
-# FZF
+# vfox
+if type -q vfox
+    vfox activate fish | source
+end
+
+# fzf
 if type -q fzf
     fzf --fish | source
 end
