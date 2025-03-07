@@ -3,12 +3,14 @@ if status is-interactive
 end
 
 # Homebrew completion
-if test -d (brew --prefix)"/share/fish/completions"
-    set -p fish_complete_path (brew --prefix)/share/fish/completions
-end
+if type -q brew
+    if test -d (brew --prefix)"/share/fish/completions"
+        set -p fish_complete_path (brew --prefix)/share/fish/completions
+    end
 
-if test -d (brew --prefix)"/share/fish/vendor_completions.d"
-    set -p fish_complete_path (brew --prefix)/share/fish/vendor_completions.d
+    if test -d (brew --prefix)"/share/fish/vendor_completions.d"
+        set -p fish_complete_path (brew --prefix)/share/fish/vendor_completions.d
+    end
 end
 
 # ASDF configuration code
@@ -24,3 +26,13 @@ if not contains $_asdf_shims $PATH
     set -gx --prepend PATH $_asdf_shims
 end
 set --erase _asdf_shims
+
+# FZF
+if type -q fish
+    fzf --fish | source
+end
+
+# Zoxide
+if type -q zoxide
+    zoxide init fish --cmd cd | source
+end
