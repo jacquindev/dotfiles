@@ -27,8 +27,13 @@ if not contains $_asdf_shims $PATH
 end
 set --erase _asdf_shims
 
+# starship
+if type -q starship
+    starship init fish | source
+end
+
 # FZF
-if type -q fish
+if type -q fzf
     fzf --fish | source
 end
 
