@@ -15,3 +15,13 @@ if [ -d "$ZDOTDIR/lib" ]; then
 	done
 	unset file
 fi
+
+# Set up fzf key bindings and fuzzy completion
+if (( ${+commands[fzf]} )); then
+	source <(fzf --zsh)
+fi
+
+# zoxide
+if (( ${+commands[zoxide]} )); then
+	eval "$(zoxide init zsh --cmd cd)"
+fi
