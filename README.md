@@ -55,11 +55,11 @@ https://github.com/user-attachments/assets/ddc7f78b-71a4-40a3-8714-1f0d83e0eb28
 
 This repository is meant to use with my **[ansible automated repo](https://github.com/jacquindev/automated-wsl2-setup)**
 
-### With Ansible
+### Option 1: With Ansible
 
 Rather than cloned this repository, please check out my [automated-wsl2-setup](https://github.com/jacquindev/automated-wsl2-setup) repository for instructions.
 
-### Without Ansible
+### Option 2: Without Ansible
 
 - Clone this repo locally
 
