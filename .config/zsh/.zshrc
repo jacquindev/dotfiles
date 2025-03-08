@@ -21,6 +21,12 @@ if [ -d "$HOME/.config/zsh/completions" ]; then
 	fpath+=$HOME/.config/zsh/completions
 fi
 
+# kubectl aliases
+# - https://github.com/ahmetb/kubectl-aliases
+if [ -f "$HOME/.config/.kubectl_aliases" ]; then
+	source "$HOME/.config/.kubectl_aliases"
+fi
+
 # Set up fzf key bindings and fuzzy completion
 if (( ${+commands[fzf]} )); then
 	source <(fzf --zsh)
