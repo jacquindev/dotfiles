@@ -16,6 +16,11 @@ if [ -d "$ZDOTDIR/lib" ]; then
 	unset file
 fi
 
+# Custom completion files
+if [ -d "$HOME/.config/zsh/completions" ]; then
+	fpath+=$HOME/.config/zsh/completions
+fi
+
 # Set up fzf key bindings and fuzzy completion
 if (( ${+commands[fzf]} )); then
 	source <(fzf --zsh)
