@@ -3,7 +3,10 @@
 .zsh_plugins.zsh
 
 # files has tokens
+.config/composer
+.config/configstore
 .config/gh/hosts.yml
+.config/go
 .config/ngrok/ngrok.yml
 .config/TabNine
 .config/wslu
