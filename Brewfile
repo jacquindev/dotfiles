@@ -33,9 +33,15 @@ brew "hashicorp/tap/vagrant"
 brew "hashicorp/tap/vault"
 brew "hashicorp/tap/packer"
 
-tap "kubescape/tap"
+brew "kubernetes-cli"
 
 brew "helm"
-brew "kubernetes-cli"
-brew "kubescape/tap/kubescape-cli"
+brew "kind"
+brew "kubectx"
 brew "minikube"
+
+tap "kubescape/tap"
+brew "kubescape/tap/kubescape-cli"
+
+tap "derailed/k9s"
+brew "derailed/k9s/k9s"
