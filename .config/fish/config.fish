@@ -11,6 +11,10 @@ if type -q brew
     end
 end
 
+# kubectl aliases
+# - https://github.com/ahmetb/kubectl-aliases
+test -f ~/.config/fish/.kubectl_aliases.fish && source ~/.config/fish/.kubectl_aliases.fish
+
 # starship
 if type -q starship
     starship init fish | source
