@@ -37,7 +37,10 @@ brew "kubernetes-cli"
 
 brew "helm"
 brew "kind"
+brew "kompose"
+brew "kube-bench"
 brew "kubectx"
+brew "kustomize"
 brew "minikube"
 
 tap "kubescape/tap"
