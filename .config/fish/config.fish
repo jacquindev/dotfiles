@@ -1,5 +1,10 @@
 set fish_greeting
 
+# Homebrew fish integration
+if test -f /home/linuxbrew/.linuxbrew/bin/brew
+    eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+end
+
 # Homebrew completion
 if type -q brew
     if test -d (brew --prefix)"/share/fish/completions"
@@ -30,7 +35,7 @@ if type -q fzf
     fzf --fish | source
 end
 
-# Zoxide
+# zoxide
 if type -q zoxide
     zoxide init fish --cmd cd | source
 end

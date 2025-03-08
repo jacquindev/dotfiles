@@ -21,6 +21,7 @@ SETUVAR --export EZA_LO_OPTIONS:\x2d\x2doneline
 SETUVAR --export EZA_LT_OPTIONS:\x2d\x2dtree\x1e\x2d\x2dlevel
 SETUVAR --export EZA_L_OPTIONS:\x1d
 SETUVAR --export EZA_STANDARD_OPTIONS:\x2d\x2dgroup\x1e\x2d\x2dheader\x1e\x2d\x2dgroup\x2ddirectories\x2dfirst
+SETUVAR --export HOMEBREW_NO_AUTO_UPDATE:1
 SETUVAR --export --path PKG_CONFIG_PATH:/usr/lib/x86_64\x2dlinux\x2dgnu/pkgconfig/\x1e/usr/share/pkgconfig/
 SETUVAR --export __ABBR_TIPS_KEYS:\x1d
 SETUVAR --export __ABBR_TIPS_VALUES:\x1d
