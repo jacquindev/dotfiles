@@ -1,16 +1,37 @@
-# Get dotfiles directory
-# https://stackoverflow.com/questions/59895/how-do-i-get-the-directory-where-a-bash-script-is-located-from-within-the-script
-SOURCE=${BASH_SOURCE[0]}
-while [ -L "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
-	DIR=$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)
-	SOURCE=$(readlink "$SOURCE")
-	[[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
-done
-DIR=$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)
+# xdg
+export XDG_CONFIG_DIRS="/etc/xdg"
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_STATE_HOME="$HOME/.local/state"
+export XDG_BIN_HOME="$HOME/.local/bin"
+export XDG_RUNTIME_DIR="$HOME/.xdg"
+export XDG_PROJECTS_DIR="$HOME/projects"
 
-export DOTFILES="$DIR"
+# zsh
+export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+export ZSH_DATA_DIR="$XDG_DATA_HOME/zsh"
+export ZSH_CACHE_DIR="$XDG_CACHE_HOME/zsh"
 
-# Environment variables & Paths
-export ZDOTDIR="$HOME/.config/zsh"
+# Homebrew
+# Disable homebrew auto-update for faster homebrew loading
+export HOMEBREW_NO_AUTO_UPDATE=1
+
+# ripgrep
+export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/config"
+
+# less
+export LESSHISTFILE="$XDG_CACHE_HOME/.lesshsts"
+
+# wget
+export WGETRC="$XDG_CONFIG_HOME/wget/wgetrc"
+
+# nvm
+export NVM_DIR="$XDG_DATA_HOME/nvm"
+
+# nodejs
+export PNPM_HOME="$XDG_DATA_HOME/pnpm"
+export npm_config_cache="$XDG_CACHE_HOME/npm"
+export YARN_CACHE_FOLDER="$XDG_CACHE_HOME/npm"
 
 skip_global_compinit=1

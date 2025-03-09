@@ -19,6 +19,7 @@ fi
 # Custom completion files
 if [ -d "$HOME/.config/zsh/completions" ]; then
 	fpath+=$HOME/.config/zsh/completions
+	autoload -Uz compinit && compinit
 fi
 
 # kubectl aliases
