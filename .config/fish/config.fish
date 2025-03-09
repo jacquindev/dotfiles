@@ -16,6 +16,12 @@ if type -q brew
     end
 end
 
+# Shared PATH for fish, zsh and bash
+if type -q bass
+    and test -f $HOME/.config/path_add.sh
+    bass ". $HOME/.config/path_add.sh"
+end
+
 # kubectl aliases
 # - https://github.com/ahmetb/kubectl-aliases
 test -f ~/.config/fish/.kubectl_aliases.fish && source ~/.config/fish/.kubectl_aliases.fish
