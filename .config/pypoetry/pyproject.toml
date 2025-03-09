@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "poetry-instance"
+version = "2.1.1"
+description = ""
+authors = []
+license = ""
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "3.13.2"
+poetry = "2.1.1"
+
+[tool.poetry.group.additional.dependencies]
+poetry-dotenv-plugin = "^0.2.0"
+poetry-dynamic-versioning = { extras = ["plugin"], version = "^1.7.1" }
