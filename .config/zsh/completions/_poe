@@ -1,0 +1,59 @@
+#compdef _poe poe
+
+function _poe {
+
+    local DIR_ARGS=("-C" "--directory" "--root")
+
+    local target_path=""
+    local tasks=()
+
+    for ((i=2; i<${#words[@]}; i++)); do
+        # iter arguments passed so far
+        if (( $DIR_ARGS[(Ie)${words[i]}] )); then
+            # arg is one of DIR_ARGS, so the next arg should be the target_path
+            if (( ($i+1) >= ${#words[@]} )); then
+                # this is the last arg, the next one should be path
+                _files
+                return
+            fi
+            target_path="${words[i+1]}"
+            tasks=($(poe _list_tasks $target_path))
+            i=$i+1
+        elif [[ "${words[i]}" != -* ]] then
+            if (( ${#tasks[@]}<1 )); then
+                # get the list of tasks if we didn't already
+                tasks=($(poe _list_tasks $target_path))
+            fi
+            if (( $tasks[(Ie)${words[i]}] )); then
+                # a task has been given so complete with files
+                _files
+                return
+            fi
+        fi
+    done
+
+    if (( ${#tasks[@]}<1 )); then
+        # get the list of tasks if we didn't already
+        tasks=($(poe _list_tasks $target_path))
+    fi
+    
+    local ALL_EXLC=("-h" "--help" "--version")
+
+    _arguments -C \
+        "(- *)"{--help,-h}"[Show this help page and exit, optionally supply a task.]" \
+        "(- *)--version[Print the version and exit]" \
+        "($ALL_EXLC --verbose -v)"{--verbose,-v}"[Increase command output (repeatable)]" \
+        "($ALL_EXLC --quiet -q)"{--quiet,-q}"[Decrease command output (repeatable)]" \
+        "($ALL_EXLC --dry-run -d)"{--dry-run,-d}"[Print the task contents but don't actually run it]" \
+        "($ALL_EXLC --directory -C)"{--directory,-C}"[Specify where to find the pyproject.toml]" \
+        "($ALL_EXLC --executor -e)"{--executor,-e}"[Override the default task executor]" \
+        "($ALL_EXLC --ansi --no-ansi)--ansi[Force enable ANSI output]" \
+        "($ALL_EXLC --ansi --no-ansi)--no-ansi[Force disable ANSI output]" \
+        "1: :($tasks)" \
+        ": :($tasks)" \
+        "*::arg:->args"
+
+    if (($tasks[(Ie)$line[1]])); then
+        _files
+    fi
+}
