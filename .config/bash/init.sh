@@ -8,8 +8,14 @@ fi
 
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 
+# lib files
 for file in "${SCRIPT_DIR}/lib/"*.bash; do
 	source "$file"
 done
 
-unset SCRIPT_DIR
+# completions
+for completion in "${SCRIPT_DIR}/completions/"*.bash; do
+	source "$completion"
+done
+
+unset file completion SCRIPT_DIR
