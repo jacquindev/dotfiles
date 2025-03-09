@@ -13,3 +13,6 @@
 
 # backup files
 *.bak
+
+# lock files
+*.lock
