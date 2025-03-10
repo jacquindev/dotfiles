@@ -27,6 +27,8 @@ local catppuccin_palette = {
 	crust = "#181926",
 }
 
+require("starship"):setup()
+
 require("full-border"):setup({
 	type = ui.Border.ROUNDED,
 })
@@ -131,3 +133,8 @@ require("git"):setup()
 if os.getenv("NVIM") then
 	require("hide-preview"):entry()
 end
+
+require("custom-shell"):setup({
+	save_history = true,
+	history_file = "default",
+})
