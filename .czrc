@@ -6,7 +6,7 @@
 		"ui": "chore: update .gitignore"
 	},
 	"typesAppend": [
-		{ "value": "workflow", "name": "workflow:       Workflow changes", "emoji": ":arrows_counterclockwise:" },
+		{ "value": "workflow", "name": "workflow: Workflow changes", "emoji": ":arrows_counterclockwise:" },
 		{ "value": "*!", "name": "*!:       BREAKING CHANGES", "emoji": ":heavy_exclamation_mark:" }
 	]
 }
