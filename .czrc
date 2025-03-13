@@ -1,0 +1,12 @@
+{
+	"useEmoji": true,
+	"emojiAlign": "left",
+	"alias": {
+		"ur": "docs: update README",
+		"ui": "chore: update .gitignore"
+	},
+	"typesAppend": [
+		{ "value": "workflow", "name": "workflow:       Workflow changes", "emoji": ":arrows_counterclockwise:" },
+		{ "value": "*!", "name": "*!:       BREAKING CHANGES", "emoji": ":heavy_exclamation_mark:" }
+	]
+}
