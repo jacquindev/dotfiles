@@ -7,6 +7,7 @@
 .config/configstore
 .config/gh/hosts.yml
 .config/go
+.config/helm
 .config/ngrok/ngrok.yml
 .config/TabNine
 .config/wslu
