@@ -2,6 +2,7 @@
 	"useEmoji": true,
 	"emojiAlign": "left",
 	"alias": {
+		"fd": "chore: fix typos",
 		"ur": "docs: update README",
 		"ui": "chore: update .gitignore"
 	},
