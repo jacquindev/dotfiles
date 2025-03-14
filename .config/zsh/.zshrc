@@ -35,7 +35,7 @@ fi
 
 # thefuck
 if (( ${+commands[thefuck]} )); then
-	eval $(thefuck --alias --enable-experimental-instant-mode)
+	eval "$(thefuck --alias --enable-experimental-instant-mode)"
 fi
 
 # zoxide
