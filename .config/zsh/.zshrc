@@ -33,6 +33,11 @@ if (( ${+commands[fzf]} )); then
 	source <(fzf --zsh)
 fi
 
+# thefuck
+if (( ${+commands[thefuck]} )); then
+	eval $(thefuck --alias --enable-experimental-instant-mode)
+fi
+
 # zoxide
 if (( ${+commands[zoxide]} )); then
 	eval "$(zoxide init zsh --cmd cd)"
