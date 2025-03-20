@@ -10,7 +10,7 @@ group:
       jacquindev/automated-wsl2-setup
     files:
       - source: Brewfile
-        dest: Brefile
+        dest: Brewfile
 
   - repos: |
       jacquindev/windots
