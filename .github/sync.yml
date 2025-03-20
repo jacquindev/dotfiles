@@ -5,17 +5,21 @@ group:
     files:
       - source: LICENSE
         dest: LICENSE
+        replace: false
 
   - repos: |
       jacquindev/automated-wsl2-setup
     files:
       - source: Brewfile
         dest: Brewfile
+        replace: true
 
   - repos: |
       jacquindev/windots
     files:
       - source: .config/yazi/
         dest: config/yazi/
+        replace: true
       - source: .czrc
         dest: home/.czrc
+        replace: true
