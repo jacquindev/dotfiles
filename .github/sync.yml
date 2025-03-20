@@ -1,11 +1,21 @@
 group:
-  repos: |
-    jacquindev/dotfiles
-    jacquindev/automated-wsl2-setup
-  files:
-    - source: .github/workflows/
-      dest: .github/workflows/
-    - source: Brewfile
-      dest: Brewfile
-    - source: LICENSE
-      dest: LICENSE
+  - repos: |
+      jacquindev/windots
+      jacquindev/automated-wsl2-setup
+    files:
+      - source: LICENSE
+        dest: LICENSE
+
+  - repos: |
+      jacquindev/automated-wsl2-setup
+    files:
+      - source: Brewfile
+        dest: Brefile
+
+  - repos: |
+      jacquindev/windots
+    files:
+      - source: .config/yazi/
+        dest: config/yazi/
+      - source: .czrc
+        dest: home/.czrc
