@@ -2,12 +2,13 @@
 	"useEmoji": true,
 	"emojiAlign": "left",
 	"alias": {
-		"fd": "fix: fix typos",
-		"ur": "docs: update README",
+		"ai": "chore: add .gitignore",
+		"al": "chore: add LICENSE",
+		"ar": "add README.md",
+		"ft": "fix: fix typos",
 		"ui": "chore: update .gitignore",
 		"um": "chore: update .gitmodules",
-		"al": "chore: add LICENSE",
-		"ai": "chore: add .gitignore"
+		"ur": "docs: update README.md"
 	},
 	"typesAppend": [
 		{ "value": "workflow", "name": "workflow: Workflow changes", "emoji": ":arrows_counterclockwise:" },
