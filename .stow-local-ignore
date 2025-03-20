@@ -18,6 +18,8 @@ _darcs
 \.gitmodules
 \.gitattributes
 
+.github
+
 .+~    # emacs backup files
 \#.*\# # emacs autosave files
 
