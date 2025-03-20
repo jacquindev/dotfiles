@@ -12,14 +12,13 @@ group:
     files:
       - source: Brewfile
         dest: Brewfile
-        replace: true
 
   - repos: |
       jacquindev/windots
     files:
       - source: .config/yazi/
         dest: config/yazi/
-        replace: true
       - source: .czrc
         dest: home/.czrc
-        replace: true
+      - source: gitalias.txt
+        dest: config/gitaliases
