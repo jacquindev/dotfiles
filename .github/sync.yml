@@ -1,0 +1,11 @@
+groups:
+  repos: |
+    jacquindev/dotfiles
+    jacquindev/automated-wsl2-setup
+  files:
+    - source: .github/workflows/
+      dest: .github/workflows/
+    - source: Brewfile
+      dest: Brewfile
+    - source: LICENSE
+      dest: LICENSE
