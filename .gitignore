@@ -12,8 +12,19 @@
 .config/TabNine
 .config/wslu
 
-# backup files
-*.bak
+# neovim
+lazy-lock.json
+mason-lock.json
 
-# lock files
-*.lock
+# others
+archives
+data
+debug
+doc/tags
+foo
+foo.*
+*.bak
+*.backup
+*.tmp
+*.temp
+*.log
