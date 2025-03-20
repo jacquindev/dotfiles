@@ -1,4 +1,4 @@
-groups:
+group:
   repos: |
     jacquindev/dotfiles
     jacquindev/automated-wsl2-setup
