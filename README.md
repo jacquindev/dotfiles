@@ -51,7 +51,7 @@ https://github.com/user-attachments/assets/ddc7f78b-71a4-40a3-8714-1f0d83e0eb28
 
 This repository is meant to use with my **[ansible automated repo](https://github.com/jacquindev/automated-wsl2-setup)**
 
-### Option 1: With Ansible
+### Option 1: (Recommended) With Ansible
 
 Rather than cloned this repository, please check out my [automated-wsl2-setup](https://github.com/jacquindev/automated-wsl2-setup) repository for instructions.
 
@@ -68,3 +68,11 @@ git clone https://github.com/jacquindev/dotfiles.git ~/.dotfiles
 ```bash
 cd ~/.dotfiles && stow .
 ```
+
+## License
+
+Licensed under the [MIT License](./LICENSE).
+
+## Author
+
+This project was written by [Jacquin Moon](https://github.com/jacquindev/).
