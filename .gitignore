@@ -2,7 +2,7 @@
 .zcompdump*
 .zsh_plugins.zsh
 
-# files has tokens
+# specific config dirs
 .config/composer
 .config/configstore
 .config/gh/hosts.yml
@@ -21,6 +21,7 @@ archives
 data
 debug
 doc/tags
+secrets
 foo
 foo.*
 *.bak
