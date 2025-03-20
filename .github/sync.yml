@@ -22,3 +22,5 @@ group:
         dest: home/.czrc
       - source: gitalias.txt
         dest: config/gitaliases
+      - source: .config/starship.toml
+        dest: config/starship.toml
