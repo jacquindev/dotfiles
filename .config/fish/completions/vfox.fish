@@ -1,3 +1,9 @@
+# Return immediately if `vfox` not exists
+if not type -q vfox
+  exit 0
+end
+
+# vfox fish completions
 complete -c vfox -x -l debug -d "Show debug information"
 complete -c vfox -x -l generate-bash-completion -d "Generate subcommands"
 complete -c vfox -x -l help -s h -d "Show help"
