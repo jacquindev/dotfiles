@@ -62,13 +62,13 @@ if type -q vfox
 end
 
 # mise
-if type -q mise
-    if test -f ~/.local/bin/mise
-        ~/.local/bin/mise activate fish | source
-    else
-        mise activate fish | source
-    end
-end
+# if type -q mise
+    # if test -f ~/.local/bin/mise
+        # ~/.local/bin/mise activate fish | source
+    # else
+        # mise activate fish | source
+    # end
+# end
 
 # fzf
 if type -q fzf
