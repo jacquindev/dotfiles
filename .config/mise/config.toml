@@ -1,0 +1,37 @@
+[settings]
+cargo.binstall = true
+disable_hints = ["python_precompiled", "python_multi"]
+experimental = true
+go_default_packages_file = "~/.config/mise/default-go-packages"
+pin = true
+python.compile = false
+python.default_packages_file = "~/.config/mise/default-python-packages"
+python.uv_venv_auto = true
+ruby.default_packages_file = "~/.config/mise/default-gems"
+status.show_env = false
+status.show_tools = false
+
+[tools]
+actionlint = "1.7.7"
+bun = "latest"
+cargo-binstall = "latest"
+deno = "latest"
+go = "1.24.1"
+java = "openjdk-17"
+maven = "3.9"
+node = "latest"
+python = ["3.12", "3.9"]
+rust = "latest"
+uv = "latest"
+
+"npm:czg" = "latest"
+"npm:git-open" = "latest"
+"npm:git-recent" = "latest"
+"npm:npm" = "latest"
+"npm:npm-check-updates" = "latest"
+"npm:npm-run-all" = "latest"
+"cargo:cargo-cache" = "latest"
+"cargo:cargo-run-bin" = "latest"
+"cargo:cargo-update" = "latest"
+php = "8.4.4"
+ruby = "3.4.2"
