@@ -59,3 +59,4 @@ PIPENV_VENV_IN_PROJECT = { value = "1", tools = true }
 PIPENV_NO_INHERIT = { value = "1", tools = true }
 PIPENV_IGNORE_VIRTUALENVS = { value = "1", tools = true }
 UV_LINK_MODE = { value = "symlink", tools = true }
+_.path = ["{{env.PNPM_HOME}}"]
