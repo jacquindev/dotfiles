@@ -28,7 +28,7 @@ disable_hints = ["python_precompiled", "python_multi"]
 experimental = true
 go_default_packages_file = "{{env.XDG_CONFIG_HOME}}/mise/default-go-packages"
 pin = true
-paranoid = true
+paranoid = false
 
 [settings.status]
 show_env = false
