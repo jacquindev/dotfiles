@@ -24,8 +24,10 @@ doc/tags
 secrets
 foo
 foo.*
-*.bak
 *.backup
-*.tmp
-*.temp
+*.bak
+*.db
+*.lock
 *.log
+*.temp
+*.tmp
