@@ -18,8 +18,3 @@ set -gx LESSHISTFILE $XDG_CACHE_HOME/.lesshsts
 
 # wgetee
 set -gx WGETRC $XDG_CONFIG_HOME/wget/wgetrc
-
-# nodejs
-set -gx npm_config_cache $XDG_CACHE_HOME/npm
-set -gx PNPM_HOME $XDG_DATA_HOME/pnpm
-set -gx YARN_CACHE_FOLDER $XDG_CACHE_HOME/npm

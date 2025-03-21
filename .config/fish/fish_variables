@@ -22,6 +22,7 @@ SETUVAR --export EZA_LT_OPTIONS:\x2d\x2dtree\x1e\x2d\x2dlevel
 SETUVAR --export EZA_L_OPTIONS:\x1d
 SETUVAR --export EZA_STANDARD_OPTIONS:\x2d\x2dgroup\x1e\x2d\x2dheader\x1e\x2d\x2dgroup\x2ddirectories\x2dfirst
 SETUVAR --export FZF_DEFAULT_OPTS:\x2d\x2dcolor\x3dbg\x2b\x3a\x23363a4f\x2cspinner\x3a\x23f4dbd6\x2chl\x3a\x23ed8796\x20\x2d\x2dcolor\x3dfg\x3a\x23cad3f5\x2cheader\x3a\x23ed8796\x2cinfo\x3a\x23c6a0f6\x2cpointer\x3a\x23f4dbd6\x20\x2d\x2dcolor\x3dmarker\x3a\x23b7bdf8\x2cfg\x2b\x3a\x23cad3f5\x2cprompt\x3a\x23c6a0f6\x2chl\x2b\x3a\x23ed8796\x20\x2d\x2dcolor\x3dselected\x2dbg\x3a\x23494d64\x20\x2d\x2dcolor\x3dborder\x3a\x23363a4f\x2clabel\x3a\x23cad3f5
+SETUVAR --export GO111MODULE:on
 SETUVAR --export HOMEBREW_NO_AUTO_UPDATE:1
 SETUVAR --export --path PKG_CONFIG_PATH:/usr/lib/x86_64\x2dlinux\x2dgnu/pkgconfig/\x1e/usr/share/pkgconfig/
 SETUVAR --export __ABBR_TIPS_KEYS:\x1d

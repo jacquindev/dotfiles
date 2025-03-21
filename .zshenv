@@ -29,9 +29,4 @@ export WGETRC="$XDG_CONFIG_HOME/wget/wgetrc"
 # nvm
 export NVM_DIR="$XDG_DATA_HOME/nvm"
 
-# nodejs
-export PNPM_HOME="$XDG_DATA_HOME/pnpm"
-export npm_config_cache="$XDG_CACHE_HOME/npm"
-export YARN_CACHE_FOLDER="$XDG_CACHE_HOME/npm"
-
 skip_global_compinit=1
