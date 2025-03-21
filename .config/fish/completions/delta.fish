@@ -1,3 +1,9 @@
+# Return immediately if `delta` not found
+if not type -q delta
+  exit 0
+end
+
+# `delta` completion for fish shell
 complete -c delta -l blame-code-style -d 'Style string for the code section of a git blame line' -r
 complete -c delta -l blame-format -d 'Format string for git blame commit metadata' -r
 complete -c delta -l blame-palette -d 'Background colors used for git blame lines (space-separated string)' -r
