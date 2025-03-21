@@ -1,4 +1,7 @@
-tap "homebrew/bundle"
+# DEPRECATED: This tap is now empty and all its contents were either deleted or migrated.
+#
+# tap "homebrew/bundle"
+#
 
 # General
 brew "bat"
