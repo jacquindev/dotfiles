@@ -43,12 +43,8 @@ rust = "1.85.0"
 uv = "latest"
 
 # global NPM packages
-"npm:czg" = "latest"
-"npm:git-open" = "latest"
-"npm:git-recent" = "latest"
 "npm:npm" = "latest"
 "npm:npm-check-updates" = "latest"
-"npm:npm-run-all" = "latest"
 
 # global cargo packages
 "cargo:cargo-cache" = "latest"
@@ -68,3 +64,4 @@ PIPENV_VENV_IN_PROJECT = 1
 PIPENV_NO_INHERIT = 1
 PIPENV_IGNORE_VIRTUALENVS = 1
 UV_LINK_MODE = { value = "symlink", tools = true }
+MISE_NODE_DEFAULT_PACKAGES_FILE = { value = "{{env.XDG_CONFIG_HOME}}/mise/default-npm-packages", tools = true }
