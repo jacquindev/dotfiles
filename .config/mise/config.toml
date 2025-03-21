@@ -60,9 +60,9 @@ uv = "latest"
 "pipx:yamllint" = "latest"
 
 [env]
-npm_config_cache = { value = "{{env.XDG_CACHE_HOME}}/npm", tools = true }
-YARN_CACHE_FOLDER = { value = "{{env.XDG_CACHE_HOME}}/npm" }
-PNPM_HOME = { value = "{{env.XDG_DATA_HOME}}/pnpm" }
+npm_config_cache = { value = "~/.cache/npm", tools = true }
+YARN_CACHE_FOLDER = { value = "~/.cache/npm" }
+PNPM_HOME = { value = "~/.local/share/pnpm" }
 PIPENV_VENV_IN_PROJECT = 1
 PIPENV_NO_INHERIT = 1
 PIPENV_IGNORE_VIRTUALENVS = 1
