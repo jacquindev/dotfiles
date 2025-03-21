@@ -61,6 +61,15 @@ if type -q vfox
     vfox activate fish | source
 end
 
+# mise
+if type -q mise
+    if test -f ~/.local/bin/mise
+        ~/.local/bin/mise activate fish | source
+    else
+        mise activate fish | source
+    end
+end
+
 # fzf
 if type -q fzf
     fzf --fish | source
