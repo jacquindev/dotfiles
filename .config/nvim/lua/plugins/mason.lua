@@ -37,6 +37,8 @@ return {
       "stylelint",
       "graphql-language-service-cli",
       "lemminx",
-    }
+      "jinja-lsp",
+      "groovy-language-server",
+    },
   },
 }

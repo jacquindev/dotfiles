@@ -7,7 +7,12 @@ return {
       { "<leader>cj", ft = { "json", "yaml" }, "<cmd>JqxList<cr>", desc = "Jqx List" },
     },
   },
-	{
+  {
+    "fei6409/log-highlight.nvim",
+    event = "BufRead *.log",
+    opts = {},
+  },
+  {
     "dmmulroy/ts-error-translator.nvim",
     opts = {},
   },

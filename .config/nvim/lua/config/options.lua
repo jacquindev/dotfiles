@@ -11,12 +11,15 @@ g.autoformat = true
 -- Enable EditorConfig integration
 g.editorconfig = true
 
--- Root dir detection
-g.root_spec = {
-  "lsp",
-  { ".git", "lua", ".obsidian", "package.json", "Makefile", "go.mod", "cargo.toml", "pyproject.toml", "src" },
-  "cwd",
-}
+-- Disable builtin providers
+-- g.loaded_python3_provider = 0
+-- g.loaded_perl_provider = 0
+-- g.loaded_ruby_provider = 0
+-- g.loaded_node_provider = 0
+
+-- Python settings
+g.lazyvim_python_lsp = "basedpyright"
+g.lazyvim_python_ruff = "ruff"
 
 -- Disable annoying cmd line stuff
 o.showcmd = false
@@ -27,6 +30,10 @@ o.cmdheight = 0
 o.backspace = { "start", "eol", "indent" }
 o.breakindent = true
 
+-- Backup
+o.backup = false
+o.backupdir = vim.fn.stdpath("state") .. "/backup"
+
 -- Smoothscroll
 if vim.fn.has("nvim-0.10") == 1 then
   o.smoothscroll = true
@@ -36,4 +43,4 @@ o.conceallevel = 2
 
 o.mousefocus = true
 o.mousemoveevent = true
-o.mousescroll = { 'ver:1', 'hor:6' }
+o.mousescroll = { "ver:1", "hor:6" }

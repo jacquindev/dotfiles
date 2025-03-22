@@ -11,7 +11,7 @@ local ts_error_translator = {
   ["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
     require("ts-error-translator").translate_diagnostics(err, result, ctx, config)
     vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
-  end
+  end,
 }
 
 return {
@@ -129,8 +129,14 @@ return {
           handlers = ts_error_translator,
         },
         lemminx = {},
-      }
+        jinja_lsp = {},
+        groovyls = {},
+      },
     },
+  },
+  {
+    "nvim-java/nvim-java",
+    opts = {},
   },
   {
     "dnlhc/glance.nvim",
