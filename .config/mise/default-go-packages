@@ -2,3 +2,4 @@
 github.com/go-task/task/v3/cmd/task@latest	# task
 github.com/melkeydev/go-blueprint@latest		# go-blueprint
 github.com/spf13/cobra-cli@latest						# cobra-cli
+github.com/Gelio/go-global-update@latest   	# go-global-update
