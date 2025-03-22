@@ -18,14 +18,15 @@ finder:
   # overrides: --tac # equivalent to the --fzf-overrides option
   # overrides_var: --tac # equivalent to the --fzf-overrides-var option
 
-cheats:
-  paths:
-    - "${XDG_CONFIG_HOME}/navi/cheats"
+# cheats:
+#   paths:
+#     - "${XDG_CONFIG_HOME}/navi/cheats"
 
 # search:
   # tags: git,!checkout # equivalent to the --tag-rules option
 
 shell:
   # shell used for shell out. possible values: bash, zsh, dash, ...
-  finder_command: /usr/local/bin/bash
-  command: env BASH_ENV="${HOME}/dotfiles/shell/bash/bashrc" /usr/local/bin/bash --norc --noprofile
+  # finder_command: /usr/bin/zsh
+  # command: env BASH_ENV="${HOME}/dotfiles/shell/bash/bashrc" /usr/local/bin/bash --norc --noprofile
+  command: zsh
