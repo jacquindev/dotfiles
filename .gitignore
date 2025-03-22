@@ -11,10 +11,14 @@
 .config/ngrok/ngrok.yml
 .config/TabNine
 .config/wslu
+.config/vscode-sqltools
 
 # neovim
 lazy-lock.json
 mason-lock.json
+
+# cache
+__pycache__
 
 # others
 archives
