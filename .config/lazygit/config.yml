@@ -43,7 +43,7 @@ git:
   paging:
     colorArg: always
     useConfig: false
-    pager: delta --features=mantis-shrimp --paging=never
+    pager: delta
   log:
     showGraph: "when-maximised"
     showWholeGraph: false
