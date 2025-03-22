@@ -1,0 +1,120 @@
+# yaml-language-server: $schema=https://dlvhdr.github.io/gh-dash/configuration/gh-dash/schema.json
+
+prSections:
+  - title: My Pull Requests
+    filters: is:open author:@me
+  - title: Needs My Review
+    filters: is:open review-requested:@me
+  - title: Involved
+    filters: is:open involves:@me -author:@me
+  - title: Ansible WSL2 Playbook
+    filters: is:open repo:jacquindev/automated-wsl2-setup
+
+issuesSections:
+  - title: My Issues
+    filters: is:open author:@me
+  - title: Assigned
+    filters: is:open assignee:@me
+  - title: Involved
+    filters: is:open involves:@me -author:@me
+  - title: Ansible WSL2 Playbook
+    filters: is:open repo:jacquindev/automated-wsl2-setup
+
+pager:
+  diff: delta
+
+defaults:
+  preview:
+    open: true
+    width: 70
+  prsLimit: 20
+  issuesLimit: 20
+  refetchIntervalMinutes: 10
+  view: prs
+  layout:
+    prs:
+      repoName:
+        grow: true
+        width: 10
+        hidden: false
+      base:
+        hidden: true
+
+repoPaths:
+  /*: ~/projects/*
+  jacquindev/windots: /mnt/g/dotfiles
+
+keybindings:
+  universal:
+    - name: lazygit
+      key: g
+      command: >
+        cd {{.RepoPath}} && lazygit
+
+  prs:
+    - name: add
+      key: A
+      command: >
+        cd {{.RepoPath}} && git add -A && lazygit
+    - name: diff
+      key: d
+      command: >
+        cd {{.RepoPath}} && gh pr checkout {{.PrNumber}} && nvim -c ":DiffviewOpen {{.BaseRefName}}...{{.HeadRefName}}"
+    - name: open in Octo
+      key: O
+      command: >
+        cd {{.RepoPath}} && nvim -c ":silent Octo pr edit {{.PrNumber}}"
+    - name: open in vscode
+      key: V
+      command: >
+        cd {{.RepoPath}} && gh pr checkout {{.PrNumber}} && code .
+    - name: approve
+      key: v
+      command: >
+        gh pr review --repo {{.RepoName}} --approve --body "$(gum input --prompt='Approve Comment: ')" {{.PrNumber}}
+    - name: merge
+      key: m
+      command: >
+        gh pr merge --repo {{.RepoName}} {{.PrNumber}} --delete-branch
+
+  issues:
+    - name: pin
+      key: p
+      command: >
+        gh issue pin {{.IssueNumber}} --repo {{.RepoName}}
+    - name: close
+      key: x
+      command: >
+        gh issue close {{.IssueNumber}} --repo {{.RepoName}}
+    - name: open in Octo
+      key: O
+      command: >
+        cd {{.RepoPath}} && nvim -c ":Octo issue edit {{.IssueNumber}}"
+    - name: develop
+      key: d
+      command: >
+        cd {{.RepoPath}} && gh issue develop -c {{.IssueNumber}} --checkout && nvim
+
+theme:
+  ui:
+    table:
+      compact: true
+      showSeparators: true
+    sectionsShowCount: true
+  colors:
+    text:
+      primary: "#cad3f5"
+      secondary: "#f5a97f"
+      inverted: "#181926"
+      faint: "#b8c0e0"
+      warning: "#eed49f"
+      success: "#a6da95"
+      error: "#ed8796"
+    background:
+      selected: "#363a4f"
+    border:
+      primary: "#f5a97f"
+      secondary: "#494d64"
+      faint: "#363a4f"
+
+confirmQuit: false
