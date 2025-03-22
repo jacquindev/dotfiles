@@ -28,7 +28,7 @@ return {
     "folke/which-key.nvim",
     opts = {
       spec = {
-        { package_prefix, group = "python", icon = " " },
+        { package_prefix, group = "python", icon = { icon = " ", color = "yellow" } },
       },
     },
   },

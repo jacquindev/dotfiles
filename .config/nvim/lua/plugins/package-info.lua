@@ -26,7 +26,7 @@ return {
     "folke/which-key.nvim",
     opts = {
       spec = {
-        { prefix, group = "npm/yarn/pnpm", icon = "󰖟 ", mode = { "n", "v" } },
+        { prefix, group = "nodejs", icon = { icon = "󰖟 ", color = "cyan" }, mode = { "n", "v" } },
       },
     },
   },

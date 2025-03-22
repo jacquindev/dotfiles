@@ -27,7 +27,7 @@ return {
     "folke/which-key.nvim",
     opts = {
       spec = {
-        { package_prefix, group = "rust", icon = " " },
+        { package_prefix, group = "rust", icon = { icon = " ", color = "red" } },
       },
     },
   },
