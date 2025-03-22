@@ -1,3 +1,19 @@
+local inlay_hints_settings = {
+  parameterNames = { enabled = "all" },
+  parameterTypes = { enabled = true },
+  variableTypes = { enabled = true },
+  propertyDeclarationTypes = { enabled = true },
+  functionLikeReturnTypes = { enabled = true },
+  enumMemberValues = { enabled = true },
+}
+
+local ts_error_translator = {
+  ["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
+    require("ts-error-translator").translate_diagnostics(err, result, ctx, config)
+    vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
+  end
+}
+
 return {
   {
     "neovim/nvim-lspconfig",
@@ -37,6 +53,83 @@ return {
         },
       },
       codelens = { enabled = false },
+      servers = {
+        astro = {
+          settings = {
+            typescript = {
+              updateImportsOnFileMove = { enabled = "always" },
+              inlayHints = inlay_hints_settings,
+            },
+            javascript = {
+              updateImportsOnFileMove = { enabled = "always" },
+              inlayHints = inlay_hints_settings,
+            },
+          },
+          handlers = ts_error_translator,
+        },
+        graphql = {
+          filetypes = { "graphql", "javascript", "javascriptreact", "typescript", "typescriptreact" },
+        },
+        htmx = {},
+        html = {},
+        cssmodules_ls = {},
+        css_variables = {},
+        cssls = {
+          lint = {
+            compatibleVendorPrefixes = "ignore",
+            vendorPrefix = "ignore",
+            unknownVendorSpecificProperties = "ignore",
+
+            -- unknownProperties = "ignore", -- duplicate with stylelint
+
+            duplicateProperties = "warning",
+            emptyRules = "warning",
+            importStatement = "warning",
+            zeroUnits = "warning",
+            fontFaceProperties = "warning",
+            hexColorLength = "warning",
+            argumentsInColorFunction = "warning",
+            unknownAtRules = "warning",
+            ieHack = "warning",
+            propertyIgnoredDueToDisplay = "warning",
+          },
+        },
+        vtsls = {
+          handlers = ts_error_translator,
+          init_options = {
+            preferences = {
+              disableSuggestions = true,
+            },
+          },
+        },
+        svelte = {
+          settings = {
+            typescript = {
+              updateImportsOnFileMove = { enabled = "always" },
+              inlayHints = inlay_hints_settings,
+            },
+            javascript = {
+              updateImportsOnFileMove = { enabled = "always" },
+              inlayHints = inlay_hints_settings,
+            },
+          },
+          handlers = ts_error_translator,
+        },
+        volar = {
+          settings = {
+            typescript = {
+              updateImportsOnFileMove = { enabled = "always" },
+              inlayHints = inlay_hints_settings,
+            },
+            javascript = {
+              updateImportsOnFileMove = { enabled = "always" },
+              inlayHints = inlay_hints_settings,
+            },
+          },
+          handlers = ts_error_translator,
+        },
+        lemminx = {},
+      }
     },
   },
   {

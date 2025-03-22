@@ -1,6 +1,6 @@
 local icons = {
   ui = require("utils.icons").get("ui", true),
-  misc = require("utils.icons").get("misc", true)
+  misc = require("utils.icons").get("misc", true),
 }
 
 return {
@@ -8,7 +8,7 @@ return {
   dependencies = {
     "zapling/mason-lock.nvim",
     cmd = { "MasonLock", "MasonLockRestore" },
-    opts = {}
+    opts = {},
   },
   keys = {
     { "<leader>cm", false },
@@ -20,8 +20,23 @@ return {
       icons = {
         package_pending = icons.ui.Modified_alt,
         package_installed = icons.ui.Check,
-        package_uninstalled = icons.misc.Ghost
+        package_uninstalled = icons.misc.Ghost,
       },
     },
+    ensure_installed = {
+      "bash-language-server",
+      "css-lsp",
+      "css-variables-language-server",
+      "cssmodules-language-server",
+      "emmet-language-server",
+      "golangci-lint",
+      "html-lsp",
+      "htmlhint",
+      "htmx-lsp",
+      "shellcheck",
+      "stylelint",
+      "graphql-language-service-cli",
+      "lemminx",
+    }
   },
 }

@@ -109,14 +109,14 @@ return {
       { prefix .. "lr", "<cmd> Octo label remove<CR>", desc = "Remove a Label" },
       { prefix .. "lc", "<cmd> Octo label create<CR>", desc = "Create a Label" },
 
-      { prefix .. "e1", "<cmd>Octo reaction thumbs_up<CR>", desc = "👍" },
-      { prefix .. "e2", "<cmd>Octo reaction thumbs_down<CR>", desc = "👎" },
-      { prefix .. "e3", "<cmd>Octo reaction eyes<CR>", desc = "👀" },
-      { prefix .. "e4", "<cmd>Octo reaction laugh<CR>", desc = "😄" },
-      { prefix .. "e5", "<cmd>Octo reaction confused<CR>", desc = "😕" },
-      { prefix .. "e6", "<cmd>Octo reaction rocket<CR>", desc = "🚀" },
-      { prefix .. "e7", "<cmd>Octo reaction heart<CR>", desc = "❤️" },
-      { prefix .. "e8", "<cmd>Octo reaction party<CR>", desc = "🎉" },
+      { prefix .. "e1", "<cmd>Octo reaction thumbs_up<CR>", desc = "Add 👍 Reaction" },
+      { prefix .. "e2", "<cmd>Octo reaction thumbs_down<CR>", desc = "Add 👎 Reaction" },
+      { prefix .. "e3", "<cmd>Octo reaction eyes<CR>", desc = "Add 👀 Reaction" },
+      { prefix .. "e4", "<cmd>Octo reaction laugh<CR>", desc = "Add 😄 Reaction" },
+      { prefix .. "e5", "<cmd>Octo reaction confused<CR>", desc = "Add 😕 Reaction" },
+      { prefix .. "e6", "<cmd>Octo reaction rocket<CR>", desc = "Add 🚀 Reaction" },
+      { prefix .. "e7", "<cmd>Octo reaction heart<CR>", desc = "Add ❤️ Reaction" },
+      { prefix .. "e8", "<cmd>Octo reaction party<CR>", desc = "Add 🎉 Reaction" },
 
       { prefix .. "x", "<cmd>Octo actions<CR>", desc = "Run an Action" },
 
@@ -146,7 +146,7 @@ return {
     },
     opts = {
       add_default_keybindings = false,
-      projects_dir = "~/dev/",
+      projects_dir = "~/projects/",
     },
     keys = {
       { prefix .. "rl", "<cmd>OctoRepos<CR>",              desc = "List Repos" },

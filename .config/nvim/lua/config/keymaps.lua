@@ -88,7 +88,6 @@ map("n", "<leader>bf", "<cmd>bfirst<cr>", { desc = "First Buffer" })
 map("n", "<leader>ba", "<cmd>blast<cr>", { desc = "Last Buffer" })
 map("n", "<leader>b<tab>", "<cmd>tabnew %<cr>", { desc = "Current Buffer in New Tab" })
 
-
 -- Info
 map("n", "<leader>if", "<cmd>LazyFormatInfo<cr>", { desc = "Formatting" })
 map("n", "<leader>ic", "<cmd>ConformInfo<cr>", { desc = "Conform" })
@@ -140,9 +139,42 @@ map("n", "dd", function()
   end
 end, { noremap = true, expr = true, desc = "Don't Yank Empty Line to Clipboard" })
 
+-- Dashboard
+map("n", "<leader>fd", function()
+  if LazyVim.has("snacks.nvim") then
+    Snacks.dashboard()
+  elseif LazyVim.has("alpha-nvim") then
+    require("alpha").start(true)
+  elseif LazyVim.has("dashboard-nvim") then
+    vim.cmd("Dashboard")
+  end
+end, { desc = "Dashboard" })
+
 -- Spelling
 map("n", "<leader>!", "zg", { desc = "Add Word to Dictionary" })
 map("n", "<leader>@", "zug", { desc = "Remove Word from Dictionary" })
 
+-- Git
+map("n", "<leader>ghb", Snacks.git.blame_line, { desc = "Blame Line" })
+
 -- Insert Mode
 map({ "c", "i", "t" }, "<M-BS>", "<C-w>", { desc = "Delete Word" })
+
+-- Center when scrolling
+if Snacks.scroll.enabled then
+  map("n", "<C-d>", function()
+    vim.wo.scrolloff = 999
+    vim.defer_fn(function()
+      vim.wo.scrolloff = 8
+    end, 500)
+    return "<c-d>"
+  end, { expr = true })
+
+  map("n", "<C-u>", function()
+    vim.wo.scrolloff = 999
+    vim.defer_fn(function()
+      vim.wo.scrolloff = 8
+    end, 500)
+    return "<c-u>"
+  end, { expr = true })
+end
