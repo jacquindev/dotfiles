@@ -8,7 +8,7 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = "3.13.2"
-poetry = "^2.1.1"
+poetry = "2.1.1"
 
 [tool.poetry.group.additional.dependencies]
 poetry-dotenv-plugin = "^0.2.0"
