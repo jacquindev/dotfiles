@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+function baths() {
+	file="$1"
+	bat --list-themes | fzf --preview="bat --theme={} --color=always $file"
+}
+
+baths "$@"

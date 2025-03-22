@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# shellcheck disable=1090,1091
+
+if [ -f "$HOME/.config/shared/init.sh" ]; then
+	source "$HOME/.config/shared/init.sh"
+fi
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+
+# lib files
+for lib_file in "${SCRIPT_DIR}/lib/"*.bash; do
+	cmd=$(basename "$lib_file")
+	if command -v "${cmd%.*}"; then
+		source "$lib_file"
+	fi
+done
+
+# kubectl aliases
+# - https://github.com/ahmetb/kubectl-aliases
+if [ -f "${XDG_CONFIG_HOME}/shared/.kubectl_aliases" ]; then
+	source "${XDG_CONFIG_HOME}/shared/.kubectl_aliases"
+fi
+
+# completions
+for comp_file in "${SCRIPT_DIR}/completions/"*.bash; do
+	source "$comp_file"
+done
+
+unset lib_file comp_file SCRIPT_DIR
+
+# zoxide
+if command -v zoxide >/dev/null 2>&1; then
+	eval "$(zoxide init bash --cmd cd)"
+fi

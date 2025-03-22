@@ -1,6 +1,9 @@
 # Profiling
 zmodload zsh/zprof
 
+# shared folder
+[ -f "${HOME}/.config/shared/init.sh" ] && source "${HOME}/.config/shared/init.sh"
+
 # Custom prompt
 if (( ${+commands[oh-my-posh]} )); then
 	eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/tokyonight_storm.omp.json)"
@@ -16,26 +19,14 @@ if [ -d "$ZDOTDIR/lib" ]; then
 	unset file
 fi
 
-# Custom completion files
-if [ -d "$HOME/.config/zsh/completions" ]; then
-	fpath+=$HOME/.config/zsh/completions
-	autoload -Uz compinit && compinit
-fi
+[ -d "${ZDOTDIR}/functions" ] && fpath+=${ZDOTDIR}/functions
+[ -d "${ZDOTDIR}/completions" ] && fpath+=${ZDOTDIR}/completions
+autoload -Uz compinit && compinit
 
 # kubectl aliases
 # - https://github.com/ahmetb/kubectl-aliases
-if [ -f "$HOME/.config/.kubectl_aliases" ]; then
-	source "$HOME/.config/.kubectl_aliases"
-fi
-
-# Set up fzf key bindings and fuzzy completion
-if (( ${+commands[fzf]} )); then
-	source <(fzf --zsh)
-fi
-
-# thefuck
-if (( ${+commands[thefuck]} )); then
-	eval "$(thefuck --alias --enable-experimental-instant-mode)"
+if [ -f "${XDG_CONFIG_HOME}/shared/.kubectl_aliases" ]; then
+	source "${XDG_CONFIG_HOME}/shared/.kubectl_aliases"
 fi
 
 # zoxide

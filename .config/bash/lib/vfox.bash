@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-if command -v vfox >/dev/null 2>&1; then
+if command_exists vfox; then
 	eval "$(vfox activate bash)"
 fi
