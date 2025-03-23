@@ -15,6 +15,7 @@ return {
     { "<leader>im", "<cmd>Mason<cr>", desc = "Mason" },
   },
   opts = {
+    max_concurrent_installers = 10,
     ui = {
       border = "rounded",
       icons = {
