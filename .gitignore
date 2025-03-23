@@ -17,6 +17,9 @@
 lazy-lock.json
 mason-lock.json
 
+# vscode
+.vscode/
+
 # cache
 __pycache__
 
