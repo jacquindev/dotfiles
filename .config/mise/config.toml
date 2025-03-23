@@ -1,62 +1,43 @@
-[tools]
-rust = "1.85.0"
-cargo-binstall = "latest"
-"cargo:cargo-cache" = "latest"
-"cargo:cargo-run-bin" = "latest"
-"cargo:cargo-update" = "latest"
-ruby = "3.4.2"
-go = "1.24.1"
-actionlint = "1.7.7"
-bun = "latest"
-deno = "latest"
-java = "openjdk-17"
-maven = "3.9"
-node = { version = "latest", postinstall = "corepack enable" }
-php = "8.4.4"
-pipenv = "latest"
-python = ["3.12", "3.9"]
-uv = "latest"
-poetry = "2.1.1"
-"pipx:cookiecutter" = "latest"
-"pipx:poethepoet" = "latest"
-"pipx:yamllint" = "latest"
-
 [settings]
-cache_prune_age = "15d"
-cargo.binstall = true
-disable_hints = ["python_precompiled", "python_multi"]
 experimental = true
-go_default_packages_file = "{{env.XDG_CONFIG_HOME}}/mise/default-go-packages"
 pin = true
-paranoid = false
-
-[settings.status]
-show_env = false
-show_tools = false
-
-[settings.python]
-compile = false
-default_packages_file = "{{env.XDG_CONFIG_HOME}}/mise/default-python-packages"
-uv_venv_auto = true
-
-[settings.ruby]
-default_packages_file = "{{env.XDG_CONFIG_HOME}}/mise/default-gems"
-
-[settings.pipx]
-uvx = true
 
 [settings.npm]
 bun = true
 
+[settings.python]
+uv_venv_auto = true
+
+[settings.pipx]
+uvx = true
+
+[settings.cargo]
+binstall = true
+
+[tools]
+node = { version = "latest", postinstall = "corepack enable && corepack prepare pnpm@latest --activate" }
+bun = "latest"
+go = "1.24.1"
+php = "8.4.5"
+cargo-binstall = "latest"
+rust = { version = "1.85.0", profile = "default" }
+java = "corretto-21"
+maven = "3.9.9"
+uv = "latest"
+pipenv = "latest"
+python = { version = "3.13", postinstall = "pip install --upgrade pip" }
+"pipx:cookiecutter" = "latest"
+"pipx:yamllint" = "latest"
+
 [env]
-npm_config_cache = { value = "{{env.XDG_CACHE_HOME}}/npm", tools = true }
-YARN_CACHE_FOLDER = { value = "{{env.XDG_CACHE_HOME}}/npm" }
-PNPM_HOME = { value = "{{env.XDG_DATA_HOME}}/pnpm" }
-MISE_NODE_DEFAULT_PACKAGES_FILE = { value = "{{env.XDG_CONFIG_HOME}}/mise/default-npm-packages", tools = true }
-MISE_RUSTUP_HOME = { value = "{{env.XDG_DATA_HOME}}/rustup", tools = true }
-MISE_CARGO_HOME = { value = "{{env.XDG_DATA_HOME}}/cargo", tools = true }
-PIPENV_VENV_IN_PROJECT = { value = "1", tools = true }
-PIPENV_NO_INHERIT = { value = "1", tools = true }
-PIPENV_IGNORE_VIRTUALENVS = { value = "1", tools = true }
+MISE_NODE_DEFAULT_PACKAGES_FILE = "{{ env.XDG_CONFIG_HOME }}/mise/default-npm-packages"
+npm_config_cache = "{{ env.XDG_CACHE_HOME }}/npm"
+YARN_CACHE_FOLDER = "{{ env.XDG_CACHE_HOME }}/npm"
+PNPM_HOME = "{{ env.XDG_DATA_HOME }}/pnpm"
 UV_LINK_MODE = { value = "symlink", tools = true }
-_.path = ["{{env.PNPM_HOME}}"]
+MISE_PYTHON_DEFAULT_PACKAGES_FILE = "{{ env.XDG_CONFIG_HOME }}/mise/default-python-packages"
+MISE_GO_DEFAULT_PACKAGES_FILE = "{{ env.XDG_CONFIG_HOME }}/mise/default-go-packages"
+MISE_RUBY_DEFAULT_PACKAGES_FILE = "{{ env.XDG_CONFIG_HOME }}/mise/default-gems"
+MISE_RUSTUP_HOME = "{{ env.XDG_DATA_HOME }}/rustup"
+MISE_CARGO_HOME = "{{ env.XDG_DATA_HOME }}/cargo"
+_.path = ["{{ env.PNPM_HOME }}"]
