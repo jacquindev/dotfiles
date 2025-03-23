@@ -10,10 +10,7 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 
 # lib files
 for lib_file in "${SCRIPT_DIR}/lib/"*.bash; do
-	cmd=$(basename "$lib_file")
-	if command -v "${cmd%.*}"; then
-		source "$lib_file"
-	fi
+	source "$lib_file"
 done
 
 # kubectl aliases
@@ -28,6 +25,31 @@ for comp_file in "${SCRIPT_DIR}/completions/"*.bash; do
 done
 
 unset lib_file comp_file SCRIPT_DIR
+
+# thefuck
+if command -v thefuck >/dev/null 2>&1; then
+	eval "$(thefuck --alias --enable-experimental-instant-mode)"
+fi
+
+# vfox
+if command -v vfox >/dev/null 2>&1; then
+	eval "$(vfox activate bash)"
+fi
+
+# fzf
+if command -v fzf >/dev/null 2>&1; then
+	eval "$(fzf --bash)"
+fi
+
+# mise
+if command -v mise >/dev/null 2>&1; then
+	eval "$(mise activate bash)"
+fi
+
+# navi
+if command -v navi >/dev/null 2>&1; then
+	eval "$(navi widget bash)"
+fi
 
 # zoxide
 if command -v zoxide >/dev/null 2>&1; then
