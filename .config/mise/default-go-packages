@@ -2,3 +2,4 @@ github.com/go-task/task/v3/cmd/task
 github.com/melkeydev/go-blueprint
 github.com/spf13/cobra-cli
 github.com/Gelio/go-global-update
+github.com/git-chglog/git-chglog/cmd/git-chglog
