@@ -1,6 +1,9 @@
 [settings]
 experimental = true
 pin = true
+trusted_config_paths = ["{{ env.XDG_PROJECTS_DIR }}"]
+go_set_gobin = false
+go_set_goroot = true
 
 [settings.npm]
 bun = true
@@ -17,7 +20,7 @@ binstall = true
 [tools]
 node = { version = "latest", postinstall = "corepack enable && corepack prepare pnpm@latest --activate" }
 bun = "latest"
-go = "1.24.1"
+go = { version = "1.24.1", preinstall = "mkdir -p $GOPATH/bin" }
 php = "8.4.5"
 cargo-binstall = "latest"
 rust = { version = "1.85.0", profile = "default" }
@@ -37,7 +40,9 @@ PNPM_HOME = "{{ env.XDG_DATA_HOME }}/pnpm"
 UV_LINK_MODE = { value = "symlink", tools = true }
 MISE_PYTHON_DEFAULT_PACKAGES_FILE = "{{ env.XDG_CONFIG_HOME }}/mise/default-python-packages"
 MISE_GO_DEFAULT_PACKAGES_FILE = "{{ env.XDG_CONFIG_HOME }}/mise/default-go-packages"
+GOPATH = "{{ env.HOME }}/go"
+GOBIN = "{{ env.GOPATH }}/bin"
 MISE_RUBY_DEFAULT_PACKAGES_FILE = "{{ env.XDG_CONFIG_HOME }}/mise/default-gems"
 MISE_RUSTUP_HOME = "{{ env.XDG_DATA_HOME }}/rustup"
 MISE_CARGO_HOME = "{{ env.XDG_DATA_HOME }}/cargo"
-_.path = ["{{ env.PNPM_HOME }}"]
+_.path = ["{{ env.PNPM_HOME }}", "{{ env.GOBIN }}"]
