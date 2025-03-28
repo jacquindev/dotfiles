@@ -23,14 +23,6 @@
 > [!NOTE]
 > Windows 11 Dotfiles Repository is maintained here ⇒ **[windots](https://github.com/jacquindev/windots.git)**
 
-## 🖥️ Demo
-
-https://github.com/user-attachments/assets/e638f52a-899a-4b30-91b8-536e555cf5b6
-
-https://github.com/user-attachments/assets/ddc7f78b-71a4-40a3-8714-1f0d83e0eb28
-
-<br>
-
 ## 🌼 Preview
 
 ![btop](./assets/btop.png)
