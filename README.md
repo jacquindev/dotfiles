@@ -37,7 +37,8 @@ This repository is meant to use with my **[ansible automated repo](https://githu
 
 ### Option 1: (Recommended) With Ansible
 
-Rather than cloned this repository, please check out my [automated-wsl2-setup](https://github.com/jacquindev/automated-wsl2-setup) repository for instructions.
+> [!NOTE]
+> Rather than cloned this repository, please check out my **[automated-wsl2-setup](https://github.com/jacquindev/automated-wsl2-setup)** repository for details and instructions.
 
 ### Option 2: Without Ansible
 
@@ -63,15 +64,15 @@ Rather than cloned this repository, please check out my [automated-wsl2-setup](h
   brew bundle
   ```
 
-## Development Tools (optional)
+## 🕵️ Development Tools (optional)
 
-### Step 1: Install [`mise`](https://mise.jdx.dev/)
+### Step 1: Install *[`mise`](https://mise.jdx.dev/)*
 
-`mise` can be installed via [Homebrew](https://brew.sh/) (`brew install mise`) or by enter the command `curl https://mise.run | sh` in your terminal. By default, if you `bundle` this repository `Brewfile`, then you are already packed with `mise`.
+`mise` can be installed via [Homebrew](https://brew.sh/) (`brew install mise`) or by enter the command `curl https://mise.run | sh` in your terminal. By default, if you already `bundle` this repository `Brewfile`, then you are already packed with `mise`.
 
-If that not your case, please visit [Installing Mise](https://mise.jdx.dev/installing-mise.html) for more ways to install `mise` on your system.
+If that not your case, please visit *[Installing Mise](https://mise.jdx.dev/installing-mise.html)* for more ways to install `mise` on your system.
 
-### Step 2: Install global tools using `mise install` command
+### Step 2: Install global tools using *`mise install`* command
 
 To install all global tools listed in [`config.toml`](./.config/mise/config.toml) file, simply run:
 
