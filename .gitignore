@@ -5,6 +5,7 @@
 # specific config dirs
 .config/composer
 .config/configstore
+.config/dlv
 .config/gh/hosts.yml
 .config/go
 .config/helm
