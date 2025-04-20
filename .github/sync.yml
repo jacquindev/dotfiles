@@ -17,9 +17,9 @@ group:
       jacquindev/windots
     files:
       - source: .config/yazi/
-        dest: config/yazi/
+        dest: config/config/yazi/
       - source: .czrc
-        dest: home/.czrc
+        dest: config/home/.czrc
       - source: gitalias.txt
         dest: config/gitaliases
       - source: .config/starship.toml
